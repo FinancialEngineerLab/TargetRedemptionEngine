@@ -31,8 +31,6 @@ public:
         const double time, 
         const boost::numeric::ublas::vector<double>& states,
         boost::numeric::ublas::matrix<double>& diffusion);
-    void getCorrelationMatrix(
-        boost::numeric::ublas::matrix<double>& correlationMatrix);
     inline std::size_t getDimension() const;
     inline std::size_t getDimensionOfBrownianMotion() const;
 
@@ -44,7 +42,6 @@ private:
     const boost::shared_ptr<Diffusion> _diffusion;
     const std::size_t _dimension;
     const std::size_t _dimensionOfBrownianMotion;
-    const boost::numeric::ublas::matrix<double> correlationMatrix;
     
 };
 

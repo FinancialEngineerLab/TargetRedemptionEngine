@@ -7,14 +7,12 @@ StochasticDifferentialEquation::StochasticDifferentialEquation(
     const boost::shared_ptr<Drift>& drift, 
     const boost::shared_ptr<Diffusion>& diffusion,
     const std::size_t dimension,
-    const std::size_t dimensionOfBrownianMotion,
-    const boost::numeric::ublas::matrix<double>& correlationMatrix) 
+    const std::size_t dimensionOfBrownianMotion
     :
     _drift(drift),
     _diffusion(diffusion),
     _dimension(dimension),
-    _dimensionOfBrownianMotion(dimensionOfBrownianMotion),
-    _correlationMatrix(correlationMatrix)
+    _dimensionOfBrownianMotion(dimensionOfBrownianMotion)
 {
 }
 

@@ -45,17 +45,6 @@ std::size_t BlackScholesFactory::makeDimensionOfBrownianMotion() const
 {
     return _dimensionOfBrownianMotion;
 }
-boost::shared_ptr<boost::numeric::ublas::matrix<double>> 
-    BlackScholesFactory::makeCorrelationMatrix() const
-{
-    return boost::shared_ptr<boost::numeric::ublas::matrix<double>>(
-        createCorrelationMatrix());
-}
-boost::numeric::ublas::matrix<double>* 
-    BlackScholesFactory::createCorrelationMatrix() const
-{
-    return 
-}
 
 
 /******************************************************************************

@@ -180,7 +180,7 @@ int main()
     //double price2 = logPricer.simulatePrice(spots, maturity, numberOfSimulations, numberOfTimeSteps);
     //std::cout << price2 << std::endl;
     double price3 = sabrPricer.simulatePrice(sabrSpots, maturity, numberOfSimulations, numberOfTimeSteps);
-    std::cout << price3 << std::endl;
+    std::cout << "price3" << price3 << std::endl;
 
     double impliedVolatility;
     if (spot == strike) {

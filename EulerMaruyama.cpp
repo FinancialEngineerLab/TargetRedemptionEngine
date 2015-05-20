@@ -37,12 +37,10 @@ void EulerMaruyama::simulateOneStep(
     boost::numeric::ublas::vector<double> randoms(dimensionOfBrownianMotion);
     generateRandomsVectorFromIterator(randoms, random, dimension);
 
-    const boost::numeri::ublas::vector<double> correlatedRandoms = 
-        boost::numeric::ublas::prod(correlationMatrix, randoms);
 
     //one step calculation.
     processes += timeStepSize * drift 
-        + sqrt(timeStepSize) * boost::numeric::ublas::prod(diffusion, correlatedRandoms);
+        + sqrt(timeStepSize) * boost::numeric::ublas::prod(diffusion, randoms);
 }
 
 

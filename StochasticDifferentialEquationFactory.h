@@ -25,7 +25,6 @@ private:
     virtual boost::shared_ptr<Diffusion> makeDiffusion() const = 0;
     virtual std::size_t makeDimension() const = 0;
     virtual std::size_t makeDimensionOfBrownianMotion() const = 0;
-    virtual boost::numeric::ublas::matrix<double> makeCorrelationMatrix() const = 0;
     
 };
 
