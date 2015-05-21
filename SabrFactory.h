@@ -12,8 +12,7 @@ public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    SabrFactory(const double beta, const double rho, 
-        const double volatility);
+    SabrFactory(const double beta, const double volatility);
     virtual ~SabrFactory();
 
 private:
@@ -29,8 +28,8 @@ private:
      * private variables.
      **************************************************************************/
     const double _beta;
-    const double _rho;
     const double _volatility;
     const std::size_t _dimension;
     const std::size_t _dimensionOfBrownianMotion;
 };
+

@@ -23,11 +23,8 @@ boost::shared_ptr<StochasticDifferentialEquation>
     const std::size_t dimension = this->makeDimension();
     const std::size_t dimensionOfBrownianMotion = 
         this->makeDimensionOfBrownianMotion();
-    const boost::numeric::ublas::matrix<double> correlationMatrix = 
-        this->makeCorrelationMatrix();
     
     return boost::make_shared<StochasticDifferentialEquation>(
-            drift, diffusion, dimension, dimensionOfBrownianMotion,
-            correlationMatrix);
+            drift, diffusion, dimension, dimensionOfBrownianMotion);
 }
 

@@ -7,7 +7,7 @@ StochasticDifferentialEquation::StochasticDifferentialEquation(
     const boost::shared_ptr<Drift>& drift, 
     const boost::shared_ptr<Diffusion>& diffusion,
     const std::size_t dimension,
-    const std::size_t dimensionOfBrownianMotion
+    const std::size_t dimensionOfBrownianMotion)
     :
     _drift(drift),
     _diffusion(diffusion),

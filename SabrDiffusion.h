@@ -9,7 +9,7 @@ public:
     /**************************************************************************
      * Constructers and Destructers
      **************************************************************************/
-    SabrDiffusion(const double beta, const double rho, const double volatility);
+    SabrDiffusion(const double beta, const double volatility);
     virtual ~SabrDiffusion();
 
     /**************************************************************************
@@ -25,6 +25,5 @@ private:
      * private variables
      **************************************************************************/
     const double _beta;
-    const double _rho;
     const double _volatility;
 };

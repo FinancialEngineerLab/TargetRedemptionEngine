@@ -4,10 +4,9 @@
  * Constructers and Destructers
  ******************************************************************************/
 SabrDiffusion::SabrDiffusion(
-    const double beta, const double rho, const double volatility) 
+    const double beta, const double volatility) 
     :
     _beta(beta),
-    _rho(rho),
     _volatility(volatility)
 
 {

@@ -12,7 +12,7 @@ BlackScholesDrift::~BlackScholesDrift()
 }
 
 void BlackScholesDrift::operator()(
-    double time, 
+    const double time, 
     const boost::numeric::ublas::vector<double>& states,
     boost::numeric::ublas::vector<double>& drift) const
 {
@@ -20,7 +20,10 @@ void BlackScholesDrift::operator()(
 }
 
 
-LogBlackScholesDrift::LogBlackScholesDrift(const double interestRate, const double dividend, const double volatility) 
+LogBlackScholesDrift::LogBlackScholesDrift(
+    const double interestRate,
+    const double dividend,
+    const double volatility) 
     :
     _interestRate(interestRate),
     _dividend(dividend),
@@ -33,7 +36,7 @@ LogBlackScholesDrift::~LogBlackScholesDrift()
 }
 
 void LogBlackScholesDrift::operator()(
-    double time, 
+    const double time, 
     const boost::numeric::ublas::vector<double>& states,
     boost::numeric::ublas::vector<double>& drift) const
 {

@@ -151,7 +151,7 @@ int main()
         interestRate, dividend, volatility);
     boost::shared_ptr<StochasticDifferentialEquation> logBlackScholes = 
         logBlackScholesFactory.makeStochasticDifferentialEquation();
-    const SabrFactory sabrFactory(beta, rho, volatilityOfVolatility);
+    const SabrFactory sabrFactory(beta, volatilityOfVolatility);
     boost::shared_ptr<StochasticDifferentialEquation> sabr = 
         sabrFactory.makeStochasticDifferentialEquation();
 

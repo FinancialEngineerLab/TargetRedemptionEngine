@@ -3,30 +3,21 @@
 #include "StochasticDifferentialEquation.h"
 #include "DiscretizationScheme.h"
 #include "RandomGeneratorBase.h"
-#include "PlainVanillaPayOff.h"
+#include "PathSimulatorBase.h"
 
-class MonteCarloPricer 
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/shared_ptr.hpp>
+
+class PathSimulator 
+    : public PathSimulatorBase
 {
 public:
-    /**************************************************************************
-     * Constructers and Destructers
-     **************************************************************************/
-    MonteCarloPricer(
+    PathSimulator(
         const boost::shared_ptr<StochasticDifferentialEquation>& model,
         const boost::shared_ptr<DiscretizationScheme>& discretizationScheme,
-        const boost::shared_ptr<RandomGeneratorBase>& randomGenerator,
-        const boost::shared_ptr<PayOff>& payOff);
-    virtual ~MonteCarloPricer();
+        const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
+    virtual ~PathSimulator();
 
-    /**************************************************************************
-     * member functions.
-     **************************************************************************/
-    double simulatePrice(
-        const boost::numeric::ublas::vector<double>& spots,
-        const double maturity,
-        const std::size_t numberOfSimulations,
-        const std::size_t numberOfTimeSteps) const;
-    
     /******************************************************************************
      * virtual functions.
      ******************************************************************************/
@@ -43,9 +34,6 @@ private:
     const boost::shared_ptr<StochasticDifferentialEquation>& _model;
     const boost::shared_ptr<DiscretizationScheme>& _discretizationScheme;
     const boost::shared_ptr<RandomGeneratorBase>& _randomGenerator;
-    const boost::shared_ptr<PayOff>& _payOff;
-
+            
 };
-
-
 

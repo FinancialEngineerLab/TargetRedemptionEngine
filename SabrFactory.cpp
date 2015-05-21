@@ -7,11 +7,9 @@
 /******************************************************************************
  * Constructers and Destructers
  ******************************************************************************/
-SabrFactory::SabrFactory(const double beta, 
-        const double rho, const double volatility)
+SabrFactory::SabrFactory(const double beta, const double volatility)
     :
     _beta(beta),
-    _rho(rho),
     _volatility(volatility),
     _dimension(2),
     _dimensionOfBrownianMotion(2)
@@ -33,7 +31,7 @@ boost::shared_ptr<Drift> SabrFactory::makeDrift() const
 boost::shared_ptr<Diffusion> SabrFactory::makeDiffusion() const
 {
     return boost::shared_ptr<SabrDiffusion>(
-        new SabrDiffusion(_beta, _rho, _volatility));
+        new SabrDiffusion(_beta, _volatility));
 }
 
 std::size_t SabrFactory::makeDimension() const
@@ -44,3 +42,4 @@ std::size_t SabrFactory::makeDimensionOfBrownianMotion() const
 {
     return _dimensionOfBrownianMotion;
 }
+
