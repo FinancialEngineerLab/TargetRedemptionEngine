@@ -1,46 +1,85 @@
+#Suffix Rule
 .SUFFIXES :
-.SUFFIXES : .o .c
-
-CC = gcc
+.SUFFIXES : .o .cpp
+.cpp.o :
+	$(CC) $(CFLAGS) $(INC_FLAGS) -c $<
 
 SELF = basic.mk
-MAKEFILE = Makefile
-DIRS = $(shell find . -mindepth 1 -maxdepth 1 -type d | grep -v "\/\.")
-SELFS = $(addsuffix /$(SELF), $(DIRS))
-MAKEFILES = $(addsuffix /$(MAKEFILE), $(DIRS))
 
-SDE_WA_SELFS = $(shell find . -name '$(SELF)')
-SDE_WA_MAKEFILES = $(shell find . -name '$(MAKEFILE)')
-SDE_WA_SRC = $(shell find . -name '*.c')
-SDE_WA_OBJS =  $(SDE_WA_SRC:.c=.o)
-SDE_WA = sde_wa
-TARGET_SDE_WA = lib$(SDE_WA).a
-TARGETS = $(TARGET_SDE_WA) 
+CC = g++
+#DEBUG = -O2 -Wall
+DEBUG = -Wall
+CFLAGS = $(DEBUG)
+INC_FLAGS = -I./
 
-
-$(TARGET_SDE_WA): create-objs
-	rm -f $@
-	ar cvr $@ $(SDE_WA_OBJS)
-
-Makefiles: $(SELFS)
-	for dir in $(DIRS) ; do	\
-	 cd $$dir	;\
-	 make -f $(SELF) $(MAKEFILE)	;\
-	 cd ..	;\
-	done
-
-create-objs: $(SDE_WA_SELFS)
-	for dir in $(DIRS); do	\
-		cd $$dir	;\
-		make	;\
-		cd ..	;\
-	done
-
+SDE_WA_SRC =  $(wildcard *.cpp)
+SDE_WA_OBJS =  $(SDE_WA_SRC:.cpp=.o)
+TARGETS = european_option 
 
 .PHONY: all
-all: clean $(TARGETS)
+all: $(TARGETS)
+
+$(TARGETS): $(SDE_WA_OBJS)
+	$(CC) $(SDE_WA_OBJS) -o $@
+
+Makefile : $(SELF)
+	rm -f $@
+	cp $(SELF) $@
+	chmod +w $@
+	echo '# Automatically-generated dependencies list:' >>$@
+	$(CC) ${CFLAGS} ${INC_FLAGS} -MM	\
+	${SDE_WA_SRC}	\
+	>> $@
+	chmod -w $@
 
 .PHONY: clean
 clean :
-	rm -f $(SDE_WA_OBJS) $(TARGETS)
+	rm -f *.o $(TARGETS)
 
+# Automatically-generated dependencies list:
+BlackScholesDiffusion.o: BlackScholesDiffusion.cpp \
+  BlackScholesDiffusion.h Diffusion.h
+BlackScholesDrift.o: BlackScholesDrift.cpp BlackScholesDrift.h Drift.h
+BlackScholesFactory.o: BlackScholesFactory.cpp BlackScholesFactory.h \
+  StochasticDifferentialEquationFactory.h \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h \
+  BlackScholesDrift.h BlackScholesDiffusion.h
+Diffusion.o: Diffusion.cpp Diffusion.h
+DiscretizationScheme.o: DiscretizationScheme.cpp DiscretizationScheme.h \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h
+Drift.o: Drift.cpp
+EulerMaruyama.o: EulerMaruyama.cpp EulerMaruyama.h DiscretizationScheme.h \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h
+LogPathSimulator.o: LogPathSimulator.cpp LogPathSimulator.h \
+  PathSimulatorDecorator.h PathSimulatorBase.h
+MersenneTwister.o: MersenneTwister.cpp MersenneTwister.h \
+  RandomGeneratorBase.h
+MonteCarloPricer.o: MonteCarloPricer.cpp MonteCarloPricer.h \
+  PathSimulatorBase.h PayOff.h
+PathSimulator.o: PathSimulator.cpp PathSimulator.h \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h \
+  DiscretizationScheme.h RandomGeneratorBase.h PathSimulatorBase.h
+PathSimulatorBase.o: PathSimulatorBase.cpp PathSimulatorBase.h
+PathSimulatorDecorator.o: PathSimulatorDecorator.cpp \
+  PathSimulatorDecorator.h PathSimulatorBase.h
+PayOff.o: PayOff.cpp PayOff.h
+PlainVanillaPayOff.o: PlainVanillaPayOff.cpp PlainVanillaPayOff.h \
+  PayOff.h
+RandomGeneratorBase.o: RandomGeneratorBase.cpp RandomGeneratorBase.h
+SabrDiffusion.o: SabrDiffusion.cpp SabrDiffusion.h Diffusion.h
+SabrDrift.o: SabrDrift.cpp SabrDrift.h Drift.h
+SabrFactory.o: SabrFactory.cpp SabrFactory.h \
+  StochasticDifferentialEquationFactory.h \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h SabrDrift.h \
+  SabrDiffusion.h
+StochasticDifferentialEquation.o: StochasticDifferentialEquation.cpp \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h
+StochasticDifferentialEquationFactory.o:  \
+ StochasticDifferentialEquationFactory.cpp \
+  StochasticDifferentialEquationFactory.h \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h
+main.o: main.cpp StochasticDifferentialEquation.h Drift.h Diffusion.h \
+  BlackScholesFactory.h StochasticDifferentialEquationFactory.h \
+  EulerMaruyama.h DiscretizationScheme.h MersenneTwister.h \
+  RandomGeneratorBase.h PlainVanillaPayOff.h PayOff.h MonteCarloPricer.h \
+  PathSimulatorBase.h SabrFactory.h PathSimulator.h

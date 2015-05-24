@@ -25,7 +25,7 @@ StochasticDifferentialEquation::~StochasticDifferentialEquation() {
 void StochasticDifferentialEquation::calculateDrift(
     const double time, 
     const boost::numeric::ublas::vector<double>& states,
-    boost::numeric::ublas::vector<double>& drift)
+    boost::numeric::ublas::vector<double>& drift) const
 {
     return (*_drift)(time, states, drift);
 }
@@ -33,7 +33,7 @@ void StochasticDifferentialEquation::calculateDrift(
 void StochasticDifferentialEquation::calculateDiffusion(
     const double time, 
     const boost::numeric::ublas::vector<double>& states,
-    boost::numeric::ublas::matrix<double>& diffusion)
+    boost::numeric::ublas::matrix<double>& diffusion) const
 {
     return (*_diffusion)(time, states, diffusion);
 }

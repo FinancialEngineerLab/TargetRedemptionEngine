@@ -26,11 +26,11 @@ public:
     void calculateDrift(
         const double time, 
         const boost::numeric::ublas::vector<double>& states,
-        boost::numeric::ublas::vector<double>& drift);
+        boost::numeric::ublas::vector<double>& drift) const;
     void calculateDiffusion(
         const double time, 
         const boost::numeric::ublas::vector<double>& states,
-        boost::numeric::ublas::matrix<double>& diffusion);
+        boost::numeric::ublas::matrix<double>& diffusion) const;
     inline std::size_t getDimension() const;
     inline std::size_t getDimensionOfBrownianMotion() const;
 

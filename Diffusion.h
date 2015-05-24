@@ -6,9 +6,15 @@
 class Diffusion 
 {
 public:
+    /**************************************************************************
+     * Constructers and Destructers.
+     **************************************************************************/
     Diffusion();
     virtual ~Diffusion();
 
+    /******************************************************************************
+     * pure virtual functions.
+     ******************************************************************************/
     virtual void operator()(
         const double time, 
         const boost::numeric::ublas::vector<double>& states,

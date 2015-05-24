@@ -2,16 +2,17 @@
 
 #include "Diffusion.h"
 
-class SabrDiffusion 
+class LiborMarketModelDiffusion 
     : public Diffusion
 {
 public:
     /**************************************************************************
      * Constructers and Destructers
      **************************************************************************/
-    SabrDiffusion(const double beta, const double volatility,
+    LiborMarketModelDiffusion(
+        const boost::numeric::ublas::matrix<double>& volatilities,
         const boost::numeric::ublas::matrix<double>& correlation);
-    virtual ~SabrDiffusion();
+    virtual ~LiborMarketModelDiffusion();
 
     /**************************************************************************
      * inherited  operators.
@@ -19,14 +20,13 @@ public:
     virtual void operator()(
         const double time, 
         const boost::numeric::ublas::vector<double>& states,
-        boost::numeric::ublas::matrix<double>& diffusion) const;
+        boost::numeric::ublas::matrix<double>& diffusions) const;
 
 private:
     /**************************************************************************
      * private variables
      **************************************************************************/
-    const double _beta;
-    const double _volatility;
+    const boost::numeric::ublas::matrix<double> _volatilities;
     const boost::numeric::ublas::matrix<double> _correlation;
     
 };

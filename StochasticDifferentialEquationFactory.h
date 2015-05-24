@@ -17,7 +17,7 @@ public:
     /**************************************************************************
      * member functions
      **************************************************************************/
-    boost::shared_ptr<StochasticDifferentialEquation> 
+    boost::shared_ptr<const StochasticDifferentialEquation> 
         makeStochasticDifferentialEquation() const;
 
 private:

@@ -4,12 +4,12 @@
 
 #include <boost/shared_ptr.hpp>
 
-class LogPathSimulator 
+class BondPathSimulator 
     : public PathSimulatorDecorator
 {
 public:
-    LogPathSimulator(const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);
-    virtual ~LogPathSimulator();
+    BondPathSimulator(const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);
+    virtual ~BondPathSimulator();
 
     /******************************************************************************
      * inherited virtual functions.
@@ -19,7 +19,6 @@ public:
         const boost::numeric::ublas::vector<double>& spots,
         const double timeStepSize,
         const std::size_t numberOfTimeSteps) const;
-    //boost::numeric::ublas::vector<double> makeProcesses() const;
 
 private:
     /******************************************************************************

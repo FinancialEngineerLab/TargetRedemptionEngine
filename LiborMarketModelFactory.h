@@ -5,16 +5,18 @@
 #include "StochasticDifferentialEquationFactory.h"
 
 
-class SabrFactory :
+class LiborMarketModelFactory :
     public StochasticDifferentialEquationFactory
 {
 public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    SabrFactory(const double beta, const double volatility,
+    LiborMarketModelFactory(
+        const boost::numeric::ublas::matrix<double>& volatilities,
+        const boost::numeric::ublas::vector<double>& maturities,
         const boost::numeric::ublas::matrix<double>& correlation);
-    virtual ~SabrFactory();
+    virtual ~LiborMarketModelFactory();
 
 private:
     /**************************************************************************
@@ -28,10 +30,10 @@ private:
     /**************************************************************************
      * private variables.
      **************************************************************************/
-    const double _beta;
-    const double _volatility;
+    const boost::numeric::ublas::matrix<double> _volatilities;
+    const boost::numeric::ublas::vector<double> _maturities;
+    const boost::numeric::ublas::matrix<double> _correlation;
     const std::size_t _dimension;
     const std::size_t _dimensionOfBrownianMotion;
-    const boost::numeric::ublas::matrix<double> _correlation;
 };
 

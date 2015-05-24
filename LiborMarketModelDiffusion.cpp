@@ -1,35 +1,30 @@
-#include "SabrDiffusion.h"
+#include "LiborMarketModelDiffusion.h"
 
 /******************************************************************************
  * Constructers and Destructers
  ******************************************************************************/
-SabrDiffusion::SabrDiffusion(
-    const double beta, const double volatility, 
+LiborMarketModelDiffusion::LiborMarketModelDiffusion(
+    const boost::numeric::ublas::matrix<double>& volatilities,
     const boost::numeric::ublas::matrix<double>& correlation) 
     :
-    _beta(beta),
-    _volatility(volatility),
+    _volatilities(volatilities),
     _correlation(correlation)
 {
 }
 
-SabrDiffusion::~SabrDiffusion() 
+LiborMarketModelDiffusion::~LiborMarketModelDiffusion() 
 {
 }
 
 /******************************************************************************
  * operators.
  ******************************************************************************/
-void SabrDiffusion::operator()(
+void LiborMarketModelDiffusion::operator()(
     const double time, 
     const boost::numeric::ublas::vector<double>& states,
-    boost::numeric::ublas::matrix<double>& diffusion) const
+    boost::numeric::ublas::matrix<double>& diffusions) const
 {
     //operation of matrix product: diffusionMatrix * correlationMatrix
-    diffusion(0, 0) = pow(states[0], _beta) * states[1] * _correlation(0, 0);
-    diffusion(0, 1) = 0.0;
-    diffusion(1, 0) = _volatility * states[1] * _correlation(1, 0);
-    diffusion(1, 1) = _volatility * states[1] * _correlation(1, 1);
-
+    diffusions = boost::numeric::ublas::prod(_volatilities, _correlation);
 }
 

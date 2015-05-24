@@ -1,29 +1,29 @@
-#include "LogPathSimulator.h"
+#include "BondPathSimulator.h"
 
-LogPathSimulator::LogPathSimulator(
+/******************************************************************************
+ * Constructers and Destructers.
+ ******************************************************************************/
+BondPathSimulator::BondPathSimulator(
     const boost::shared_ptr<const PathSimulatorBase>& innerSimulator)
     :
     PathSimulatorDecorator(innerSimulator)
 {
 }
 
-LogPathSimulator::~LogPathSimulator() 
+BondPathSimulator::~BondPathSimulator() 
 {
 }
 
 /******************************************************************************
  * inherited virtual functions.
  ******************************************************************************/
-void LogPathSimulator::simulateOnePath(
+void BondPathSimulator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
     const boost::numeric::ublas::vector<double>& spots,
     const double timeStepSize,
     const std::size_t numberOfTimeSteps) const
 {
-    boost::numeric::ublas::vector<double> logSpots(spots);
-    logSpots[0] = log(spots[0]);
     PathSimulatorDecorator::simulateOnePath(
         processes, logSpots, timeStepSize, numberOfTimeSteps);
-    processes[0] = exp(processes[0]);
 }
 

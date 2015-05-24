@@ -14,7 +14,7 @@ StochasticDifferentialEquationFactory::~StochasticDifferentialEquationFactory() 
 /******************************************************************************
  * member functions
  ******************************************************************************/
-boost::shared_ptr<StochasticDifferentialEquation> 
+boost::shared_ptr<const StochasticDifferentialEquation> 
     StochasticDifferentialEquationFactory::makeStochasticDifferentialEquation() 
     const
 {

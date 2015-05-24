@@ -1,5 +1,5 @@
 #include "EulerMaruyama.h"
-    #include <boost/numeric/ublas/io.hpp>
+#include <boost/numeric/ublas/io.hpp>
 
 /******************************************************************************
  * Constructers and Destructers.
@@ -17,7 +17,7 @@ EulerMaruyama::~EulerMaruyama()
  ******************************************************************************/
 void EulerMaruyama::simulateOneStep(
     boost::numeric::ublas::vector<double>& processes, 
-    const boost::shared_ptr<StochasticDifferentialEquation>& model,
+    const boost::shared_ptr<const StochasticDifferentialEquation>& model,
     const double time,
     const double timeStepSize,
     std::vector<double>::iterator& random) const
@@ -36,7 +36,6 @@ void EulerMaruyama::simulateOneStep(
     model->calculateDiffusion(time, processes, diffusion);
     boost::numeric::ublas::vector<double> randoms(dimensionOfBrownianMotion);
     generateRandomsVectorFromIterator(randoms, random, dimension);
-
 
     //one step calculation.
     processes += timeStepSize * drift 

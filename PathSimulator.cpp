@@ -1,12 +1,13 @@
 #include "PathSimulator.h"
 
 
+
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
 PathSimulator::PathSimulator(
-    const boost::shared_ptr<StochasticDifferentialEquation>& model,
-    const boost::shared_ptr<DiscretizationScheme>& discretizationScheme,
+    const boost::shared_ptr<const StochasticDifferentialEquation>& model,
+    const boost::shared_ptr<const DiscretizationScheme>& discretizationScheme,
     const boost::shared_ptr<RandomGeneratorBase>& randomGenerator)
     :
     _model(model),
@@ -21,9 +22,9 @@ PathSimulator::~PathSimulator()
 
 
 /******************************************************************************
- * virtual functions.
+ * inherited virtual functions.
  ******************************************************************************/
-boost::numeric::ublas::vector<double>& PathSimulator::simulateOnePath(
+void PathSimulator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
     const boost::numeric::ublas::vector<double>& spots,
     const double timeStepSize,
@@ -42,8 +43,12 @@ boost::numeric::ublas::vector<double>& PathSimulator::simulateOnePath(
 
         time += timeStepSize;
     }
+}
+
+boost::numeric::ublas::vector<double> PathSimulator::makeProcesses() const
+{
+    const std::size_t dimension = _model->getDimension();
+    boost::numeric::ublas::vector<double> processes(dimension, 0.0);
 
     return processes;
 }
-
-
