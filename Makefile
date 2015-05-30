@@ -50,12 +50,25 @@ DiscretizationScheme.o: DiscretizationScheme.cpp DiscretizationScheme.h \
 Drift.o: Drift.cpp
 EulerMaruyama.o: EulerMaruyama.cpp EulerMaruyama.h DiscretizationScheme.h \
   StochasticDifferentialEquation.h Drift.h Diffusion.h
+LiborMarketModelDiffusion.o: LiborMarketModelDiffusion.cpp \
+  LiborMarketModelDiffusion.h Diffusion.h
+LiborMarketModelDrift.o: LiborMarketModelDrift.cpp \
+  LiborMarketModelDrift.h Drift.h
+LiborMarketModelFactory.o: LiborMarketModelFactory.cpp \
+  LiborMarketModelFactory.h StochasticDifferentialEquationFactory.h \
+  StochasticDifferentialEquation.h Drift.h Diffusion.h \
+  LiborMarketModelDrift.h LiborMarketModelDiffusion.h
 LogPathSimulator.o: LogPathSimulator.cpp LogPathSimulator.h \
   PathSimulatorDecorator.h PathSimulatorBase.h
 MersenneTwister.o: MersenneTwister.cpp MersenneTwister.h \
   RandomGeneratorBase.h
 MonteCarloPricer.o: MonteCarloPricer.cpp MonteCarloPricer.h \
-  PathSimulatorBase.h PayOff.h
+  PathSimulatorBase.h PathDependent.h PayOff.h
+PathDependent.o: PathDependent.cpp PathDependent.h
+PathDependentAsian.o: PathDependentAsian.cpp PathDependentAsian.h \
+  PathDependent.h PayOff.h
+PathDependentEuropean.o: PathDependentEuropean.cpp \
+  PathDependentEuropean.h PathDependent.h PayOff.h
 PathSimulator.o: PathSimulator.cpp PathSimulator.h \
   StochasticDifferentialEquation.h Drift.h Diffusion.h \
   DiscretizationScheme.h RandomGeneratorBase.h PathSimulatorBase.h
@@ -80,6 +93,7 @@ StochasticDifferentialEquationFactory.o:  \
   StochasticDifferentialEquation.h Drift.h Diffusion.h
 main.o: main.cpp StochasticDifferentialEquation.h Drift.h Diffusion.h \
   BlackScholesFactory.h StochasticDifferentialEquationFactory.h \
-  EulerMaruyama.h DiscretizationScheme.h MersenneTwister.h \
-  RandomGeneratorBase.h PlainVanillaPayOff.h PayOff.h MonteCarloPricer.h \
-  PathSimulatorBase.h SabrFactory.h PathSimulator.h
+  SabrFactory.h LiborMarketModelFactory.h EulerMaruyama.h \
+  DiscretizationScheme.h MersenneTwister.h RandomGeneratorBase.h \
+  PlainVanillaPayOff.h PayOff.h MonteCarloPricer.h PathSimulatorBase.h \
+  PathDependent.h PathSimulator.h PathDependentEuropean.h

@@ -16,14 +16,14 @@ LogPathSimulator::~LogPathSimulator()
  ******************************************************************************/
 void LogPathSimulator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
+    boost::numeric::ublas::matrix<double>& spotsValues,
     const boost::numeric::ublas::vector<double>& spots,
-    const double timeStepSize,
-    const std::size_t numberOfTimeSteps) const
+    const boost::numeric::ublas::vector<double>& observedTimes) const
 {
     boost::numeric::ublas::vector<double> logSpots(spots);
     logSpots[0] = log(spots[0]);
     PathSimulatorDecorator::simulateOnePath(
-        processes, logSpots, timeStepSize, numberOfTimeSteps);
+        processes, spotsValues, logSpots, observedTimes);
     processes[0] = exp(processes[0]);
 }
 

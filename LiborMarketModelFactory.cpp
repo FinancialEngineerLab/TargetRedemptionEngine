@@ -36,7 +36,7 @@ boost::shared_ptr<Drift> LiborMarketModelFactory::makeDrift() const
 boost::shared_ptr<Diffusion> LiborMarketModelFactory::makeDiffusion() const
 {
     return boost::shared_ptr<LiborMarketModelDiffusion>(
-        new LiborMarketModelDiffusion(_volatilities, _correlation));
+        new LiborMarketModelDiffusion(_volatilities, _correlation, _maturities));
 }
 
 std::size_t LiborMarketModelFactory::makeDimension() const

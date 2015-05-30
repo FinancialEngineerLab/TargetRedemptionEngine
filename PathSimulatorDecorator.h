@@ -8,7 +8,8 @@ class PathSimulatorDecorator
     : public PathSimulatorBase
 {
 public:
-    PathSimulatorDecorator(const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);
+    PathSimulatorDecorator(
+        const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);
     virtual ~PathSimulatorDecorator();
 
     /**************************************************************************
@@ -16,10 +17,9 @@ public:
      **************************************************************************/
     virtual void simulateOnePath(
         boost::numeric::ublas::vector<double>& processes,
+        boost::numeric::ublas::matrix<double>& spotsValues,
         const boost::numeric::ublas::vector<double>& spots,
-        const double timeStepSize,
-        const std::size_t numberOfTimeSteps) const;
-
+        const boost::numeric::ublas::vector<double>& observedTimes) const;
 
     /**************************************************************************
      * member functions.

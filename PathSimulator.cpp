@@ -1,6 +1,7 @@
 #include "PathSimulator.h"
 
-
+#include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/io.hpp>
 
 /******************************************************************************
  * Constructers and Destructers.
@@ -26,22 +27,21 @@ PathSimulator::~PathSimulator()
  ******************************************************************************/
 void PathSimulator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
+    boost::numeric::ublas::matrix<double>& path,
     const boost::numeric::ublas::vector<double>& spots,
-    const double timeStepSize,
-    const std::size_t numberOfTimeSteps) const
+    const boost::numeric::ublas::vector<double>& observedTimes) const
 {
-    double time = 0.0;
     processes = spots;
     std::vector<double> randoms(_randomGenerator->getDimension());
     _randomGenerator->generateNormalRandoms(randoms);
     std::vector<double>::iterator random = randoms.begin();
 
-    for (std::size_t timeIndex = 0; timeIndex <  numberOfTimeSteps; 
+    for (std::size_t timeIndex = 1; timeIndex < observedTimes.size(); 
         ++timeIndex) {
+        const double timeStepSize = observedTimes[timeIndex] - observedTimes[timeIndex - 1];
         _discretizationScheme->simulateOneStep(
-            processes, _model, time, timeStepSize, random);
-
-        time += timeStepSize;
+            processes, _model, observedTimes[timeIndex - 1], timeStepSize, random);
+        boost::numeric::ublas::column(path, timeIndex) = processes;
     }
 }
 
@@ -52,3 +52,4 @@ boost::numeric::ublas::vector<double> PathSimulator::makeProcesses() const
 
     return processes;
 }
+

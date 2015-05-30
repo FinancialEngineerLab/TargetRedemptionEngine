@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PathSimulatorBase.h"
+#include "PathDependent.h"
 #include "PayOff.h"
 
 #include <boost/shared_ptr.hpp>
@@ -13,7 +14,7 @@ public:
      **************************************************************************/
     MonteCarloPricer(
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-        const boost::shared_ptr<const PayOff>& payOff);
+        const boost::shared_ptr<const PathDependent>& pathDependent);
     virtual ~MonteCarloPricer();
 
     /**************************************************************************
@@ -23,14 +24,22 @@ public:
         const boost::numeric::ublas::vector<double>& spots,
         const double maturity,
         const std::size_t numberOfSimulations,
-        const std::size_t numberOfTimeSteps) const;
+        const boost::numeric::ublas::vector<double>& observedTimes,
+        const boost::numeric::ublas::vector<double>& discountFactors) const;
     
 private:
-    /******************************************************************************
+    /**************************************************************************
      * private variables.
-     ******************************************************************************/
+     **************************************************************************/
     const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
-    const boost::shared_ptr<const PayOff>& _payOff;
+    const boost::shared_ptr<const PathDependent> _pathDependent;
+
+    /**************************************************************************
+     * private functions.
+     **************************************************************************/
+    inline void initializePath(
+        boost::numeric::ublas::matrix<double>& path,
+        const boost::numeric::ublas::vector<double>& processes) const;
 
 };
 

@@ -11,7 +11,8 @@ public:
      **************************************************************************/
     LiborMarketModelDiffusion(
         const boost::numeric::ublas::matrix<double>& volatilities,
-        const boost::numeric::ublas::matrix<double>& correlation);
+        const boost::numeric::ublas::matrix<double>& correlation,
+        const boost::numeric::ublas::vector<double>& maturities);
     virtual ~LiborMarketModelDiffusion();
 
     /**************************************************************************
@@ -28,5 +29,8 @@ private:
      **************************************************************************/
     const boost::numeric::ublas::matrix<double> _volatilities;
     const boost::numeric::ublas::matrix<double> _correlation;
+    const boost::numeric::ublas::vector<double> _maturities;
     
+
+    std::size_t findStartIndex(const double time) const;
 };
