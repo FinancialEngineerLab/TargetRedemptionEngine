@@ -29,13 +29,16 @@ void PathSimulator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
     boost::numeric::ublas::matrix<double>& path,
     const boost::numeric::ublas::vector<double>& spots,
-    const boost::numeric::ublas::vector<double>& observedTimes) const
+    const std::vector<double>& observedTimes) const
 {
     processes = spots;
     std::vector<double> randoms(_randomGenerator->getDimension());
     _randomGenerator->generateNormalRandoms(randoms);
     std::vector<double>::iterator random = randoms.begin();
 
+    for (std::size_t i = 0; i < observedTimes.size(); i++) {
+        std::cout << i << ":" << observedTimes[i] << std::endl;
+    }
     for (std::size_t timeIndex = 1; timeIndex < observedTimes.size(); 
         ++timeIndex) {
         const double timeStepSize = observedTimes[timeIndex] - observedTimes[timeIndex - 1];

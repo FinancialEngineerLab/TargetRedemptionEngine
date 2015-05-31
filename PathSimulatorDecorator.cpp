@@ -18,7 +18,7 @@ void PathSimulatorDecorator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
     boost::numeric::ublas::matrix<double>& spotsValues,
     const boost::numeric::ublas::vector<double>& spots,
-    const boost::numeric::ublas::vector<double>& observedTimes) const
+    const std::vector<double>& observedTimes) const
 {
     return _innerSimulator->simulateOnePath(
         processes, spotsValues, spots, observedTimes);

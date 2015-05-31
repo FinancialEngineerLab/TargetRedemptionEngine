@@ -8,7 +8,7 @@ PresentValueCalculator::PresentValueCalculator(
     const boost::numeric::ublas::vector<double>& discountFactors)
     :
     _cashFlow(cashFlow),
-    _discoutFactors(discountFactors)
+    _discountFactors(discountFactors)
 {
 }
 
@@ -17,13 +17,13 @@ PresentValueCalculator::~PresentValueCalculator()
 }
 
 
-double PresentValueCalculator::calculatePresentValue(
+double PresentValueCalculator::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {
     const double cashFlow =  _cashFlow->operator()(path);
-    const double discountFactor = discountFactors[_cashFlow->getTimeIndex()];
+    const double discountFactor = _discountFactors[_cashFlow->getTimeIndex()];
     const double presentValue = cashFlow * discountFactor;
 
-    return presetnValue;
+    return presentValue;
 }
 

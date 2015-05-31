@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 
 class CashFlow
 {
@@ -9,9 +10,9 @@ public:
     virtual ~CashFlow();
 
     virtual double operator()(
-        const boost::numeric::ublas::vector<double>& path) const = 0;
+        const boost::numeric::ublas::matrix<double>& path) const = 0;
 
-    inline std::size_t getTimeIndex();
+    inline std::size_t getTimeIndex() const;
     
 private:
     //! tiemIndex is a index at which cash flow occurs.
@@ -19,7 +20,7 @@ private:
 };
 
 
-inline std::size_t CashFlow::getTimeIndex()
+inline std::size_t CashFlow::getTimeIndex() const
 {
     return _timeIndex;
 }

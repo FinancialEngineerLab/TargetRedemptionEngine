@@ -4,9 +4,12 @@
  * Constructers and Destructers.
  ******************************************************************************/
 CashFlowPut::CashFlowPut(
-        const double strike)
+    const std::size_t timeIndex, const double strike,
+    const boost::shared_ptr<const CashFlow> cashFlow)
     :
-    _strike(strike)
+    CashFlow(timeIndex),
+    _strike(strike),
+    _cashFlow(cashFlow)
 {
 }
 
@@ -14,8 +17,8 @@ CashFlowPut::~CashFlowPut()
 {
 }
 
-double operator()(
-    const boost::numeric::ublas::vector<double>& path) const
+double CashFlowPut::operator()(
+    const boost::numeric::ublas::matrix<double>& path) const
 {
     const double cashFlow = _cashFlow->operator()(path);
 

@@ -44,6 +44,15 @@ BlackScholesFactory.o: BlackScholesFactory.cpp BlackScholesFactory.h \
   StochasticDifferentialEquationFactory.h \
   StochasticDifferentialEquation.h Drift.h Diffusion.h \
   BlackScholesDrift.h BlackScholesDiffusion.h
+CashFlow.o: CashFlow.cpp CashFlow.h
+CashFlowAverage.o: CashFlowAverage.cpp CashFlowAverage.h
+CashFlowCalculator.o: CashFlowCalculator.cpp CashFlowCalculator.h
+CashFlowCall.o: CashFlowCall.cpp CashFlowCall.h CashFlow.h
+CashFlowPut.o: CashFlowPut.cpp CashFlowPut.h CashFlow.h
+CashFlowSpot.o: CashFlowSpot.cpp CashFlowSpot.h CashFlow.h
+CashFlowSwap.o: CashFlowSwap.cpp CashFlowSwap.h
+CashFlowSwaption.o: CashFlowSwaption.cpp CashFlowSwaption.h CashFlow.h \
+  CashFlowSwap.h
 Diffusion.o: Diffusion.cpp Diffusion.h
 DiscretizationScheme.o: DiscretizationScheme.cpp DiscretizationScheme.h \
   StochasticDifferentialEquation.h Drift.h Diffusion.h
@@ -63,12 +72,7 @@ LogPathSimulator.o: LogPathSimulator.cpp LogPathSimulator.h \
 MersenneTwister.o: MersenneTwister.cpp MersenneTwister.h \
   RandomGeneratorBase.h
 MonteCarloPricer.o: MonteCarloPricer.cpp MonteCarloPricer.h \
-  PathSimulatorBase.h PathDependent.h PayOff.h
-PathDependent.o: PathDependent.cpp PathDependent.h
-PathDependentAsian.o: PathDependentAsian.cpp PathDependentAsian.h \
-  PathDependent.h PayOff.h
-PathDependentEuropean.o: PathDependentEuropean.cpp \
-  PathDependentEuropean.h PathDependent.h PayOff.h
+  PathSimulatorBase.h PresentValueCalculator.h
 PathSimulator.o: PathSimulator.cpp PathSimulator.h \
   StochasticDifferentialEquation.h Drift.h Diffusion.h \
   DiscretizationScheme.h RandomGeneratorBase.h PathSimulatorBase.h
@@ -76,8 +80,12 @@ PathSimulatorBase.o: PathSimulatorBase.cpp PathSimulatorBase.h
 PathSimulatorDecorator.o: PathSimulatorDecorator.cpp \
   PathSimulatorDecorator.h PathSimulatorBase.h
 PayOff.o: PayOff.cpp PayOff.h
+PayOffCaplet.o: PayOffCaplet.cpp PayOffCaplet.h PayOff.h
+PayOffSwaption.o: PayOffSwaption.cpp PayOffSwaption.h PayOff.h
 PlainVanillaPayOff.o: PlainVanillaPayOff.cpp PlainVanillaPayOff.h \
   PayOff.h
+PresentValueCalculator.o: PresentValueCalculator.cpp \
+  PresentValueCalculator.h
 RandomGeneratorBase.o: RandomGeneratorBase.cpp RandomGeneratorBase.h
 SabrDiffusion.o: SabrDiffusion.cpp SabrDiffusion.h Diffusion.h
 SabrDrift.o: SabrDrift.cpp SabrDrift.h Drift.h
@@ -91,9 +99,3 @@ StochasticDifferentialEquationFactory.o:  \
  StochasticDifferentialEquationFactory.cpp \
   StochasticDifferentialEquationFactory.h \
   StochasticDifferentialEquation.h Drift.h Diffusion.h
-main.o: main.cpp StochasticDifferentialEquation.h Drift.h Diffusion.h \
-  BlackScholesFactory.h StochasticDifferentialEquationFactory.h \
-  SabrFactory.h LiborMarketModelFactory.h EulerMaruyama.h \
-  DiscretizationScheme.h MersenneTwister.h RandomGeneratorBase.h \
-  PlainVanillaPayOff.h PayOff.h MonteCarloPricer.h PathSimulatorBase.h \
-  PathDependent.h PathSimulator.h PathDependentEuropean.h

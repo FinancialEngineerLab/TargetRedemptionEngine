@@ -37,7 +37,7 @@ void LiborMarketModelDiffusion::operator()(
 
     for (std::size_t dimensionIndex = 0; dimensionIndex < rowDimension; 
         ++dimensionIndex) {
-        if (dimensionIndex > startIndex) {
+        if (dimensionIndex < startIndex) {
             boost::numeric::ublas::row(diffusions, dimensionIndex) = 
                 boost::numeric::ublas::zero_vector<double>(columnDimension);
         }
@@ -49,9 +49,9 @@ std::size_t LiborMarketModelDiffusion::findStartIndex(const double time) const
 {
     for (std::size_t startIndex = 0; startIndex < _maturities.size(); ++startIndex) {
         if (_maturities[startIndex] > time) {
-            return startIndex - 1;
+            return startIndex;
         }
     }
 
-    return _maturities.size() - 1;
+    return _maturities.size();
 }

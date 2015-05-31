@@ -4,11 +4,12 @@
 #include "LiborMarketModelFactory.h"
 #include "EulerMaruyama.h"
 #include "MersenneTwister.h"
-#include "PlainVanillaPayOff.h"
-#include "PayOffCaplet.h"
 #include "MonteCarloPricer.h"
 #include "PathSimulator.h"
-#include "PathDependentEuropean.h"
+#include "CashFlowSpot.h"
+#include "CashFlowCall.h"
+#include "CashFlowSwap.h"
+#include "CashFlowSwaption.h"
 
 
 #include <boost/shared_ptr.hpp>
@@ -141,8 +142,9 @@ inline boost::numeric::ublas::vector<double> makeLiborMarketModelSpots(
     const std::size_t dimension)
 {
     boost::numeric::ublas::vector<double> spots(dimension, 0.0);
-    for (std::size_t dimensionIndex = 1; dimensionIndex <= dimension; ++dimensionIndex) {
-        spots[dimensionIndex - 1] = 1.0 - dimensionIndex / 100.0 * 0.5;
+    for (std::size_t dimensionIndex = 1; dimensionIndex <= dimension; 
+        ++dimensionIndex) {
+        spots[dimensionIndex - 1] = dimensionIndex / 100.0 * 0.5;
     }
 
     return spots;
@@ -151,7 +153,8 @@ inline boost::numeric::ublas::vector<double> makeLiborMarketModelSpots(
 inline boost::numeric::ublas::matrix<double> makeLiborMarketModelVolatilities(
     const std::size_t dimension)
 {
-    boost::numeric::ublas::matrix<double> volatilities(dimension, dimension, 0.0);
+    boost::numeric::ublas::matrix<double> 
+        volatilities(dimension, dimension, 0.0);
     for (std::size_t rowIndex = 0; rowIndex < dimension; ++rowIndex) {
         for (std::size_t columnIndex = 0; columnIndex < rowIndex; ++columnIndex) {
             volatilities(rowIndex, columnIndex) = 1.0;
@@ -164,15 +167,17 @@ inline boost::numeric::ublas::matrix<double> makeLiborMarketModelVolatilities(
 inline boost::numeric::ublas::vector<double> makeLiborMarketModelTenor(
     const std::size_t dimension)
 {
-    boost::numeric::ublas::vector<double> maturities(dimension, 0.0);
-    for (std::size_t maturityIndex = 1; maturityIndex <= dimension; ++maturityIndex) {
+    boost::numeric::ublas::vector<double> maturities(dimension + 1, 0.0);
+    for (std::size_t maturityIndex = 1; maturityIndex <= dimension; 
+        ++maturityIndex) {
         maturities[maturityIndex - 1] = 0.5 * maturityIndex;
     }
+
     return maturities;
 }
 
-inline boost::numeric::ublas::matrix<double> makeLiborMarketModelCorrelationMatrix(
-    const std::size_t dimension)
+inline boost::numeric::ublas::matrix<double> 
+    makeLiborMarketModelCorrelationMatrix(const std::size_t dimension)
 {
     const boost::numeric::ublas::matrix<double> correlation = 
         boost::numeric::ublas::identity_matrix<double>(dimension);
@@ -183,15 +188,14 @@ inline boost::numeric::ublas::matrix<double> makeLiborMarketModelCorrelationMatr
 /******************************************************************************
  * some utility functions.
  ******************************************************************************/
-inline boost::numeric::ublas::vector<double> makeObservedTimes(
+inline std::vector<double> makeObservedTimes(
     const double maturity, const std::size_t numberOfTimeSteps)
 {
     assert(maturity > 0.0);
     assert(numberOfTimeSteps > 0.0);
 
     const double timeStepSize = maturity / numberOfTimeSteps;
-    boost::numeric::ublas::vector<double> 
-        observedTimes(numberOfTimeSteps + 1 , 0.0);
+    std::vector<double> observedTimes(numberOfTimeSteps + 1 , 0.0);
 
     double time = 0.0;
     for (std::size_t timeIndex = 0; timeIndex < numberOfTimeSteps; 
@@ -206,7 +210,7 @@ inline boost::numeric::ublas::vector<double> makeObservedTimes(
 
 inline boost::numeric::ublas::vector<double> makeDiscountFactors(
     const double rate,
-    const boost::numeric::ublas::vector<double>& observedTimes)
+    const std::vector<double>& observedTimes)
 {
     boost::numeric::ublas::vector<double> discountFactors(observedTimes.size(), 0.0);
 
@@ -219,7 +223,7 @@ inline boost::numeric::ublas::vector<double> makeDiscountFactors(
 
 int main()
 {
-    const std::size_t numberOfTimeSteps = 30;
+    const std::size_t numberOfTimeSteps = 32;
     const std::size_t numberOfSimulations = 100;
 
     /**************************************************************************
@@ -260,21 +264,28 @@ int main()
         const boost::shared_ptr<const PathSimulatorBase>  blackScholesPathSimulator(
             new PathSimulator(blackScholes, eulerMaruyama, mersenneTwister));
 
-        //payoff function.
-        const boost::shared_ptr<const PayOff> callPayOff(new CallOptionPayOff(strike));
-
-        //path dependent
-        const boost::numeric::ublas::vector<double> observedTimes =
+        //cash flow
+        const std::vector<double> observedTimes =
             makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const PathDependent> 
-            europeanCall(new PathDependentEuropean(observedTimes, callPayOff));
-
-        //create a pricer.
-        const MonteCarloPricer pricer(blackScholesPathSimulator, europeanCall);
+        const boost::shared_ptr<const CashFlow> 
+            cashFlowSpot(new CashFlowSpot(
+                observedTimes.size() - 1, observedTimes.size() - 1, 0));
+        const boost::shared_ptr<const CashFlow>
+            europeanCall(new CashFlowCall(strike, cashFlowSpot));
 
         //discount factors
         const boost::numeric::ublas::vector<double> discountFactors =
             makeDiscountFactors(interestRate, observedTimes);
+
+        //present value calculator.
+        const boost::shared_ptr<const PresentValueCalculator> 
+            presentValueCalculator(
+                new PresentValueCalculator(europeanCall, discountFactors));
+
+        //create a pricer.
+        const MonteCarloPricer pricer(blackScholesPathSimulator, 
+            presentValueCalculator);
+
 
         /**********************************************************************
          * Calculate price.
@@ -325,21 +336,25 @@ int main()
         const boost::shared_ptr<const PathSimulatorBase>  sabrPathSimulator(
             new PathSimulator(sabr, eulerMaruyama, mersenneTwister));
 
-        //payoff function.
-        const boost::shared_ptr<const PayOff> callPayOff(new CallOptionPayOff(strike));
-
-        //path dependent
-        const boost::numeric::ublas::vector<double> observedTimes =
+        //cash flow
+        const std::vector<double> observedTimes =
             makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const PathDependent> 
-            europeanCall(new PathDependentEuropean(observedTimes, callPayOff));
-
-        //pricer
-        const MonteCarloPricer pricer(sabrPathSimulator, europeanCall);
+        const boost::shared_ptr<const CashFlow> 
+            cashFlowSpot(new CashFlowSpot(observedTimes.size() - 1, observedTimes.size() - 1, 0));
+        const boost::shared_ptr<const CashFlow>
+            europeanCall(new CashFlowCall(strike, cashFlowSpot));
 
         //discount factors
         const boost::numeric::ublas::vector<double> discountFactors =
             makeDiscountFactors(interestRate, observedTimes);
+
+        //present value calculator.
+        const boost::shared_ptr<const PresentValueCalculator> 
+            presentValueCalculator(
+                new PresentValueCalculator(europeanCall, discountFactors));
+
+        //pricer
+        const MonteCarloPricer pricer(sabrPathSimulator, presentValueCalculator);
 
         /**********************************************************************
          * Calculate Price.
@@ -377,7 +392,7 @@ int main()
          * Parameter settings.
          **********************************************************************/
         const double strike = 0.5;
-        const double interestRate = 0.06;
+        const double interestRate = 0.006;
         const std::size_t numberOfBonds = 5;
         const boost::numeric::ublas::vector<double> spots =
             makeLiborMarketModelSpots(numberOfBonds);
@@ -405,35 +420,55 @@ int main()
         const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
             new PathSimulator(libor, eulerMaruyama, mersenneTwister));
 
-        //payoff function.
-        std::vector< boost::shared_ptr<const PayOff> > capletPayOffs(numberOfBonds);
-        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-            capletPayOffs[bondIndex] = boost::shared_ptr<const PayOff>(
-                new PayOffCaplet(strike, bondIndex, tenor));
+        //make Indice
+        std::vector<double> observedTimes(numberOfTimeSteps + 1);
+        for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); ++timeIndex) {
+            observedTimes[timeIndex] = timeIndex * (1.0 / 10.0);
         }
+        //! tenorIndex to timeIndex. assuming that tenor is 6-month.
+        //std::vector<std::size_t> tenorToTime(numberOfBonds + 1);
+        //for (std::size_t tenorIndex = 0; tenorIndex < tenorToTime.size(); ++tenorIndex) {
+        //    tenorToTime[tenorIndex] = (tenorIndex + 1) * 4;
+        //}
+        //! tenorIndex To AssetIndex.
+        //std::vector<std::size_t> tenorToAsset(numberOfBonds);
+        //for (std::size_t tenorIndex = 0; tenorIndex < numberOfBonds; ++tenorIndex) {
+        //    tenorToAsset[tenorIndex] = tenorIndex;
+        //}
 
-        //path dependent
-        const boost::numeric::ublas::vector<double> observedTimes =
-            makeObservedTimes(tenor[numberOfBonds - 1], numberOfTimeSteps);
-        std::vector< boost::shared_ptr<const PathDependent> > 
+        //cash flow.
+        std::vector<std::size_t> tenorToTime(2);
+        std::vector<std::size_t> tenorToAsset(1);
+        std::vector< boost::shared_ptr<const CashFlow> > 
             europeanCaplets(numberOfBonds);
         for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-            europeanCaplets[bondIndex] = boost::shared_ptr<const PathDependent>(
-                new PathDependentEuropean(
-                    observedTimes, capletPayOffs[bondIndex]));
-        }
-
-        //pricer
-        std::vector< boost::shared_ptr<const MonteCarloPricer> > 
-            pricers(numberOfBonds);
-        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-            pricers[bondIndex] = boost::shared_ptr<const MonteCarloPricer>(
-                new MonteCarloPricer(pathSimulator, europeanCaplets[bondIndex]));
+            tenorToAsset[1] = bondIndex;
+            tenorToTime[0] = (bondIndex + 1) * 5;
+            tenorToTime[1] = (bondIndex + 2) * 5;
+            const boost::shared_ptr<const CashFlowSwap> swap(
+                new CashFlowSwap(observedTimes, tenorToTime, tenorToAsset, strike));
+            europeanCaplets[bondIndex] = boost::shared_ptr<const CashFlow>(
+                new CashFlowSwaption(swap->getTimeIndex(), swap));
         }
 
         //discount factors
         const boost::numeric::ublas::vector<double> discountFactors =
             makeDiscountFactors(interestRate, observedTimes);
+
+        //pricer
+        std::vector< boost::shared_ptr<const MonteCarloPricer> > 
+            pricers(numberOfBonds);
+        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+            //present value calculator
+            const boost::shared_ptr<const PresentValueCalculator> 
+                presentValueCalculator(new PresentValueCalculator(
+                    europeanCaplets[bondIndex], discountFactors));
+
+            //pricer
+            pricers[bondIndex] = boost::shared_ptr<const MonteCarloPricer>(
+                new MonteCarloPricer(pathSimulator, presentValueCalculator));
+        }
+
 
         /**********************************************************************
          * Calculate Price.

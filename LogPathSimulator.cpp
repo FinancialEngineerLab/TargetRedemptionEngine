@@ -18,7 +18,7 @@ void LogPathSimulator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
     boost::numeric::ublas::matrix<double>& spotsValues,
     const boost::numeric::ublas::vector<double>& spots,
-    const boost::numeric::ublas::vector<double>& observedTimes) const
+    const std::vector<double>& observedTimes) const
 {
     boost::numeric::ublas::vector<double> logSpots(spots);
     logSpots[0] = log(spots[0]);

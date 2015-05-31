@@ -1,5 +1,6 @@
 #include "MonteCarloPricer.h"
 
+
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/io.hpp>
@@ -9,10 +10,10 @@
  ******************************************************************************/
 MonteCarloPricer::MonteCarloPricer(
     const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-    const boost::shared_ptr<const PathDependent>& pathDependent)
+    const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator)
     :
     _pathSimulator(pathSimulator),
-    _pathDependent(pathDependent)
+    _presentValueCalculator(presentValueCalculator)
 {
 }
 
@@ -26,7 +27,7 @@ MonteCarloPricer::~MonteCarloPricer()
 double MonteCarloPricer::simulatePrice(
     const boost::numeric::ublas::vector<double>& spots,
     const std::size_t numberOfSimulations,
-    const boost::numeric::ublas::vector<double>& observedTimes,
+    const std::vector<double>& observedTimes,
     const boost::numeric::ublas::vector<double>& discountFactors) const
 {
     double sumPrice = 0.0;
@@ -43,9 +44,8 @@ double MonteCarloPricer::simulatePrice(
         _pathSimulator->simulateOnePath(
             processes, path, spots, observedTimes);
         std::cout << path << std::endl;
-        _pathDependent->calculateCashFlows(path, cashFlows);
-        sumPrice += 
-            _pathDependent->calculatePresentValue(cashFlows, discountFactors);
+
+        sumPrice += _presentValueCalculator->operator()(path);
     }
 
     return sumPrice / numberOfSimulations;

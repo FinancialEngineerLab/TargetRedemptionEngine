@@ -1,8 +1,7 @@
 #pragma once
 
 #include "PathSimulatorBase.h"
-#include "PathDependent.h"
-#include "PayOff.h"
+#include "PresentValueCalculator.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -14,7 +13,7 @@ public:
      **************************************************************************/
     MonteCarloPricer(
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-        const boost::shared_ptr<const PathDependent>& pathDependent);
+        const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator);
     virtual ~MonteCarloPricer();
 
     /**************************************************************************
@@ -23,7 +22,7 @@ public:
     double simulatePrice(
         const boost::numeric::ublas::vector<double>& spots,
         const std::size_t numberOfSimulations,
-        const boost::numeric::ublas::vector<double>& observedTimes,
+        const std::vector<double>& observedTimes,
         const boost::numeric::ublas::vector<double>& discountFactors) const;
     
 private:
@@ -31,7 +30,7 @@ private:
      * private variables.
      **************************************************************************/
     const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
-    const boost::shared_ptr<const PathDependent> _pathDependent;
+    const boost::shared_ptr<const PresentValueCalculator> _presentValueCalculator;
 
     /**************************************************************************
      * private functions.

@@ -3,19 +3,21 @@
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
-CashFlowCalculator::CashFlowCalculator(
+CashFlowSwaption::CashFlowSwaption(
+    const std::size_t timeIndex,
     const boost::shared_ptr<const CashFlowSwap>& swap)
     :
+    CashFlow(timeIndex),
     _swap(swap)
 {
 }
 
-CashFlowCalculator::~CashFlowCalculator() 
+CashFlowSwaption::~CashFlowSwaption() 
 {
 }
 
-double operator()(
-    const boost::numeric::ublas::vector<double>& path) const
+double CashFlowSwaption::operator()(
+    const boost::numeric::ublas::matrix<double>& path) const
 {
     double cashFlow = _swap->operator()(path);
 
