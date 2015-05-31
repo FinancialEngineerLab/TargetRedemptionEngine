@@ -5,6 +5,7 @@
 #include "EulerMaruyama.h"
 #include "MersenneTwister.h"
 #include "PlainVanillaPayOff.h"
+#include "PayOffCaplet.h"
 #include "MonteCarloPricer.h"
 #include "PathSimulator.h"
 #include "PathDependentEuropean.h"
@@ -140,8 +141,8 @@ inline boost::numeric::ublas::vector<double> makeLiborMarketModelSpots(
     const std::size_t dimension)
 {
     boost::numeric::ublas::vector<double> spots(dimension, 0.0);
-    for (std::size_t dimensionIndex = 0; dimensionIndex < dimension; ++dimensionIndex) {
-        spots[dimensionIndex] = 1.0 - dimensionIndex / 100.0 * 0.5;
+    for (std::size_t dimensionIndex = 1; dimensionIndex <= dimension; ++dimensionIndex) {
+        spots[dimensionIndex - 1] = 1.0 - dimensionIndex / 100.0 * 0.5;
     }
 
     return spots;
@@ -160,12 +161,12 @@ inline boost::numeric::ublas::matrix<double> makeLiborMarketModelVolatilities(
     return volatilities;
 }
 
-inline boost::numeric::ublas::vector<double> makeLiborMarketModelMaturities(
+inline boost::numeric::ublas::vector<double> makeLiborMarketModelTenor(
     const std::size_t dimension)
 {
     boost::numeric::ublas::vector<double> maturities(dimension, 0.0);
-    for (std::size_t maturityIndex = 0; maturityIndex < dimension; ++maturityIndex) {
-        maturities[maturityIndex] = 0.5 * maturityIndex;
+    for (std::size_t maturityIndex = 1; maturityIndex <= dimension; ++maturityIndex) {
+        maturities[maturityIndex - 1] = 0.5 * maturityIndex;
     }
     return maturities;
 }
@@ -220,7 +221,6 @@ int main()
 {
     const std::size_t numberOfTimeSteps = 30;
     const std::size_t numberOfSimulations = 100;
-    const double strike = 100.0;
 
     /**************************************************************************
      * European Call BlackScholes Model Simulation.
@@ -229,6 +229,7 @@ int main()
         /**********************************************************************
          * Parameter settings.
          **********************************************************************/
+        const double strike = 100.0;
         const double maturity = 1.0;
         const double spot = 100.0;
         const double volatility = 0.2;
@@ -278,12 +279,14 @@ int main()
         /**********************************************************************
          * Calculate price.
          **********************************************************************/
-        double price = pricer.simulatePrice(
-            spots, maturity, numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "price:" << price  << std::endl;
+        //double price = pricer.simulatePrice(
+        //    spots, numberOfSimulations, observedTimes, discountFactors);
+        //std::cout << "BlackScholes price:" << price  << std::endl;
         //double price = logPricer.simulatePrice(
         //    spots, maturity, numberOfSimulations, numberOfTimeSteps);
         //std::cout << price << std::endl;
+        
+        std::cout << std::endl;
     }
 
     /**************************************************************************
@@ -293,6 +296,7 @@ int main()
         /**********************************************************************
          * Parameter settings.
          **********************************************************************/
+        const double strike = 100.0;
         const double maturity = 1.0;
         const double spot = 100.0;
         const double interestRate = 0.06;
@@ -340,9 +344,9 @@ int main()
         /**********************************************************************
          * Calculate Price.
          **********************************************************************/
-        double price = pricer.simulatePrice(spots, maturity, 
-            numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "SABR Price:" << price << std::endl;
+        //double price = pricer.simulatePrice(spots, 
+        //    numberOfSimulations, observedTimes, discountFactors);
+        //std::cout << "SABR Price:" << price << std::endl;
 
         /**********************************************************************
          * SABR Model analytic price.
@@ -362,30 +366,31 @@ int main()
             spot, strike, impliedVolatility, maturity, discountFactor);
         std::cout << "imp price:" << callPrice << std::endl;
         
+        std::cout << std::endl;
     }
 
     /**************************************************************************
-     * Euroepan Call LIBOR Model Simulation.
+     * Euroepan caplet simulation under LIBOR Market Model.
      **************************************************************************/
     {
         /**********************************************************************
          * Parameter settings.
          **********************************************************************/
-        const double maturity = 1.0;
+        const double strike = 0.5;
         const double interestRate = 0.06;
         const std::size_t numberOfBonds = 5;
         const boost::numeric::ublas::vector<double> spots =
             makeLiborMarketModelSpots(numberOfBonds);
         const boost::numeric::ublas::matrix<double> volatilities =
             makeLiborMarketModelVolatilities(numberOfBonds);
-        const boost::numeric::ublas::vector<double> maturities =
-            makeLiborMarketModelMaturities(numberOfBonds + 1);
+        const boost::numeric::ublas::vector<double> tenor =
+            makeLiborMarketModelTenor(numberOfBonds);
         const boost::numeric::ublas::matrix<double> correlation = 
             makeLiborMarketModelCorrelationMatrix(numberOfBonds);
 
         //LIBOR Market Model creation by Factory pattern.
         const LiborMarketModelFactory liborFactory(
-            volatilities, maturities, correlation);
+            volatilities, tenor, correlation);
         boost::shared_ptr<const StochasticDifferentialEquation> libor = 
             liborFactory.makeStochasticDifferentialEquation();
 
@@ -397,20 +402,34 @@ int main()
             new MersenneTwister(numberOfTimeSteps * numberOfBonds, 0));
 
         //path simulator
-        const boost::shared_ptr<const PathSimulatorBase>  pathSimulator(
+        const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
             new PathSimulator(libor, eulerMaruyama, mersenneTwister));
 
         //payoff function.
-        const boost::shared_ptr<const PayOff> callPayOff(new CallOptionPayOff(strike));
+        std::vector< boost::shared_ptr<const PayOff> > capletPayOffs(numberOfBonds);
+        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+            capletPayOffs[bondIndex] = boost::shared_ptr<const PayOff>(
+                new PayOffCaplet(strike, bondIndex, tenor));
+        }
 
         //path dependent
         const boost::numeric::ublas::vector<double> observedTimes =
-            makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const PathDependent> 
-            europeanCall(new PathDependentEuropean(observedTimes, callPayOff));
+            makeObservedTimes(tenor[numberOfBonds - 1], numberOfTimeSteps);
+        std::vector< boost::shared_ptr<const PathDependent> > 
+            europeanCaplets(numberOfBonds);
+        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+            europeanCaplets[bondIndex] = boost::shared_ptr<const PathDependent>(
+                new PathDependentEuropean(
+                    observedTimes, capletPayOffs[bondIndex]));
+        }
 
         //pricer
-        const MonteCarloPricer pricer(pathSimulator, europeanCall);
+        std::vector< boost::shared_ptr<const MonteCarloPricer> > 
+            pricers(numberOfBonds);
+        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+            pricers[bondIndex] = boost::shared_ptr<const MonteCarloPricer>(
+                new MonteCarloPricer(pathSimulator, europeanCaplets[bondIndex]));
+        }
 
         //discount factors
         const boost::numeric::ublas::vector<double> discountFactors =
@@ -419,9 +438,21 @@ int main()
         /**********************************************************************
          * Calculate Price.
          **********************************************************************/
-        double price = pricer.simulatePrice(spots, maturities[numberOfBonds], 
-            numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "LIBOR Price:" << price << std::endl;
+        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+            const double price = pricers[bondIndex]->simulatePrice(spots, 
+                numberOfSimulations, observedTimes, discountFactors);
+            std::cout << "LIBOR Price[" << bondIndex << "]:" << price << std::endl;
+            exit(1);
+        }
+
+
+        /******************************************************************************
+         * European caplet analytic price.
+         ******************************************************************************/
+
+
+
+        std::cout << std::endl;
     }
 
     /**************************************************************************

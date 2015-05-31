@@ -22,7 +22,6 @@ public:
      **************************************************************************/
     double simulatePrice(
         const boost::numeric::ublas::vector<double>& spots,
-        const double maturity,
         const std::size_t numberOfSimulations,
         const boost::numeric::ublas::vector<double>& observedTimes,
         const boost::numeric::ublas::vector<double>& discountFactors) const;

@@ -1,9 +1,9 @@
-#include "PathDependent.h"
+#include "CashFlowCalculator.h"
 
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
-PathDependent::PathDependent(
+CashFlowCalculator::CashFlowCalculator(
     const boost::numeric::ublas::vector<double>& observedTimes) 
     :
     _observedTimes(observedTimes)
@@ -11,11 +11,11 @@ PathDependent::PathDependent(
     
 }
 
-PathDependent::~PathDependent() 
+CashFlowCalculator::~CashFlowCalculator() 
 {
 }
 
-double PathDependent::calculatePresentValue(
+double CashFlowCalculator::calculatePresentValue(
     const boost::numeric::ublas::vector<double>& cashFlows,
     const boost::numeric::ublas::vector<double>& discountFactors) const
 {

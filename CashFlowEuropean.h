@@ -1,24 +1,24 @@
 #pragma once
 
-#include "PathDependent.h"
+#include "CashFlowCalculator.h"
 #include "PayOff.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class PathDependentEuropean 
-    : public PathDependent
+class CashFlowEuropean 
+    : public CashFlow
 {
 public:
     /******************************************************************************
      * Constructers and Destructers.
      ******************************************************************************/
-    PathDependentEuropean(const boost::numeric::ublas::vector<double>& observedTimes,
+    CashFlowEuropean(const boost::numeric::ublas::vector<double>& observedTimes,
         const boost::shared_ptr<const PayOff>& payOff);
-    virtual ~PathDependentEuropean();
+    virtual ~CashFlowEuropean();
 
     virtual void calculateCashFlows(
-        const boost::numeric::ublas::matrix<double>& spotsValues,
+        const boost::numeric::ublas::matrix<double>& path,
         boost::numeric::ublas::vector<double>& cashFlows) const;
 
 private:

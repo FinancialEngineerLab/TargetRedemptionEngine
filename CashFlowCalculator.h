@@ -2,11 +2,11 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-class PathDependent 
+class CashFlowCalculator 
 {
 public:
-    PathDependent(const boost::numeric::ublas::vector<double>& observedTimes);
-    virtual ~PathDependent();
+    CashFlowCalculator(const boost::numeric::ublas::vector<double>& observedTimes);
+    virtual ~CashFlowCalculator();
 
     virtual void calculateCashFlows(
         const boost::numeric::ublas::matrix<double>& spotValues,

@@ -25,7 +25,6 @@ MonteCarloPricer::~MonteCarloPricer()
  ******************************************************************************/
 double MonteCarloPricer::simulatePrice(
     const boost::numeric::ublas::vector<double>& spots,
-    const double maturity,
     const std::size_t numberOfSimulations,
     const boost::numeric::ublas::vector<double>& observedTimes,
     const boost::numeric::ublas::vector<double>& discountFactors) const
@@ -43,7 +42,7 @@ double MonteCarloPricer::simulatePrice(
         ++simulationIndex) {
         _pathSimulator->simulateOnePath(
             processes, path, spots, observedTimes);
-        //std::cout << path << std::endl;
+        std::cout << path << std::endl;
         _pathDependent->calculateCashFlows(path, cashFlows);
         sumPrice += 
             _pathDependent->calculatePresentValue(cashFlows, discountFactors);
@@ -56,10 +55,10 @@ double MonteCarloPricer::simulatePrice(
 /******************************************************************************
  * private functions.
  ******************************************************************************/
-
 inline void MonteCarloPricer::initializePath(
     boost::numeric::ublas::matrix<double>& path,
     const boost::numeric::ublas::vector<double>& processes) const
 {
     boost::numeric::ublas::column(path, 0) = processes;
 }
+

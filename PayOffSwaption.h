@@ -1,23 +1,25 @@
 #pragma once
 
-#include <boost/numeric/ublas/vector.hpp>
+#include "PayOff.h"
 
-class PayOff 
+class PayOffSwaption 
+    : public PayOff
 {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructers.
      **************************************************************************/
-    PayOff();
-    virtual ~PayOff();
+    PayOffSwaption(const double strike);
+    virtual ~PayOffSwaption();
 
     /**************************************************************************
-     * pure virtual functions.
+     * inherited pure virtual functions.
      **************************************************************************/
     virtual double payOffFunction(
-        const boost::numeric::ublas::vector<double>& spots) const = 0;
+        const boost::numeric::ublas::vector<double>& spots) const;
 
 private:
+    const double _strike;
             
 };
 
