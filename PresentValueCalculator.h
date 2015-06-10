@@ -19,9 +19,11 @@ public:
 
     virtual double operator()(
         const boost::numeric::ublas::matrix<double>& path) const;
+
 private:
     const boost::shared_ptr<const CashFlow> _cashFlow;
     const boost::numeric::ublas::vector<double> _discountFactors;
+    const std::vector<double> sumOfDiscountFactors;
             
 };
 

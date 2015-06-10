@@ -8,11 +8,11 @@
 LiborMarketModelDiffusion::LiborMarketModelDiffusion(
     const boost::numeric::ublas::matrix<double>& volatilities,
     const boost::numeric::ublas::matrix<double>& correlation,
-    const boost::numeric::ublas::vector<double>& maturities) 
+    const boost::numeric::ublas::vector<double>& tenor) 
     :
     _volatilities(volatilities),
     _correlation(correlation),
-    _maturities(maturities)
+    _tenor(tenor)
 {
 }
 
@@ -47,11 +47,11 @@ void LiborMarketModelDiffusion::operator()(
 
 std::size_t LiborMarketModelDiffusion::findStartIndex(const double time) const
 {
-    for (std::size_t startIndex = 0; startIndex < _maturities.size(); ++startIndex) {
-        if (_maturities[startIndex] > time) {
+    for (std::size_t startIndex = 0; startIndex < _tenor.size(); ++startIndex) {
+        if (_tenor[startIndex] > time) {
             return startIndex;
         }
     }
 
-    return _maturities.size();
+    return _tenor.size();
 }

@@ -33,7 +33,8 @@ double CashFlowSwap::operator()(
         const std::size_t assetIndex = _tenorToAsset[tenorIndex];
         const std::size_t timeIndex0 = _tenorToTime[tenorIndex];
         const std::size_t timeIndex1 = _tenorToTime[tenorIndex + 1];
-        const double period = _observedTimes[timeIndex1] - _observedTimes[timeIndex0];
+        const double period = 
+            _observedTimes[timeIndex1] - _observedTimes[timeIndex0];
 
         discountFactor *= 1.0 / (1.0 + period * path(assetIndex, maturityIndex));
         cashFlow += period 

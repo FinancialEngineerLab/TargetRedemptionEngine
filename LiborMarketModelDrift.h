@@ -13,7 +13,7 @@ public:
      **************************************************************************/
     LiborMarketModelDrift(
         const boost::numeric::ublas::matrix<double>& volatilities,
-        const boost::numeric::ublas::vector<double>& maturities,
+        const boost::numeric::ublas::vector<double>& tenor,
         const std::size_t dimension);
     virtual ~LiborMarketModelDrift();
 
@@ -30,7 +30,7 @@ private:
      * private variables.
      ******************************************************************************/
     const boost::numeric::ublas::matrix<double> _volatilities;
-    const boost::numeric::ublas::vector<double> _maturities;
+    const boost::numeric::ublas::vector<double> _tenor;
     const std::size_t _dimension;
 
     /******************************************************************************

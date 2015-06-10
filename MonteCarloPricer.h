@@ -2,6 +2,7 @@
 
 #include "PathSimulatorBase.h"
 #include "PresentValueCalculator.h"
+#include "ExpectationBase.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -13,7 +14,9 @@ public:
      **************************************************************************/
     MonteCarloPricer(
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-        const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator);
+        const boost::shared_ptr<const PresentValueCalculator>& 
+            presentValueCalculator,
+        const boost::shared_ptr<ExpectationBase>& expectation);
     virtual ~MonteCarloPricer();
 
     /**************************************************************************
@@ -31,6 +34,7 @@ private:
      **************************************************************************/
     const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
     const boost::shared_ptr<const PresentValueCalculator> _presentValueCalculator;
+    const boost::shared_ptr<ExpectationBase> _expectation;
 
     /**************************************************************************
      * private functions.

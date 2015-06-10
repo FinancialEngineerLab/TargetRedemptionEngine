@@ -6,15 +6,15 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <vector>
 
-class CashFlowAverage 
+class CashFlowAsian
     : public CashFlow
 {
 public:
-    CashFlowAverage(
+    CashFlowAsian(
         const std::size_t timeIndex,
         const std::size_t spotIndex,
         const std::vector<std::size_t>& timeIndice);
-    virtual ~CashFlowAverage();
+    virtual ~CashFlowAsian();
 
     virtual double operator()(
         const boost::numeric::ublas::matrix<double>& path) const;
@@ -23,7 +23,7 @@ private:
     const std::size_t _spotIndex;
     const std::vector<std::size_t> _timeIndice;
 
-    double calculateAverage(
+    double calculateAsian(
         const boost::numeric::ublas::matrix<double>& path) const;
 };
 

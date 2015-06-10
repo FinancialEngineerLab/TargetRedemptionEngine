@@ -1,6 +1,5 @@
 #include "MonteCarloPricer.h"
 
-
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/io.hpp>
@@ -10,10 +9,12 @@
  ******************************************************************************/
 MonteCarloPricer::MonteCarloPricer(
     const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-    const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator)
+    const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator,
+    const boost::shared_ptr<ExpectationBase>& expectation)
     :
     _pathSimulator(pathSimulator),
-    _presentValueCalculator(presentValueCalculator)
+    _presentValueCalculator(presentValueCalculator),
+    _expectation(expectation)
 {
 }
 
@@ -30,25 +31,28 @@ double MonteCarloPricer::simulatePrice(
     const std::vector<double>& observedTimes,
     const boost::numeric::ublas::vector<double>& discountFactors) const
 {
-    double sumPrice = 0.0;
-
-    boost::numeric::ublas::vector<double> processes = 
-        _pathSimulator->makeProcesses();
+    boost::numeric::ublas::vector<double> processes = spots;
     boost::numeric::ublas::matrix<double> 
         path(processes.size(), observedTimes.size(), 0.0);
     initializePath(path, spots);
-    boost::numeric::ublas::vector<double> cashFlows(observedTimes.size());
 
     for (std::size_t simulationIndex = 0; simulationIndex < numberOfSimulations;
         ++simulationIndex) {
-        _pathSimulator->simulateOnePath(
-            processes, path, spots, observedTimes);
-        std::cout << path << std::endl;
+        //initial settings
+        processes = spots;
+        boost::numeric::ublas::column(path , 0) = spots;
 
-        sumPrice += _presentValueCalculator->operator()(path);
+        //simulate path
+        _pathSimulator->simulateOnePath(processes, path, observedTimes);
+
+        //add sample and calculate present value.
+        _expectation->addSample(path);
     }
+    const double price =_expectation->doExpectation(numberOfSimulations);
+    const double variance = _expectation->getVariance();
+    std::cout << "variacne:" << variance << std::endl;
 
-    return sumPrice / numberOfSimulations;
+    return price;
 }
 
 

@@ -7,7 +7,7 @@ CashFlowCall::CashFlowCall(
     const double strike,
     const boost::shared_ptr<const CashFlow> cashFlow)
     :
-    CashFlow(cashFlow->getTimeIndex()),
+    CashFlow(cashFlow->getCashFlowDateIndex()),
     _strike(strike),
     _cashFlow(cashFlow)
 {

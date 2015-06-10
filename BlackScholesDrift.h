@@ -35,7 +35,8 @@ public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    LogBlackScholesDrift(const double interestRate, const double dividend, const double volatility);
+    LogBlackScholesDrift(const double interestRate, 
+        const double dividend, const double volatility);
     virtual ~LogBlackScholesDrift();
         
     /**************************************************************************

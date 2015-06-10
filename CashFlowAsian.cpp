@@ -1,10 +1,10 @@
-#include "CashFlowAverage.h"
+#include "CashFlowAsian.h"
 
 
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
-CashFlowAverage::CashFlowAverage(
+CashFlowAsian::CashFlowAsian(
     const std::size_t timeIndex,
     const std::size_t spotIndex,
     const std::vector<std::size_t>& timeIndice)
@@ -15,19 +15,19 @@ CashFlowAverage::CashFlowAverage(
 {
 }
 
-CashFlowAverage::~CashFlowAverage() 
+CashFlowAsian::~CashFlowAsian() 
 {
 }
 
-double CashFlowAverage::operator()(
+double CashFlowAsian::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {
-    const double average = calculateAverage(path);
+    const double average = calculateAsian(path);
 
     return average;
 }
 
-double CashFlowAverage::calculateAverage(
+double CashFlowAsian::calculateAsian(
     const boost::numeric::ublas::matrix<double>& path) const
 {
     double average = 0.0;

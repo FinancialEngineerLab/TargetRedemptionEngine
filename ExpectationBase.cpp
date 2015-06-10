@@ -1,15 +1,13 @@
-#include "CashFlow.h"
+#include "ExpectationBase.h"
 
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
-CashFlow::CashFlow(const std::size_t cashFlowDateIndex)
-    :
-    _cashFlowDateIndex(cashFlowDateIndex)
+ExpectationBase::ExpectationBase()
 {
+    
 }
-
-CashFlow::~CashFlow() 
+ExpectationBase::~ExpectationBase() 
 {
 }
 
