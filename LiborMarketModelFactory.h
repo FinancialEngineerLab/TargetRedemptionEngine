@@ -6,8 +6,7 @@
 
 
 class LiborMarketModelFactory :
-    public StochasticDifferentialEquationFactory
-{
+    public StochasticDifferentialEquationFactory {
 public:
     /**************************************************************************
      * Constructers and Destructers.

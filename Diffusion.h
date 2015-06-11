@@ -3,8 +3,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class Diffusion 
-{
+class Diffusion {
 public:
     /**************************************************************************
      * Constructers and Destructers.

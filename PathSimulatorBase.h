@@ -2,8 +2,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-class PathSimulatorBase
-{
+class PathSimulatorBase {
 public:
     PathSimulatorBase();
     virtual ~PathSimulatorBase();

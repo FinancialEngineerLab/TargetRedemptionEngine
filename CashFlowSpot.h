@@ -6,8 +6,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 class CashFlowSpot 
-    : public CashFlow
-{
+    : public CashFlow {
 public:
     /******************************************************************************
      * Constructers and Destructers.

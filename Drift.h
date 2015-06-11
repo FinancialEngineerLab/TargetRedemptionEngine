@@ -2,8 +2,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-class Drift 
-{
+class Drift {
 public:
     /**************************************************************************
      * Constructers and Destructers.

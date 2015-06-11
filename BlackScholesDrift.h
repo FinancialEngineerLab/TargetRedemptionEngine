@@ -3,8 +3,7 @@
 #include "Drift.h"
 
 class BlackScholesDrift :
-    public Drift
-{
+    public Drift {
 public:
     /**************************************************************************
      * Constructers and Destructers.
@@ -29,8 +28,7 @@ private:
 };
 
 class LogBlackScholesDrift :
-    public Drift
-{
+    public Drift {
 public:
     /**************************************************************************
      * Constructers and Destructers.

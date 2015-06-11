@@ -6,8 +6,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 class CashFlowSwap 
-    : public CashFlow
-{
+    : public CashFlow {
 public:
     CashFlowSwap(
         const std::vector<double>& observedTimes,

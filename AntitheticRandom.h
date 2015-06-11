@@ -7,8 +7,7 @@
 #include <boost/math/distributions.hpp>
 
 class AntitheticRandom :
-    public RandomGeneratorBase
-{
+    public RandomGeneratorBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.

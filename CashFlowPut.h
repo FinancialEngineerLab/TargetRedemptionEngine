@@ -6,8 +6,7 @@
 #include <boost/shared_ptr.hpp>
 
 class CashFlowPut
-    : public CashFlow
-{
+    : public CashFlow {
 public:
     CashFlowPut(const std::size_t timeIndex, const double strike,
         const boost::shared_ptr<const CashFlow> cashFlow);

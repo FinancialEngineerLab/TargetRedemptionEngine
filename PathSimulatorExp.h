@@ -5,8 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 class PathSimulatorExp 
-    : public PathSimulatorDecorator
-{
+    : public PathSimulatorDecorator {
 public:
     PathSimulatorExp(const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);
     virtual ~PathSimulatorExp();

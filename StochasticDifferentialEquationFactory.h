@@ -5,8 +5,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/shared_ptr.hpp>
 
-class StochasticDifferentialEquationFactory 
-{
+class StochasticDifferentialEquationFactory {
 public:
     /**************************************************************************
      * Constructers and Destructers

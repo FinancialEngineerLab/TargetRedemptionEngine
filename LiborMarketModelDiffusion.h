@@ -3,8 +3,7 @@
 #include "Diffusion.h"
 
 class LiborMarketModelDiffusion 
-    : public Diffusion
-{
+    : public Diffusion {
 public:
     /**************************************************************************
      * Constructers and Destructers

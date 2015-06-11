@@ -3,8 +3,7 @@
 #include "Diffusion.h"
 
 class BlackScholesDiffusion 
-    : public Diffusion
-{
+    : public Diffusion {
 public:
     /**************************************************************************
      * Constructers and Destructers
@@ -29,8 +28,7 @@ private:
 
 
 class LogBlackScholesDiffusion 
-    : public Diffusion
-{
+    : public Diffusion {
 public:
     /**************************************************************************
      * Constructers and Destructers

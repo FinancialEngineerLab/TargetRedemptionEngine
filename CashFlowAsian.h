@@ -7,8 +7,7 @@
 #include <vector>
 
 class CashFlowAsian
-    : public CashFlow
-{
+    : public CashFlow {
 public:
     CashFlowAsian(
         const std::size_t timeIndex,

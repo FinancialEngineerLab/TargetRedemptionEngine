@@ -6,8 +6,7 @@
 #include <boost/shared_ptr.hpp>
 
 class CashFlowGammaHedge
-    : public CashFlow
-{
+    : public CashFlow {
 public:
     /**************************************************************************
      * Constructers and Destructers.

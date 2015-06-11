@@ -6,8 +6,7 @@
 
 
 class BlackScholesFactory :
-    public StochasticDifferentialEquationFactory
-{
+    public StochasticDifferentialEquationFactory {
 public:
     /**************************************************************************
      * Constructers and Destructers.

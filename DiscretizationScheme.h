@@ -4,8 +4,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-class DiscretizationScheme 
-{
+class DiscretizationScheme {
 public:
     /**************************************************************************
      * Constructers and Destructers

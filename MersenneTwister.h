@@ -5,8 +5,7 @@
 #include <boost/random.hpp>
 
 class MersenneTwister 
-    : public RandomGeneratorBase
-{
+    : public RandomGeneratorBase {
 public:
     /**************************************************************************
      * Constructers and Destructers

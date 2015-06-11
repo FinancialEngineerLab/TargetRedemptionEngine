@@ -6,8 +6,7 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
 
-class ExpectationBase
-{
+class ExpectationBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.

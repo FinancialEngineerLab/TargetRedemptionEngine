@@ -6,8 +6,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-class MonteCarloPricer 
-{
+class MonteCarloPricer {
 public:
     /**************************************************************************
      * Constructers and Destructers

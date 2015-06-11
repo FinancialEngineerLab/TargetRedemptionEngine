@@ -6,8 +6,7 @@
 
 
 class SabrFactory :
-    public StochasticDifferentialEquationFactory
-{
+    public StochasticDifferentialEquationFactory {
 public:
     /**************************************************************************
      * Constructers and Destructers.

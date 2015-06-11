@@ -7,8 +7,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 class CashFlowSwaption 
-    : public CashFlow
-{
+    : public CashFlow {
 public:
     CashFlowSwaption(const std::size_t timeIndex, 
         const boost::shared_ptr<const CashFlowSwap>& swap);

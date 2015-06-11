@@ -3,8 +3,7 @@
 #include "Diffusion.h"
 
 class SabrDiffusion 
-    : public Diffusion
-{
+    : public Diffusion {
 public:
     /**************************************************************************
      * Constructers and Destructers

@@ -2,8 +2,7 @@
 
 #include <vector>
 
-class RandomGeneratorBase 
-{
+class RandomGeneratorBase {
 public:
     RandomGeneratorBase(const std::size_t dimension);
     virtual ~RandomGeneratorBase();

@@ -3,8 +3,7 @@
 #include "DiscretizationScheme.h"
 
 class EulerMaruyama 
-    : public DiscretizationScheme
-{
+    : public DiscretizationScheme {
 public:
     /**************************************************************************
      * Constructers and Destructers

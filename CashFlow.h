@@ -3,8 +3,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class CashFlow
-{
+class CashFlow {
 public:
     CashFlow(const std::size_t cashFlowDateIndex);
     virtual ~CashFlow();

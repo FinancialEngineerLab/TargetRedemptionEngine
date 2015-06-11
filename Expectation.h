@@ -4,8 +4,7 @@
 #include "ExpectationBase.h"
 
 class Expectation 
-    : public ExpectationBase
-{
+    : public ExpectationBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.

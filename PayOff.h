@@ -2,8 +2,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-class PayOff 
-{
+class PayOff {
 public:
     /**************************************************************************
      * Constructers and Destructers

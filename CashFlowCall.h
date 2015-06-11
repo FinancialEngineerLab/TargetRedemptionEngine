@@ -6,8 +6,7 @@
 #include <boost/shared_ptr.hpp>
 
 class CashFlowCall
-    : public CashFlow
-{
+    : public CashFlow {
 public:
     CashFlowCall(const double strike,
         const boost::shared_ptr<const CashFlow> cashFlow);

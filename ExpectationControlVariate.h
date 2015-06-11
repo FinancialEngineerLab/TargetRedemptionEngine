@@ -10,8 +10,7 @@
 #include <boost/accumulators/statistics/variance.hpp>
 
 class ExpectationControlVariate
-    : public ExpectationBase
-{
+    : public ExpectationBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.

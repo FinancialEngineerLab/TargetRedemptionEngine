@@ -3,8 +3,7 @@
 #include "PayOff.h"
 
 class PayOffSwaption 
-    : public PayOff
-{
+    : public PayOff {
 public:
     /**************************************************************************
      * Constructers and Destructers.

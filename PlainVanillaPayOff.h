@@ -3,8 +3,7 @@
 #include "PayOff.h"
 
 class CallOptionPayOff 
-    : public PayOff
-{
+    : public PayOff {
 public:
     CallOptionPayOff(const double strike);
     virtual ~CallOptionPayOff();

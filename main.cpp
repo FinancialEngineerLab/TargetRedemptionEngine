@@ -415,542 +415,148 @@ void calculateEuropeanCallSABR()
 
 }
 
+/*****""""*********************************************************************
+ * Euroepan caplet simulation under LIBOR Market Model.
+ **""""************************************************************************/
 void calculateEuropeanCapletLiborMarketModel()
 {
-    /**************************************************************************
-     * Euroepan caplet simulation under LIBOR Market Model.
-     **************************************************************************/
-    {
-        /**********************************************************************
-         * Parameter settings.
-         **********************************************************************/
-        const double strike = 0.05;
-        const double interestRate = 0.006;
-        const std::size_t numberOfBonds = 5;
-        const boost::numeric::ublas::vector<double> spots =
-            makeLiborMarketModelSpots(numberOfBonds);
-        const boost::numeric::ublas::matrix<double> volatilities =
-            makeLiborMarketModelVolatilities(numberOfBonds);
-        const boost::numeric::ublas::vector<double> tenor =
-            makeLiborMarketModelTenor(numberOfBonds);
-        const boost::numeric::ublas::matrix<double> correlation = 
-            makeLiborMarketModelCorrelationMatrix(numberOfBonds);
-        
-        const std::size_t numberOfTimeSteps = 64;
-        const std::size_t numberOfSimulations = 100;
+    /**********************************************************************
+     * Parameter settings.
+     **********************************************************************/
+    const double strike = 0.05;
+    const double interestRate = 0.006;
+    const std::size_t numberOfBonds = 5;
+    const boost::numeric::ublas::vector<double> spots =
+        makeLiborMarketModelSpots(numberOfBonds);
+    const boost::numeric::ublas::matrix<double> volatilities =
+        makeLiborMarketModelVolatilities(numberOfBonds);
+    const boost::numeric::ublas::vector<double> tenor =
+        makeLiborMarketModelTenor(numberOfBonds);
+    const boost::numeric::ublas::matrix<double> correlation = 
+        makeLiborMarketModelCorrelationMatrix(numberOfBonds);
+    
+    const std::size_t numberOfTimeSteps = 64;
+    const std::size_t numberOfSimulations = 100;
 
-        //LIBOR Market Model creation by Factory pattern.
-        const LiborMarketModelFactory liborFactory(
-            volatilities, tenor, correlation);
-        boost::shared_ptr<const StochasticDifferentialEquation> libor = 
-            liborFactory.makeStochasticDifferentialEquation();
+    //LIBOR Market Model creation by Factory pattern.
+    const LiborMarketModelFactory liborFactory(
+        volatilities, tenor, correlation);
+    boost::shared_ptr<const StochasticDifferentialEquation> libor = 
+        liborFactory.makeStochasticDifferentialEquation();
 
-        //discretization scheme.
-        boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
+    //discretization scheme.
+    boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
 
-        //random number generator.
-        boost::shared_ptr<MersenneTwister> mersenneTwister(
-            new MersenneTwister(numberOfTimeSteps * numberOfBonds, 0));
+    //random number generator.
+    boost::shared_ptr<MersenneTwister> mersenneTwister(
+        new MersenneTwister(numberOfTimeSteps * numberOfBonds, 0));
 
-        //path simulator
-        const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
-            new PathSimulator(libor, eulerMaruyama, mersenneTwister));
+    //path simulator
+    const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
+        new PathSimulator(libor, eulerMaruyama, mersenneTwister));
 
-        //make Indice
-        std::vector<double> observedTimes(numberOfTimeSteps + 1);
-        for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); ++timeIndex) {
-            observedTimes[timeIndex] = timeIndex * (1.0 / 4.0);
-        }
-        //! tenorIndex to timeIndex. assuming that tenor is 6-month.
-        //std::vector<std::size_t> tenorToTime(numberOfBonds + 1);
-        //for (std::size_t tenorIndex = 0; tenorIndex < tenorToTime.size(); ++tenorIndex) {
-        //    tenorToTime[tenorIndex] = (tenorIndex + 1) * 4;
-        //}
-        //! tenorIndex To AssetIndex.
-        //std::vector<std::size_t> tenorToAsset(numberOfBonds);
-        //for (std::size_t tenorIndex = 0; tenorIndex < numberOfBonds; ++tenorIndex) {
-        //    tenorToAsset[tenorIndex] = tenorIndex;
-        //}
+    //make Indice
+    std::vector<double> observedTimes(numberOfTimeSteps + 1);
+    for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); ++timeIndex) {
+        observedTimes[timeIndex] = timeIndex * (1.0 / 4.0);
+    }
+    //! tenorIndex to timeIndex. assuming that tenor is 6-month.
+    //std::vector<std::size_t> tenorToTime(numberOfBonds + 1);
+    //for (std::size_t tenorIndex = 0; tenorIndex < tenorToTime.size(); ++tenorIndex) {
+    //    tenorToTime[tenorIndex] = (tenorIndex + 1) * 4;
+    //}
+    //! tenorIndex To AssetIndex.
+    //std::vector<std::size_t> tenorToAsset(numberOfBonds);
+    //for (std::size_t tenorIndex = 0; tenorIndex < numberOfBonds; ++tenorIndex) {
+    //    tenorToAsset[tenorIndex] = tenorIndex;
+    //}
 
-        //cash flow.
-        std::vector<std::size_t> tenorToTime(2);
-        std::vector<std::size_t> tenorToAsset(1);
-        std::vector< boost::shared_ptr<const CashFlow> > 
-            europeanCaplets(numberOfBonds);
-        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-            tenorToAsset[0] = bondIndex;
-            tenorToTime[0] = (bondIndex + 40) * 1;
-            tenorToTime[1] = (bondIndex + 41) * 1;
-            const boost::shared_ptr<const CashFlowSwap> swap(
-                new CashFlowSwap(observedTimes, tenorToTime, tenorToAsset, strike));
-            europeanCaplets[bondIndex] = boost::shared_ptr<const CashFlow>(
-                new CashFlowSwaption(swap->getCashFlowDateIndex(), swap));
-        }
+    //cash flow.
+    std::vector<std::size_t> tenorToTime(2);
+    std::vector<std::size_t> tenorToAsset(1);
+    std::vector< boost::shared_ptr<const CashFlow> > 
+        europeanCaplets(numberOfBonds);
+    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+        tenorToAsset[0] = bondIndex;
+        tenorToTime[0] = (bondIndex + 40) * 1;
+        tenorToTime[1] = (bondIndex + 41) * 1;
+        const boost::shared_ptr<const CashFlowSwap> swap(
+            new CashFlowSwap(observedTimes, tenorToTime, tenorToAsset, strike));
+        europeanCaplets[bondIndex] = boost::shared_ptr<const CashFlow>(
+            new CashFlowSwaption(swap->getCashFlowDateIndex(), swap));
+    }
 
-        //discount factors
-        const boost::numeric::ublas::vector<double> discountFactors =
-            makeDiscountFactors(interestRate, observedTimes);
+    //discount factors
+    const boost::numeric::ublas::vector<double> discountFactors =
+        makeDiscountFactors(interestRate, observedTimes);
+
+    //pricer
+    std::vector< boost::shared_ptr<const MonteCarloPricer> > 
+        pricers(numberOfBonds);
+    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+        //present value calculator
+        const boost::shared_ptr<const PresentValueCalculator> 
+            presentValueCalculator(new PresentValueCalculator(
+                europeanCaplets[bondIndex], discountFactors));
+
+        //expectation
+        const boost::shared_ptr<ExpectationBase> expectation(
+            new Expectation(presentValueCalculator));
 
         //pricer
-        std::vector< boost::shared_ptr<const MonteCarloPricer> > 
-            pricers(numberOfBonds);
-        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-            //present value calculator
-            const boost::shared_ptr<const PresentValueCalculator> 
-                presentValueCalculator(new PresentValueCalculator(
-                    europeanCaplets[bondIndex], discountFactors));
-
-            //expectation
-            const boost::shared_ptr<ExpectationBase> expectation(
-                new Expectation(presentValueCalculator));
-
-            //pricer
-            pricers[bondIndex] = boost::shared_ptr<const MonteCarloPricer>(
-                new MonteCarloPricer(pathSimulator, presentValueCalculator,
-                    expectation));
-        }
-
-
-        /**********************************************************************
-         * Calculate Price.
-         **********************************************************************/
-        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-            const double price = pricers[bondIndex]->simulatePrice(spots, 
-                numberOfSimulations, observedTimes, discountFactors);
-            std::cout << "LIBOR Price[" << bondIndex << "]:" 
-                << price << std::endl;
-        }
-
-        
-        /**********************************************************************
-         * European caplet analytic price.
-         **********************************************************************/
-        for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-            const boost::numeric::ublas::vector<double> rowVolatility =
-                boost::numeric::ublas::row(volatilities, bondIndex);
-            const double volatility = sqrt(
-                boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
-
-            const std::size_t tenorIndex0 = (bondIndex + 40) * 1;
-            const std::size_t tenorIndex1 = (bondIndex + 41) * 1;
-            const double period = 
-                observedTimes[tenorIndex1] - observedTimes[tenorIndex0];
-            const double price = period * calculateBlackFormula(
-                spots[bondIndex], strike, volatility, 
-                observedTimes[tenorIndex0], discountFactors[tenorIndex0]);
-
-            std::cout << "tenor[" 
-                << bondIndex << "]:" << observedTimes[tenorIndex0] << std::endl;
-            std::cout << "discountFactor[" 
-                << bondIndex << "]:" << discountFactors[tenorIndex0] << std::endl;
-            std::cout << "spot[" 
-                << bondIndex << "]:" << spots[bondIndex] << std::endl;
-            std::cout << "vol[" 
-                << bondIndex << "]:" << volatility << std::endl;
-            std::cout << "LIBOR analytic Price[" 
-                << bondIndex << "]:" << price << std::endl;
-        }
-         
-
-
-        std::cout << std::endl;
+        pricers[bondIndex] = boost::shared_ptr<const MonteCarloPricer>(
+            new MonteCarloPricer(pathSimulator, presentValueCalculator,
+                expectation));
     }
+
+
+    /**********************************************************************
+     * Calculate Price.
+     **********************************************************************/
+    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+        const double price = pricers[bondIndex]->simulatePrice(spots, 
+            numberOfSimulations, observedTimes, discountFactors);
+        std::cout << "LIBOR Price[" << bondIndex << "]:" 
+            << price << std::endl;
+    }
+
+    
+    /**********************************************************************
+     * European caplet analytic price.
+     **********************************************************************/
+    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
+        const boost::numeric::ublas::vector<double> rowVolatility =
+            boost::numeric::ublas::row(volatilities, bondIndex);
+        const double volatility = sqrt(
+            boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
+
+        const std::size_t tenorIndex0 = (bondIndex + 40) * 1;
+        const std::size_t tenorIndex1 = (bondIndex + 41) * 1;
+        const double period = 
+            observedTimes[tenorIndex1] - observedTimes[tenorIndex0];
+        const double price = period * calculateBlackFormula(
+            spots[bondIndex], strike, volatility, 
+            observedTimes[tenorIndex0], discountFactors[tenorIndex0]);
+
+        std::cout << "tenor[" 
+            << bondIndex << "]:" << observedTimes[tenorIndex0] << std::endl;
+        std::cout << "discountFactor[" 
+            << bondIndex << "]:" << discountFactors[tenorIndex0] << std::endl;
+        std::cout << "spot[" 
+            << bondIndex << "]:" << spots[bondIndex] << std::endl;
+        std::cout << "vol[" 
+            << bondIndex << "]:" << volatility << std::endl;
+        std::cout << "LIBOR analytic Price[" 
+            << bondIndex << "]:" << price << std::endl;
+    }
+    std::cout << std::endl;
 }
+
 
 int main()
 {
-    /**************************************************************************
-     * Programs on Chapter 4 in Clewlow.
-     **************************************************************************/
-    {
-        /**********************************************************************
-         * European Call Option under the BlackScholes Model. FIgure4.2.
-         **********************************************************************/
-        const double strike = 100.0;
-        const double maturity = 1.0;
-        boost::numeric::ublas::vector<double> spots(1);
-        spots[0] = log(100.0);
-        const double volatility = 0.2;
-        const double interestRate = 0.06;
-        const double dividend = 0.03;
-        const double numberOfTimeSteps = 10;
-        const double numberOfSimulations = 100;
 
-        //Logarithmic BlackScholes Model by Factory patter.
-        const LogBlackScholesFactory logBlackScholesFactory(
-            interestRate, dividend, volatility);
-        boost::shared_ptr<const StochasticDifferentialEquation> logBlackScholes = 
-            logBlackScholesFactory.makeStochasticDifferentialEquation();
-
-        //discretization scheme.
-        boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
-
-        //random number generator.
-        boost::shared_ptr<MersenneTwister> mersenneTwister(
-            new MersenneTwister(numberOfTimeSteps, 0));
-
-        //path simulator.
-        const boost::shared_ptr<const PathSimulatorBase> blackScholesPathSimulator(
-            new PathSimulator(logBlackScholes, eulerMaruyama, mersenneTwister));
-        const boost::shared_ptr<const PathSimulatorBase> 
-            logBlackScholesPathSimulator(
-                new PathSimulatorExp(blackScholesPathSimulator));
-
-        //cash flow
-        const std::vector<double> observedTimes =
-            makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const CashFlow> 
-            cashFlowSpot(new CashFlowSpot(
-                observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlow>
-            europeanCall(new CashFlowCall(strike, cashFlowSpot));
-
-        //discount factors
-        const boost::numeric::ublas::vector<double> discountFactors =
-            makeDiscountFactors(interestRate, observedTimes);
-
-        //present value calculator.
-        const boost::shared_ptr<const PresentValueCalculator> 
-            presentValueCalculator(
-                new PresentValueCalculator(europeanCall, discountFactors));
-
-        //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new Expectation(presentValueCalculator));
-
-        //create a pricer.
-        const MonteCarloPricer pricer(logBlackScholesPathSimulator, 
-            presentValueCalculator, expectation);
-
-        const double price = pricer.simulatePrice(
-            spots, numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "Figure4.2:" << price << std::endl;
-    }
-
-    {
-        /**********************************************************************
-         * European Call Option under the BlackScholes Model
-         * with Antithetic Variance Reductin. FIgure4.5.
-         **********************************************************************/
-        const double strike = 100.0;
-        const double maturity = 1.0;
-        boost::numeric::ublas::vector<double> spots(1);
-        spots[0] = log(100.0);
-        const double volatility = 0.2;
-        const double interestRate = 0.06;
-        const double dividend = 0.03;
-        const double numberOfTimeSteps = 10;
-        const double numberOfSimulations = 100;
-
-        //Logarithmic BlackScholes Model by Factory patter.
-        const LogBlackScholesFactory logBlackScholesFactory(
-            interestRate, dividend, volatility);
-        boost::shared_ptr<const StochasticDifferentialEquation> logBlackScholes = 
-            logBlackScholesFactory.makeStochasticDifferentialEquation();
-
-        //discretization scheme.
-        boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
-
-        //random number generator.
-        boost::shared_ptr<MersenneTwister> mersenneTwister(
-            new MersenneTwister(numberOfTimeSteps, 0));
-        boost::shared_ptr<AntitheticRandom> antitheticMersenneTwister(
-            new AntitheticRandom(mersenneTwister));
-
-        //path simulator.
-        const boost::shared_ptr<const PathSimulatorBase> blackScholesPathSimulator(
-            new PathSimulator(logBlackScholes, eulerMaruyama, antitheticMersenneTwister));
-        const boost::shared_ptr<const PathSimulatorBase> logBlackScholesPathSimulator(
-            new PathSimulatorExp(blackScholesPathSimulator));
-
-        //cash flow
-        const std::vector<double> observedTimes =
-            makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const CashFlow> 
-            cashFlowSpot(new CashFlowSpot(
-                observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlow>
-            europeanCall(new CashFlowCall(strike, cashFlowSpot));
-
-        //discount factors
-        const boost::numeric::ublas::vector<double> discountFactors =
-            makeDiscountFactors(interestRate, observedTimes);
-
-        //present value calculator.
-        const boost::shared_ptr<const PresentValueCalculator> 
-            presentValueCalculator(
-                new PresentValueCalculator(europeanCall, discountFactors));
-
-        //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new Expectation(presentValueCalculator));
-
-        //create a pricer.
-        const MonteCarloPricer pricer(logBlackScholesPathSimulator, 
-            presentValueCalculator, expectation);
-
-        const double price = pricer.simulatePrice(
-            spots, numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "Figure4.5:" << price << std::endl;
-    }
-    {
-        /**********************************************************************
-         * European Call Option under the BlackScholes Model
-         * with a Delta-based Control Variate. FIgure4.9.
-         **********************************************************************/
-        const double strike = 100.0;
-        const double maturity = 1.0;
-        boost::numeric::ublas::vector<double> spots(1);
-        spots[0] = 100.0;
-        const double volatility = 0.2;
-        const double interestRate = 0.06;
-        const double dividend = 0.03;
-        const double numberOfTimeSteps = 10;
-        const double numberOfSimulations = 100;
-
-        //Logarithmic BlackScholes Model by Factory patter.
-        const BlackScholesFactory BlackScholesFactory(
-            interestRate, dividend, volatility);
-        boost::shared_ptr<const StochasticDifferentialEquation> blackScholes = 
-            BlackScholesFactory.makeStochasticDifferentialEquation();
-
-        //discretization scheme.
-        boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
-
-        //random number generator.
-        boost::shared_ptr<MersenneTwister> mersenneTwister(
-            new MersenneTwister(numberOfTimeSteps, 0));
-        boost::shared_ptr<AntitheticRandom> antitheticMersenneTwister(
-            new AntitheticRandom(mersenneTwister));
-
-        //observed Times
-        const std::vector<double> observedTimes =
-            makeObservedTimes(maturity, numberOfTimeSteps);
-
-        //discount factors
-        const boost::numeric::ublas::vector<double> discountFactors =
-            makeDiscountFactors(interestRate, observedTimes);
-
-        //path simulator.
-        const boost::shared_ptr<const PathSimulatorBase> 
-            blackScholesPathSimulator(
-                new PathSimulator(blackScholes, eulerMaruyama, mersenneTwister));
-
-        //cash flow
-        const boost::shared_ptr<const CashFlow> 
-            cashFlowSpot(new CashFlowSpot(
-                observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlow>
-            europeanCall(new CashFlowCall(strike, cashFlowSpot));
-        const boost::shared_ptr<const CashFlow>
-            deltaHedge(new CashFlowDeltaHedge(
-                strike, maturity, volatility, interestRate, dividend,
-                discountFactors, observedTimes, 
-                europeanCall->getCashFlowDateIndex()));
-
-        //present value calculator.
-        const boost::shared_ptr<const PresentValueCalculator> 
-            presentValueCalculator(
-                new PresentValueCalculator(europeanCall, discountFactors));
-
-        //control variates
-        std::vector< boost::shared_ptr<const PresentValueCalculator> >
-            controlVariates(1);
-        boost::shared_ptr<const PresentValueCalculator>
-            deltaControlVariate(
-                new PresentValueCalculator(deltaHedge, discountFactors));
-        controlVariates[0] = deltaControlVariate;
-
-        //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new ExpectationControlVariate(presentValueCalculator, 
-                controlVariates));
-
-        //create a pricer.
-        const MonteCarloPricer pricer(blackScholesPathSimulator, 
-            presentValueCalculator,
-            expectation);
-
-        const double price = pricer.simulatePrice(
-            spots, numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "Figure4.9:" << price << std::endl;
-    }
-    {
-        /**********************************************************************
-         * European Call Option under the BlackScholes Model
-         * with a Delta-based Control Variate and Antithetic. FIgure4.11.
-         **********************************************************************/
-        const double strike = 100.0;
-        const double maturity = 1.0;
-        boost::numeric::ublas::vector<double> spots(1);
-        spots[0] = 100.0;
-        const double volatility = 0.2;
-        const double interestRate = 0.06;
-        const double dividend = 0.03;
-        const double numberOfTimeSteps = 10;
-        const double numberOfSimulations = 100;
-
-        //Logarithmic BlackScholes Model by Factory patter.
-        const BlackScholesFactory BlackScholesFactory(
-            interestRate, dividend, volatility);
-        boost::shared_ptr<const StochasticDifferentialEquation> blackScholes = 
-            BlackScholesFactory.makeStochasticDifferentialEquation();
-
-        //discretization scheme.
-        boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
-
-        //random number generator.
-        boost::shared_ptr<MersenneTwister> mersenneTwister(
-            new MersenneTwister(numberOfTimeSteps, 0));
-        boost::shared_ptr<AntitheticRandom> antitheticMersenneTwister(
-            new AntitheticRandom(mersenneTwister));
-
-        //observed Times
-        const std::vector<double> observedTimes =
-            makeObservedTimes(maturity, numberOfTimeSteps);
-
-        //discount factors
-        const boost::numeric::ublas::vector<double> discountFactors =
-            makeDiscountFactors(interestRate, observedTimes);
-
-        //path simulator.
-        const boost::shared_ptr<const PathSimulatorBase> 
-            blackScholesPathSimulator(
-                new PathSimulator(blackScholes, eulerMaruyama, 
-                antitheticMersenneTwister));
-
-        //cash flow
-        const boost::shared_ptr<const CashFlow> 
-            cashFlowSpot(new CashFlowSpot(
-                observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlow>
-            europeanCall(new CashFlowCall(strike, cashFlowSpot));
-        const boost::shared_ptr<const CashFlow>
-            deltaHedge(new CashFlowDeltaHedge(
-                strike, maturity, volatility, interestRate, dividend,
-                discountFactors, observedTimes,
-                europeanCall->getCashFlowDateIndex()));
-
-        //present value calculator.
-        const boost::shared_ptr<const PresentValueCalculator> 
-            presentValueCalculator(
-                new PresentValueCalculator(europeanCall, discountFactors));
-
-        //control variates
-        std::vector< boost::shared_ptr<const PresentValueCalculator> >
-            controlVariates(1);
-        boost::shared_ptr<const PresentValueCalculator>
-            deltaControlVariate(
-                new PresentValueCalculator(deltaHedge, discountFactors));
-        controlVariates[0] = deltaControlVariate;
-
-        //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new ExpectationControlVariate(presentValueCalculator, 
-                controlVariates));
-
-        //create a pricer.
-        const MonteCarloPricer pricer(blackScholesPathSimulator, 
-            presentValueCalculator,
-            expectation);
-
-        const double price = pricer.simulatePrice(
-            spots, numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "Figure4.11:" << price << std::endl;
-    }
-    {
-        /**********************************************************************
-         * European Call Option under the BlackScholes Model
-         * with a Delta-based Control Variate,
-         * Gamma-based Control Variate and Antithetic. FIgure4.13.
-         **********************************************************************/
-        const double strike = 100.0;
-        const double maturity = 1.0;
-        boost::numeric::ublas::vector<double> spots(1);
-        spots[0] = 100.0;
-        const double volatility = 0.2;
-        const double interestRate = 0.06;
-        const double dividend = 0.03;
-        const double numberOfTimeSteps = 10;
-        const double numberOfSimulations = 100;
-
-        //Logarithmic BlackScholes Model by Factory patter.
-        const BlackScholesFactory BlackScholesFactory(
-            interestRate, dividend, volatility);
-        boost::shared_ptr<const StochasticDifferentialEquation> blackScholes = 
-            BlackScholesFactory.makeStochasticDifferentialEquation();
-
-        //discretization scheme.
-        boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
-
-        //random number generator.
-        boost::shared_ptr<MersenneTwister> mersenneTwister(
-            new MersenneTwister(numberOfTimeSteps, 0));
-        boost::shared_ptr<AntitheticRandom> antitheticMersenneTwister(
-            new AntitheticRandom(mersenneTwister));
-
-        //observed Times
-        const std::vector<double> observedTimes =
-            makeObservedTimes(maturity, numberOfTimeSteps);
-
-        //discount factors
-        const boost::numeric::ublas::vector<double> discountFactors =
-            makeDiscountFactors(interestRate, observedTimes);
-
-        //path simulator.
-        const boost::shared_ptr<const PathSimulatorBase> 
-            blackScholesPathSimulator(
-                new PathSimulator(blackScholes, eulerMaruyama, 
-                antitheticMersenneTwister));
-
-        //cash flow
-        const boost::shared_ptr<const CashFlow> 
-            cashFlowSpot(new CashFlowSpot(
-                observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlow>
-            europeanCall(new CashFlowCall(strike, cashFlowSpot));
-        const boost::shared_ptr<const CashFlow>
-            deltaHedge(new CashFlowDeltaHedge(
-                strike, maturity, volatility, interestRate, dividend,
-                discountFactors, observedTimes,
-                europeanCall->getCashFlowDateIndex()));
-        const boost::shared_ptr<const CashFlow>
-            gammaHedge(new CashFlowGammaHedge(
-                strike, maturity, volatility, interestRate, dividend,
-                discountFactors, observedTimes, 
-                europeanCall->getCashFlowDateIndex()));
-
-        //present value calculator.
-        const boost::shared_ptr<const PresentValueCalculator> 
-            presentValueCalculator(
-                new PresentValueCalculator(europeanCall, discountFactors));
-
-        //control variates
-        std::vector< boost::shared_ptr<const PresentValueCalculator> >
-            controlVariates(2);
-        boost::shared_ptr<const PresentValueCalculator>
-            deltaControlVariate(
-                new PresentValueCalculator(deltaHedge, discountFactors));
-        boost::shared_ptr<const PresentValueCalculator>
-            gammaControlVariate(
-                new PresentValueCalculator(gammaHedge, discountFactors));
-        controlVariates[0] = deltaControlVariate;
-        controlVariates[1] = gammaControlVariate;
-
-        //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new ExpectationControlVariate(presentValueCalculator, 
-                controlVariates));
-
-        //create a pricer.
-        const MonteCarloPricer pricer(blackScholesPathSimulator, 
-            presentValueCalculator,
-            expectation);
-
-        const double price = pricer.simulatePrice(
-            spots, numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "Figure4.13:" << price << std::endl;
-    }
+    calculateEuropeanCapletLiborMarketModel();
 
     {
         int a = 0;

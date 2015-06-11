@@ -5,8 +5,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 class LiborMarketModelDrift 
-    : public Drift
-{
+    : public Drift {
 public:
     /**************************************************************************
      * Constructers and Destructers

@@ -3,8 +3,7 @@
 #include "Drift.h"
 
 class SabrDrift 
-    : public Drift
-{
+    : public Drift {
 public:
     /**************************************************************************
      * Constructers and Destructers
