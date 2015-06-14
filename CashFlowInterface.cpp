@@ -1,13 +1,12 @@
-#include "PayOff.h"
+#include "CashFlowInterface.h"
 
 /******************************************************************************
- * Constructers and Destructers
+ * Constructers and Destructers.
  ******************************************************************************/
-PayOff::PayOff() 
+CashFlowInterface::CashFlowInterface()
 {
 }
 
-PayOff::~PayOff() 
+CashFlowInterface::~CashFlowInterface() 
 {
 }
-

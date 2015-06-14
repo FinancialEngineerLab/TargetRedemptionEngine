@@ -12,10 +12,13 @@
 #include "CashFlowCall.h"
 #include "CashFlowSwap.h"
 #include "CashFlowSwaption.h"
+#include "CashFlowCaplet.h"
 #include "CashFlowDeltaHedge.h"
 #include "CashFlowGammaHedge.h"
 #include "Expectation.h"
 #include "ExpectationControlVariate.h"
+#include "Maturities.h"
+#include "Tenor.h"
 
 
 #include <vector>
@@ -176,19 +179,6 @@ inline boost::numeric::ublas::matrix<double> makeLiborMarketModelVolatilities(
     return volatilities;
 }
 
-inline boost::numeric::ublas::vector<double> makeLiborMarketModelTenor(
-    const std::size_t dimension)
-{
-    boost::numeric::ublas::vector<double> tenor(dimension + 1, 0.0);
-    for (std::size_t tenorIndex = 0; tenorIndex < dimension; 
-        ++tenorIndex) {
-        //maturities[maturityIndex - 1] = 0.5 * maturityIndex;
-        tenor[tenorIndex] = 10.0 + 0.5 * tenorIndex;
-    }
-
-    return tenor;
-}
-
 inline boost::numeric::ublas::matrix<double> 
     makeLiborMarketModelCorrelationMatrix(const std::size_t dimension)
 {
@@ -280,10 +270,10 @@ void calculateEuropeanCallBlackScholes()
         //cash flow
         const std::vector<double> observedTimes =
             makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const CashFlow> 
+        const boost::shared_ptr<const CashFlowInterface> 
             cashFlowSpot(new CashFlowSpot(
                 observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlow>
+        const boost::shared_ptr<const CashFlowInterface>
             europeanCall(new CashFlowCall(strike, cashFlowSpot));
 
         //discount factors
@@ -363,9 +353,9 @@ void calculateEuropeanCallSABR()
         //cash flow
         const std::vector<double> observedTimes =
             makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const CashFlow> 
+        const boost::shared_ptr<const CashFlowInterface> 
             cashFlowSpot(new CashFlowSpot(observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlow>
+        const boost::shared_ptr<const CashFlowInterface>
             europeanCall(new CashFlowCall(strike, cashFlowSpot));
 
         //discount factors
@@ -430,17 +420,35 @@ void calculateEuropeanCapletLiborMarketModel()
         makeLiborMarketModelSpots(numberOfBonds);
     const boost::numeric::ublas::matrix<double> volatilities =
         makeLiborMarketModelVolatilities(numberOfBonds);
-    const boost::numeric::ublas::vector<double> tenor =
-        makeLiborMarketModelTenor(numberOfBonds);
     const boost::numeric::ublas::matrix<double> correlation = 
         makeLiborMarketModelCorrelationMatrix(numberOfBonds);
-    
-    const std::size_t numberOfTimeSteps = 64;
-    const std::size_t numberOfSimulations = 100;
+
+    const std::size_t numberOfTimeSteps = 32;
+    const std::size_t numberOfSimulations = 1000;
+
+    //make Indice
+    std::vector<double> observedTimes(numberOfTimeSteps + 1);
+    for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); 
+        ++timeIndex) {
+        observedTimes[timeIndex] = timeIndex * (1.0 / 4.0);
+    }
+    std::vector<std::size_t> maturitiesIndice(numberOfBonds);
+    maturitiesIndice[0] = 4;
+    maturitiesIndice[1] = 8;
+    maturitiesIndice[2] = 12;
+    maturitiesIndice[3] = 16;
+    maturitiesIndice[4] = 20;
+    //Maturities maturities(observedTimes, maturitiesIndex);
+    boost::shared_ptr<Maturities> maturities(new Maturities(observedTimes, maturitiesIndice));
+
+    std::vector<std::size_t> tenorToMaturityIndice(2);
+    tenorToMaturityIndice[0] = 0;
+    tenorToMaturityIndice[1] = 1;
+    const boost::shared_ptr<const Tenor> tenor(new Tenor(maturities, tenorToMaturityIndice));
 
     //LIBOR Market Model creation by Factory pattern.
     const LiborMarketModelFactory liborFactory(
-        volatilities, tenor, correlation);
+        volatilities, maturities, correlation);
     boost::shared_ptr<const StochasticDifferentialEquation> libor = 
         liborFactory.makeStochasticDifferentialEquation();
 
@@ -455,100 +463,57 @@ void calculateEuropeanCapletLiborMarketModel()
     const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
         new PathSimulator(libor, eulerMaruyama, mersenneTwister));
 
-    //make Indice
-    std::vector<double> observedTimes(numberOfTimeSteps + 1);
-    for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); ++timeIndex) {
-        observedTimes[timeIndex] = timeIndex * (1.0 / 4.0);
-    }
-    //! tenorIndex to timeIndex. assuming that tenor is 6-month.
-    //std::vector<std::size_t> tenorToTime(numberOfBonds + 1);
-    //for (std::size_t tenorIndex = 0; tenorIndex < tenorToTime.size(); ++tenorIndex) {
-    //    tenorToTime[tenorIndex] = (tenorIndex + 1) * 4;
-    //}
-    //! tenorIndex To AssetIndex.
-    //std::vector<std::size_t> tenorToAsset(numberOfBonds);
-    //for (std::size_t tenorIndex = 0; tenorIndex < numberOfBonds; ++tenorIndex) {
-    //    tenorToAsset[tenorIndex] = tenorIndex;
-    //}
-
     //cash flow.
-    std::vector<std::size_t> tenorToTime(2);
-    std::vector<std::size_t> tenorToAsset(1);
-    std::vector< boost::shared_ptr<const CashFlow> > 
-        europeanCaplets(numberOfBonds);
-    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-        tenorToAsset[0] = bondIndex;
-        tenorToTime[0] = (bondIndex + 40) * 1;
-        tenorToTime[1] = (bondIndex + 41) * 1;
-        const boost::shared_ptr<const CashFlowSwap> swap(
-            new CashFlowSwap(observedTimes, tenorToTime, tenorToAsset, strike));
-        europeanCaplets[bondIndex] = boost::shared_ptr<const CashFlow>(
-            new CashFlowSwaption(swap->getCashFlowDateIndex(), swap));
-    }
-
+    boost::shared_ptr<const CashFlowInterface> caplet(
+        new CashFlowCaplet(tenor->getTimeIndex(1), strike, tenor));
     //discount factors
     const boost::numeric::ublas::vector<double> discountFactors =
         makeDiscountFactors(interestRate, observedTimes);
 
+    //present value calculator
+    const boost::shared_ptr<const PresentValueCalculator> 
+        presentValueCalculator(
+            new PresentValueCalculator(caplet, discountFactors));
+
+    //expectation
+    const boost::shared_ptr<ExpectationBase> expectation(
+        new Expectation(presentValueCalculator));
+
     //pricer
-    std::vector< boost::shared_ptr<const MonteCarloPricer> > 
-        pricers(numberOfBonds);
-    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-        //present value calculator
-        const boost::shared_ptr<const PresentValueCalculator> 
-            presentValueCalculator(new PresentValueCalculator(
-                europeanCaplets[bondIndex], discountFactors));
-
-        //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new Expectation(presentValueCalculator));
-
-        //pricer
-        pricers[bondIndex] = boost::shared_ptr<const MonteCarloPricer>(
-            new MonteCarloPricer(pathSimulator, presentValueCalculator,
-                expectation));
-    }
-
+    boost::shared_ptr<const MonteCarloPricer> pricer(
+        new MonteCarloPricer(pathSimulator, presentValueCalculator,
+            expectation));
 
     /**********************************************************************
      * Calculate Price.
      **********************************************************************/
-    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-        const double price = pricers[bondIndex]->simulatePrice(spots, 
+    {
+        const double price = pricer->simulatePrice(spots, 
             numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "LIBOR Price[" << bondIndex << "]:" 
-            << price << std::endl;
+        std::cout << "LIBOR Price:" << price << std::endl;
     }
 
     
     /**********************************************************************
      * European caplet analytic price.
      **********************************************************************/
-    for (std::size_t bondIndex = 0; bondIndex < numberOfBonds; ++bondIndex) {
-        const boost::numeric::ublas::vector<double> rowVolatility =
-            boost::numeric::ublas::row(volatilities, bondIndex);
-        const double volatility = sqrt(
-            boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
+    std::cout << std::endl;
+    const boost::numeric::ublas::vector<double> rowVolatility =
+        boost::numeric::ublas::row(volatilities, tenor->getAssetIndex(0));
+    const double volatility = sqrt(
+        boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
 
-        const std::size_t tenorIndex0 = (bondIndex + 40) * 1;
-        const std::size_t tenorIndex1 = (bondIndex + 41) * 1;
-        const double period = 
-            observedTimes[tenorIndex1] - observedTimes[tenorIndex0];
-        const double price = period * calculateBlackFormula(
-            spots[bondIndex], strike, volatility, 
-            observedTimes[tenorIndex0], discountFactors[tenorIndex0]);
+    const double period = tenor->operator[](1) - tenor->operator[](0);
+    const double price = period * calculateBlackFormula(
+        spots[tenor->getAssetIndex(0)], strike, volatility, 
+        tenor->operator[](0), discountFactors[tenor->getTimeIndex(1)]);
 
-        std::cout << "tenor[" 
-            << bondIndex << "]:" << observedTimes[tenorIndex0] << std::endl;
-        std::cout << "discountFactor[" 
-            << bondIndex << "]:" << discountFactors[tenorIndex0] << std::endl;
-        std::cout << "spot[" 
-            << bondIndex << "]:" << spots[bondIndex] << std::endl;
-        std::cout << "vol[" 
-            << bondIndex << "]:" << volatility << std::endl;
-        std::cout << "LIBOR analytic Price[" 
-            << bondIndex << "]:" << price << std::endl;
-    }
+    std::cout << "tenor:" << tenor->operator[](0) << std::endl;
+    std::cout << "DF:" << discountFactors[tenor->getTimeIndex(1)] << std::endl;
+    std::cout << "spot:" << spots << std::endl;
+    std::cout << "vol:" << volatility << std::endl;
+    std::cout << "LIBOR analytic Price:" << price << std::endl;
+
     std::cout << std::endl;
 }
 

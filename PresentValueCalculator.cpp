@@ -4,7 +4,7 @@
  * Constructers and Destructers.
  ******************************************************************************/
 PresentValueCalculator::PresentValueCalculator(
-    const boost::shared_ptr<const CashFlow>& cashFlow,
+    const boost::shared_ptr<const CashFlowInterface>& cashFlow,
     const boost::numeric::ublas::vector<double>& discountFactors)
     :
     _cashFlow(cashFlow),

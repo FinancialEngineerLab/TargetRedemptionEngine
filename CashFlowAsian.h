@@ -7,21 +7,35 @@
 #include <vector>
 
 class CashFlowAsian
-    : public CashFlow {
+    : public CashFlowInterface {
 public:
+    /**************************************************************************
+     * Constructers and Destructers.
+     **************************************************************************/
     CashFlowAsian(
-        const std::size_t timeIndex,
+        const std::size_t cashFlowDateIndex,
         const std::size_t spotIndex,
         const std::vector<std::size_t>& timeIndice);
-    virtual ~CashFlowAsian();
+    ~CashFlowAsian();
 
+    /**************************************************************************
+     * inherited pure virtual functions.
+     **************************************************************************/
     virtual double operator()(
         const boost::numeric::ublas::matrix<double>& path) const;
+    virtual std::size_t getCashFlowDateIndex() const;
     
 private:
+    /**************************************************************************
+     * private variables.
+     **************************************************************************/
+    const CashFlow _cashFlow;
     const std::size_t _spotIndex;
     const std::vector<std::size_t> _timeIndice;
 
+    /**************************************************************************
+     * pure virtual functions.
+     **************************************************************************/
     double calculateAsian(
         const boost::numeric::ublas::matrix<double>& path) const;
 };

@@ -1,24 +1,21 @@
 #pragma once
 
-#include "PayOff.h"
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 
-class PayOffSwaption 
-    : public PayOff {
+class CashFlowInterface {
 public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    PayOffSwaption(const double strike);
-    virtual ~PayOffSwaption();
+    CashFlowInterface();
+    ~CashFlowInterface();
 
     /**************************************************************************
-     * inherited pure virtual functions.
+     * pure virtual functions.
      **************************************************************************/
-    virtual double payOffFunction(
-        const boost::numeric::ublas::vector<double>& spots) const;
-
-private:
-    const double _strike;
-            
+    virtual double operator()(
+        const boost::numeric::ublas::matrix<double>& path) const = 0;
+    virtual std::size_t getCashFlowDateIndex() const = 0;
 };
 

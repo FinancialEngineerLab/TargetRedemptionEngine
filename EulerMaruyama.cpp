@@ -37,6 +37,9 @@ void EulerMaruyama::simulateOneStep(
     boost::numeric::ublas::vector<double> randoms(dimensionOfBrownianMotion);
     generateRandomsVectorFromIterator(randoms, random, dimension);
 
+    //std::cout << "EM(drift):" << drift << std::endl;
+    //std::cout << "EM(diffusion):" << sqrt(timeStepSize) * boost::numeric::ublas::prod(diffusion, randoms)<< std::endl;
+
     //one step calculation.
     processes += timeStepSize * drift 
         + sqrt(timeStepSize) * boost::numeric::ublas::prod(diffusion, randoms);

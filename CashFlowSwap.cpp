@@ -9,7 +9,7 @@ CashFlowSwap::CashFlowSwap(
     const std::vector<std::size_t>& tenorToAsset,
     const double strike)
     :
-    CashFlow(tenorToTime[0]),
+    _cashFlow(tenorToTime[0]),
     _observedTimes(observedTimes),
     _tenorToTime(tenorToTime),
     _tenorToAsset(tenorToAsset),

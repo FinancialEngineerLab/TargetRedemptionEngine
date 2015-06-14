@@ -1,9 +1,9 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
-
 #include "StochasticDifferentialEquationFactory.h"
+#include "Maturities.h"
 
+#include <boost/shared_ptr.hpp>
 
 class LiborMarketModelFactory :
     public StochasticDifferentialEquationFactory {
@@ -13,7 +13,7 @@ public:
      **************************************************************************/
     LiborMarketModelFactory(
         const boost::numeric::ublas::matrix<double>& volatilities,
-        const boost::numeric::ublas::vector<double>& maturities,
+        const boost::shared_ptr<const Maturities>& maturities,
         const boost::numeric::ublas::matrix<double>& correlation);
     virtual ~LiborMarketModelFactory();
 
@@ -30,7 +30,7 @@ private:
      * private variables.
      **************************************************************************/
     const boost::numeric::ublas::matrix<double> _volatilities;
-    const boost::numeric::ublas::vector<double> _maturities;
+    const boost::shared_ptr<const Maturities> _maturities;
     const boost::numeric::ublas::matrix<double> _correlation;
     const std::size_t _dimension;
     const std::size_t _dimensionOfBrownianMotion;

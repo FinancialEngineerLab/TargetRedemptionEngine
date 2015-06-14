@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Diffusion.h"
+#include "Maturities.h"
 
 class LiborMarketModelDiffusion 
     : public Diffusion {
@@ -11,7 +12,7 @@ public:
     LiborMarketModelDiffusion(
         const boost::numeric::ublas::matrix<double>& volatilities,
         const boost::numeric::ublas::matrix<double>& correlation,
-        const boost::numeric::ublas::vector<double>& tenor);
+        const boost::shared_ptr<const Maturities>& maturities);
     virtual ~LiborMarketModelDiffusion();
 
     /**************************************************************************
@@ -28,8 +29,7 @@ private:
      **************************************************************************/
     const boost::numeric::ublas::matrix<double> _volatilities;
     const boost::numeric::ublas::matrix<double> _correlation;
-    const boost::numeric::ublas::vector<double> _tenor;
-    
+    const boost::shared_ptr<const Maturities> _maturities;
 
     std::size_t findStartIndex(const double time) const;
 };

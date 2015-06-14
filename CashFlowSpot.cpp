@@ -7,10 +7,10 @@
  * Constructers and Destructers.
  ******************************************************************************/
 CashFlowSpot::CashFlowSpot(
-    const std::size_t timeIndex,
+    const std::size_t cashFlowDateIndex,
     const std::size_t maturityIndex, const std::size_t assetIndex)
     :
-    CashFlow(timeIndex),
+    _cashFlow(cashFlowDateIndex),
     _maturityIndex(maturityIndex),
     _assetIndex(assetIndex)
 {
@@ -24,5 +24,10 @@ double CashFlowSpot::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {
     return path(_assetIndex, _maturityIndex);
+}
+
+std::size_t CashFlowSpot::getCashFlowDateIndex() const
+{
+    return _cashFlow.getCashFlowDateIndex();
 }
 
