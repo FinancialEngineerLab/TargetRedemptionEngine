@@ -48,17 +48,17 @@ public:
     virtual ~LogBlackScholesFactory();
 
 private:
-    /******************************************************************************
+    /**************************************************************************
      * inherited pure virtual functions.
-     ******************************************************************************/
+     **************************************************************************/
     virtual boost::shared_ptr<Drift> makeDrift() const;
     virtual boost::shared_ptr<Diffusion> makeDiffusion() const;
     virtual std::size_t makeDimension() const;
     virtual std::size_t makeDimensionOfBrownianMotion() const;
 
-    /******************************************************************************
+    /**************************************************************************
      * private variables.
-     ******************************************************************************/
+     **************************************************************************/
     const double _interestRate;
     const double _dividend;
     const double _volatility;

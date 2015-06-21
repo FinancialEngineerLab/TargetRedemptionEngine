@@ -12,9 +12,9 @@ public:
     DiscretizationScheme();
     virtual ~DiscretizationScheme();
 
-    /******************************************************************************
+    /**************************************************************************
      * pure virtual functions.
-     ******************************************************************************/
+     **************************************************************************/
     virtual void simulateOneStep(
         boost::numeric::ublas::vector<double>& processes, 
         const boost::shared_ptr<const StochasticDifferentialEquation>& model,

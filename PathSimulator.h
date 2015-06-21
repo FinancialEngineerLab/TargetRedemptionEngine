@@ -16,7 +16,8 @@ public:
      **************************************************************************/
     PathSimulator(
         const boost::shared_ptr<const StochasticDifferentialEquation>& model,
-        const boost::shared_ptr<const DiscretizationScheme>& discretizationScheme,
+        const boost::shared_ptr<const DiscretizationScheme>& 
+            discretizationScheme,
         const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
     virtual ~PathSimulator();
 

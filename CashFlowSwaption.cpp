@@ -1,13 +1,11 @@
 #include "CashFlowSwaption.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 CashFlowSwaption::CashFlowSwaption(
-    const std::size_t timeIndex,
     const boost::shared_ptr<const CashFlowSwap>& swap)
     :
-    CashFlow(timeIndex),
     _swap(swap)
 {
 }
@@ -16,6 +14,9 @@ CashFlowSwaption::~CashFlowSwaption()
 {
 }
 
+/**************************************************************************
+ * inherited pure virtual functions.
+ **************************************************************************/
 double CashFlowSwaption::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {

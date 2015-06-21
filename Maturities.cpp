@@ -1,5 +1,8 @@
 #include "Maturities.h"
 
+/******************************************************************************
+ * Constructers and Destructers.
+ ******************************************************************************/
 Maturities::Maturities(
     const std::vector<double>& observedTimes,
     const std::vector<std::size_t>& maturityIndice)

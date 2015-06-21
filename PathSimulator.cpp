@@ -42,7 +42,8 @@ void PathSimulator::simulateOnePath(
             observedTimes[timeIndex] - observedTimes[timeIndex - 1];
 
         _discretizationScheme->simulateOneStep(
-            processes, _model, observedTimes[timeIndex - 1], timeStepSize, random);
+            processes, _model, 
+            observedTimes[timeIndex - 1], timeStepSize, random);
         boost::numeric::ublas::column(path, timeIndex) = processes;
     }
 }

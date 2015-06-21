@@ -4,7 +4,7 @@
  * Constructers and Destructers.
  ******************************************************************************/
 PresentValueCalculator::PresentValueCalculator(
-    const boost::shared_ptr<const CashFlowInterface>& cashFlow,
+    const boost::shared_ptr<const CashFlow>& cashFlow,
     const boost::numeric::ublas::vector<double>& discountFactors)
     :
     _cashFlow(cashFlow),
@@ -22,7 +22,7 @@ double PresentValueCalculator::operator()(
 {
     const double cashFlow =  _cashFlow->operator()(path);
     const double discountFactor = 
-        _discountFactors[_cashFlow->getCashFlowDateIndex()];
+        _discountFactors[_cashFlow->getPaymentDateIndex()];
     const double presentValue = cashFlow * discountFactor;
 
     return presentValue;

@@ -1,7 +1,7 @@
 #include "CashFlowSwap.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 CashFlowSwap::CashFlowSwap(
     const std::vector<double>& observedTimes,
@@ -9,7 +9,6 @@ CashFlowSwap::CashFlowSwap(
     const std::vector<std::size_t>& tenorToAsset,
     const double strike)
     :
-    _cashFlow(tenorToTime[0]),
     _observedTimes(observedTimes),
     _tenorToTime(tenorToTime),
     _tenorToAsset(tenorToAsset),
@@ -21,6 +20,9 @@ CashFlowSwap::~CashFlowSwap()
 {
 }
 
+/**************************************************************************
+ * inherited pure virtual functions.
+ **************************************************************************/
 double CashFlowSwap::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {

@@ -1,12 +1,14 @@
-#include "CashFlowInterface.h"
+#include "CashFlowCalculator.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
-CashFlowInterface::CashFlowInterface()
+CashFlowCalculator::CashFlowCalculator()
 {
 }
 
-CashFlowInterface::~CashFlowInterface() 
+CashFlowCalculator::~CashFlowCalculator() 
 {
 }
+
+

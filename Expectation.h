@@ -10,7 +10,8 @@ public:
      * Constructers and Destructers.
      **************************************************************************/
     Expectation(
-        const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator);
+        const boost::shared_ptr<const PresentValueCalculator>& 
+        presentValueCalculator);
     virtual ~Expectation();
 
     virtual void addSample(const boost::numeric::ublas::matrix<double>& path);

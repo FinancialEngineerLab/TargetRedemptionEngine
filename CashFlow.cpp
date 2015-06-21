@@ -1,11 +1,14 @@
 #include "CashFlow.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
-CashFlow::CashFlow(const std::size_t cashFlowDateIndex)
+CashFlow::CashFlow(
+    const boost::shared_ptr<const CashFlowCalculator> calculator,
+    const std::size_t paymentDateIndex)
     :
-    _cashFlowDateIndex(cashFlowDateIndex)
+    _calculator(calculator),
+    _paymentDateIndex(paymentDateIndex)
 {
 }
 
@@ -19,11 +22,14 @@ CashFlow::~CashFlow()
 double CashFlow::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {
-    return 0.0;
+    return _calculator->operator()(path);
 }
 
-std::size_t CashFlow::getCashFlowDateIndex() const
+/******************************************************************************
+ * member functions.
+ ******************************************************************************/
+std::size_t CashFlow::getPaymentDateIndex() const
 {
-    return _cashFlowDateIndex;
+    return _paymentDateIndex;
 }
 

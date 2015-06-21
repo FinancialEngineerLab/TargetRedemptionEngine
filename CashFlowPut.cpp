@@ -1,15 +1,16 @@
 #include "CashFlowPut.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 CashFlowPut::CashFlowPut(
-    const std::size_t timeIndex, const double strike,
-    const boost::shared_ptr<const CashFlow> cashFlow)
+    const double strike,
+    const std::size_t assetIndex,
+    const std::size_t maturityIndex)
     :
-    CashFlow(timeIndex),
     _strike(strike),
-    _cashFlow(cashFlow)
+    _assetIndex(assetIndex),
+    _maturityIndex(maturityIndex)
 {
 }
 
@@ -17,10 +18,18 @@ CashFlowPut::~CashFlowPut()
 {
 }
 
+/******************************************************************************
+ * inherited pure virtual functions.
+ ******************************************************************************/
 double CashFlowPut::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {
-    const double cashFlow = _cashFlow->operator()(path);
+    assert(0 <= _assetIndex);
+    assert(_assetIndex < path.size1());
+    assert(0 <= _maturityIndex);
+    assert(_maturityIndex < path.size2());
+
+    const double cashFlow = path(_assetIndex, _maturityIndex);
 
     return std::max(0.0, _strike - cashFlow);
 }

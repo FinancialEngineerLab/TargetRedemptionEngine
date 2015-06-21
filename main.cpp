@@ -8,13 +8,10 @@
 #include "MonteCarloPricer.h"
 #include "PathSimulator.h"
 #include "PathSimulatorExp.h"
-#include "CashFlowSpot.h"
 #include "CashFlowCall.h"
 #include "CashFlowSwap.h"
 #include "CashFlowSwaption.h"
 #include "CashFlowCaplet.h"
-#include "CashFlowDeltaHedge.h"
-#include "CashFlowGammaHedge.h"
 #include "Expectation.h"
 #include "ExpectationControlVariate.h"
 #include "Maturities.h"
@@ -137,15 +134,15 @@ inline double calculateBlackFormula(
     return callPrice;
 }
 
-inline boost::numeric::ublas::matrix<double> makeSabrCorrelationMatrix(
+inline boost::numeric::ublas::matrix<double> makeSabrDecomposedCorrelationMatrix(
     const double rho)
 {
-    boost::numeric::ublas::matrix<double> correlation(2, 2, 0.0);
-    correlation(0, 0) = 1;
-    correlation(1, 0) = rho;
-    correlation(1, 1) = sqrt(1.0 - rho * rho);
+    boost::numeric::ublas::matrix<double> decomposedCorrelation(2, 2, 0.0);
+    decomposedCorrelation(0, 0) = 1;
+    decomposedCorrelation(1, 0) = rho;
+    decomposedCorrelation(1, 1) = sqrt(1.0 - rho * rho);
 
-    return correlation;
+    return decomposedCorrelation;
 }
 
 /******************************************************************************
@@ -270,11 +267,10 @@ void calculateEuropeanCallBlackScholes()
         //cash flow
         const std::vector<double> observedTimes =
             makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const CashFlowInterface> 
-            cashFlowSpot(new CashFlowSpot(
-                observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlowInterface>
-            europeanCall(new CashFlowCall(strike, cashFlowSpot));
+        const boost::shared_ptr<const CashFlowCalculator> 
+            cashFlowCall(new CashFlowCall(strike, 0, observedTimes.size() - 1));
+        const boost::shared_ptr<const CashFlow> 
+            europeanCall(new CashFlow(cashFlowCall, 0));
 
         //discount factors
         const boost::numeric::ublas::vector<double> discountFactors =
@@ -330,13 +326,15 @@ void calculateEuropeanCallSABR()
         boost::numeric::ublas::vector<double> spots(2);
         spots[0] = 100.0;
         spots[1] = alpha;
-        const boost::numeric::ublas::matrix<double> sabrCorrelation = makeSabrCorrelationMatrix(rho);
+        const boost::numeric::ublas::matrix<double> sabrCorrelation = 
+            makeSabrDecomposedCorrelationMatrix(rho);
 
         const std::size_t numberOfTimeSteps = 64;
         const std::size_t numberOfSimulations = 100;
 
         //SABR Model Creation by Factory Pattern.
-        const SabrFactory sabrFactory(beta, volatilityOfVolatility, sabrCorrelation);
+        const SabrFactory sabrFactory(
+            beta, volatilityOfVolatility, sabrCorrelation);
         boost::shared_ptr<const StochasticDifferentialEquation> sabr = 
             sabrFactory.makeStochasticDifferentialEquation();
 
@@ -353,10 +351,10 @@ void calculateEuropeanCallSABR()
         //cash flow
         const std::vector<double> observedTimes =
             makeObservedTimes(maturity, numberOfTimeSteps);
-        const boost::shared_ptr<const CashFlowInterface> 
-            cashFlowSpot(new CashFlowSpot(observedTimes.size() - 1, observedTimes.size() - 1, 0));
-        const boost::shared_ptr<const CashFlowInterface>
-            europeanCall(new CashFlowCall(strike, cashFlowSpot));
+        const boost::shared_ptr<const CashFlowCalculator> 
+            cashFlowCall(new CashFlowCall(strike, 0, observedTimes.size() - 1));
+        const boost::shared_ptr<const CashFlow> 
+            europeanCall(new CashFlow(cashFlowCall, 0));
 
         //discount factors
         const boost::numeric::ublas::vector<double> discountFactors =
@@ -424,7 +422,7 @@ void calculateEuropeanCapletLiborMarketModel()
         makeLiborMarketModelCorrelationMatrix(numberOfBonds);
 
     const std::size_t numberOfTimeSteps = 32;
-    const std::size_t numberOfSimulations = 1000;
+    const std::size_t numberOfSimulations = 10000;
 
     //make Indice
     std::vector<double> observedTimes(numberOfTimeSteps + 1);
@@ -439,12 +437,14 @@ void calculateEuropeanCapletLiborMarketModel()
     maturitiesIndice[3] = 16;
     maturitiesIndice[4] = 20;
     //Maturities maturities(observedTimes, maturitiesIndex);
-    boost::shared_ptr<Maturities> maturities(new Maturities(observedTimes, maturitiesIndice));
+    boost::shared_ptr<Maturities> maturities(
+        new Maturities(observedTimes, maturitiesIndice));
 
     std::vector<std::size_t> tenorToMaturityIndice(2);
     tenorToMaturityIndice[0] = 0;
     tenorToMaturityIndice[1] = 1;
-    const boost::shared_ptr<const Tenor> tenor(new Tenor(maturities, tenorToMaturityIndice));
+    const boost::shared_ptr<const Tenor> tenor(
+        new Tenor(maturities, tenorToMaturityIndice));
 
     //LIBOR Market Model creation by Factory pattern.
     const LiborMarketModelFactory liborFactory(
@@ -464,8 +464,10 @@ void calculateEuropeanCapletLiborMarketModel()
         new PathSimulator(libor, eulerMaruyama, mersenneTwister));
 
     //cash flow.
-    boost::shared_ptr<const CashFlowInterface> caplet(
-        new CashFlowCaplet(tenor->getTimeIndex(1), strike, tenor));
+    const boost::shared_ptr<const CashFlowCalculator> cashFlowCaplet(
+        new CashFlowCaplet(strike, tenor));
+    const boost::shared_ptr<const CashFlow> caplet(
+        new CashFlow(cashFlowCaplet, tenor->getTimeIndex(1)));
     //discount factors
     const boost::numeric::ublas::vector<double> discountFactors =
         makeDiscountFactors(interestRate, observedTimes);
@@ -497,22 +499,24 @@ void calculateEuropeanCapletLiborMarketModel()
     /**********************************************************************
      * European caplet analytic price.
      **********************************************************************/
-    std::cout << std::endl;
-    const boost::numeric::ublas::vector<double> rowVolatility =
-        boost::numeric::ublas::row(volatilities, tenor->getAssetIndex(0));
-    const double volatility = sqrt(
-        boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
+    {
+        std::cout << std::endl;
+        const boost::numeric::ublas::vector<double> rowVolatility =
+            boost::numeric::ublas::row(volatilities, tenor->getAssetIndex(0));
+        const double volatility = sqrt(
+            boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
 
-    const double period = tenor->operator[](1) - tenor->operator[](0);
-    const double price = period * calculateBlackFormula(
-        spots[tenor->getAssetIndex(0)], strike, volatility, 
-        tenor->operator[](0), discountFactors[tenor->getTimeIndex(1)]);
+        const double period = tenor->operator[](1) - tenor->operator[](0);
+        const double price = period * calculateBlackFormula(
+            spots[tenor->getAssetIndex(0)], strike, volatility, 
+            tenor->operator[](0), discountFactors[tenor->getTimeIndex(1)]);
 
-    std::cout << "tenor:" << tenor->operator[](0) << std::endl;
-    std::cout << "DF:" << discountFactors[tenor->getTimeIndex(1)] << std::endl;
-    std::cout << "spot:" << spots << std::endl;
-    std::cout << "vol:" << volatility << std::endl;
-    std::cout << "LIBOR analytic Price:" << price << std::endl;
+        std::cout << "tenor:" << tenor->operator[](0) << std::endl;
+        std::cout << "DF:" << discountFactors[tenor->getTimeIndex(1)] << std::endl;
+        std::cout << "spot:" << spots << std::endl;
+        std::cout << "vol:" << volatility << std::endl;
+        std::cout << "LIBOR analytic Price:" << price << std::endl;
+    }
 
     std::cout << std::endl;
 }

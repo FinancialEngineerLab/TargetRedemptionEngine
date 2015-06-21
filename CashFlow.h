@@ -1,32 +1,39 @@
 #pragma once
 
-#include "CashFlowInterface.h"
+#include "CashFlowCalculator.h"
 
+#include <boost/shared_ptr.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class CashFlow 
-    : public CashFlowInterface {
+class CashFlow : public CashFlowCalculator {
 public:
     /**************************************************************************
-     * Constructers and Destructers.
+     * Constructers and Destructer.
      **************************************************************************/
-    CashFlow(const std::size_t cashFlowDateIndex);
-    virtual ~CashFlow();
+    CashFlow(
+        const boost::shared_ptr<const CashFlowCalculator> calculator,
+        const std::size_t paymentDateIndex);
+    ~CashFlow();
 
     /**************************************************************************
      * inherited pure virtual functions.
      **************************************************************************/
     virtual double operator()(
         const boost::numeric::ublas::matrix<double>& path) const;
-    virtual std::size_t getCashFlowDateIndex() const;
+
+    /**************************************************************************
+     * member functions.
+     **************************************************************************/
+    std::size_t getPaymentDateIndex() const;
     
 private:
     /**************************************************************************
      * private variables.
      **************************************************************************/
-    //! timeIndex is a index at which cash flow occurs.
-    const std::size_t _cashFlowDateIndex;
+    const boost::shared_ptr<const CashFlowCalculator> _calculator;
+    //! paymentDateIndex is a index at which cash flow occurs.
+    const std::size_t _paymentDateIndex;
 };
 
 

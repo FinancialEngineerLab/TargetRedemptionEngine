@@ -1,6 +1,11 @@
 #include "BlackScholesDrift.h"
 
-BlackScholesDrift::BlackScholesDrift(const double interestRate, const double dividend) 
+/******************************************************************************
+ * Constructers and Destructers.
+ ******************************************************************************/
+BlackScholesDrift::BlackScholesDrift(
+    const double interestRate, 
+    const double dividend) 
     :
     _interestRate(interestRate),
     _dividend(dividend)
@@ -20,6 +25,9 @@ void BlackScholesDrift::operator()(
 }
 
 
+/******************************************************************************
+ * Constructers and Destructers.
+ ******************************************************************************/
 LogBlackScholesDrift::LogBlackScholesDrift(
     const double interestRate,
     const double dividend,
@@ -42,3 +50,4 @@ void LogBlackScholesDrift::operator()(
 {
     drift[0] = (_interestRate - _dividend - 0.5 * _volatility * _volatility);
 }
+

@@ -43,7 +43,8 @@ void LiborMarketModelDiffusion::operator()(
             boost::numeric::ublas::row(diffusions, dimensionIndex) = 
                 boost::numeric::ublas::zero_vector<double>(columnDimension);
         } else {
-            boost::numeric::ublas::row(diffusions, dimensionIndex) *=  states[dimensionIndex];
+            boost::numeric::ublas::row(diffusions, dimensionIndex) 
+                *=  states[dimensionIndex];
         }
     }
 

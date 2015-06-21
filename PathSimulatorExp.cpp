@@ -4,6 +4,9 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
+/******************************************************************************
+ * Constructers and Destructers.
+ ******************************************************************************/
 PathSimulatorExp::PathSimulatorExp(
     const boost::shared_ptr<const PathSimulatorBase>& innerSimulator)
     :

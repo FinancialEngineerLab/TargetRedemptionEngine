@@ -1,12 +1,11 @@
 #pragma once
 
-#include "CashFlow.h"
+#include "CashFlowCalculator.h"
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class CashFlowSwap 
-    : public CashFlowInterface {
+class CashFlowSwap : public CashFlowCalculator {
 public:
     CashFlowSwap(
         const std::vector<double>& observedTimes,
@@ -19,7 +18,6 @@ public:
         const boost::numeric::ublas::matrix<double>& path) const;
     
 private:
-    const CashFlow _cashFlow;
     const std::vector<double> _observedTimes;
     const std::vector<std::size_t> _tenorToTime;
     const std::vector<std::size_t> _tenorToAsset;
