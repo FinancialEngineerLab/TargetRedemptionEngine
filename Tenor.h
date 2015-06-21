@@ -13,8 +13,8 @@ public:
 
     double operator[](const std::size_t index) const;
     std::size_t size() const;
-    std::size_t getAssetIndex(const std::size_t index) const;
-    std::size_t getTimeIndex(const std::size_t index) const;
+    std::size_t translateTenorIndexToAssetIndex(const std::size_t tenorIndex) const;
+    std::size_t translateTenorIndexToTimeIndex(const std::size_t tenorIndex) const;
     
 private:
     const boost::shared_ptr<const Maturities> _maturities;

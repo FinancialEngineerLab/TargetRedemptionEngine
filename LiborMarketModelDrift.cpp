@@ -31,7 +31,8 @@ void LiborMarketModelDrift::operator()(
     const boost::numeric::ublas::vector<double>& states,
     boost::numeric::ublas::vector<double>& drifts) const
 {
-    boost::numeric::ublas::vector<double> summedRowVector(_dimension, 0.0);
+    using namespace boost::numeric;
+    ublas::vector<double> summedRowVector(_dimension, 0.0);
 
     const std::size_t startIndex = _maturities->findIndexIncludingTime(time);
     for (std::size_t dimensionIndex = 0; dimensionIndex < _dimension; 
@@ -41,10 +42,12 @@ void LiborMarketModelDrift::operator()(
             calculateSummationInDrift(
                 startIndex, dimensionIndex, states, summedRowVector);
 
-            const boost::numeric::ublas::vector<double>& rowVolatility =
-                boost::numeric::ublas::row(_volatilities, dimensionIndex);
+            //const boost::numeric::ublas::vector<double>& rowVolatility =
+                //boost::numeric::ublas::row(_volatilities, dimensionIndex);
+            const ublas::matrix_row< const ublas::matrix<double> > 
+                rowVolatility(_volatilities, dimensionIndex);
             drifts[dimensionIndex] = 
-                boost::numeric::ublas::inner_prod(rowVolatility, summedRowVector);
+                ublas::inner_prod(rowVolatility, summedRowVector);
         } else {
             drifts[dimensionIndex] = 0.0;
         }

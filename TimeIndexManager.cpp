@@ -17,7 +17,8 @@ TimeIndexManager::~TimeIndexManager()
 
 double TimeIndexManager::operator[](const std::size_t index) const
 {
-    assert(0 <= index < _observedTimes.size());
+    assert(0 <= index);
+    assert(index < _observedTimes.size());
     return _observedTimes[_timeIndice[index]];
 }
 
@@ -28,7 +29,8 @@ std::size_t TimeIndexManager::size() const
 
 std::size_t TimeIndexManager::getTimeIndex(const std::size_t index) const
 {
-    assert(0 <= index < size());
+    assert(0 <= index);
+    assert(index < size());
     return _timeIndice[index];
 }
 

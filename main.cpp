@@ -152,10 +152,10 @@ inline boost::numeric::ublas::vector<double> makeLiborMarketModelSpots(
     const std::size_t dimension)
 {
     boost::numeric::ublas::vector<double> spots(dimension, 0.0);
-    for (std::size_t dimensionIndex = 1; dimensionIndex <= dimension; 
+    for (std::size_t dimensionIndex = 0; dimensionIndex < dimension; 
         ++dimensionIndex) {
         //spots[dimensionIndex - 1] = dimensionIndex / 100.0 * 0.5;
-        spots[dimensionIndex - 1] = 0.051;
+        spots[dimensionIndex] = 0.051;
     }
 
     return spots;
@@ -467,7 +467,7 @@ void calculateEuropeanCapletLiborMarketModel()
     const boost::shared_ptr<const CashFlowCalculator> cashFlowCaplet(
         new CashFlowCaplet(strike, tenor));
     const boost::shared_ptr<const CashFlow> caplet(
-        new CashFlow(cashFlowCaplet, tenor->getTimeIndex(1)));
+        new CashFlow(cashFlowCaplet, tenor->translateTenorIndexToTimeIndex(1)));
     //discount factors
     const boost::numeric::ublas::vector<double> discountFactors =
         makeDiscountFactors(interestRate, observedTimes);
@@ -502,17 +502,17 @@ void calculateEuropeanCapletLiborMarketModel()
     {
         std::cout << std::endl;
         const boost::numeric::ublas::vector<double> rowVolatility =
-            boost::numeric::ublas::row(volatilities, tenor->getAssetIndex(0));
+            boost::numeric::ublas::row(volatilities, tenor->translateTenorIndexToAssetIndex(0));
         const double volatility = sqrt(
             boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
 
         const double period = tenor->operator[](1) - tenor->operator[](0);
         const double price = period * calculateBlackFormula(
-            spots[tenor->getAssetIndex(0)], strike, volatility, 
-            tenor->operator[](0), discountFactors[tenor->getTimeIndex(1)]);
+            spots[tenor->translateTenorIndexToAssetIndex(0)], strike, volatility, 
+            tenor->operator[](0), discountFactors[tenor->translateTenorIndexToTimeIndex(1)]);
 
         std::cout << "tenor:" << tenor->operator[](0) << std::endl;
-        std::cout << "DF:" << discountFactors[tenor->getTimeIndex(1)] << std::endl;
+        std::cout << "DF:" << discountFactors[tenor->translateTenorIndexToTimeIndex(1)] << std::endl;
         std::cout << "spot:" << spots << std::endl;
         std::cout << "vol:" << volatility << std::endl;
         std::cout << "LIBOR analytic Price:" << price << std::endl;

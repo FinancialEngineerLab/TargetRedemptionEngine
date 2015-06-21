@@ -19,8 +19,8 @@ CashFlowCaplet::~CashFlowCaplet()
 double CashFlowCaplet::operator()(
     const boost::numeric::ublas::matrix<double>& path) const
 {
-    const std::size_t maturityIndex = _tenor->getTimeIndex(0);
-    const std::size_t assetIndex = _tenor->getAssetIndex(0);
+    const std::size_t maturityIndex = _tenor->translateTenorIndexToTimeIndex(0);
+    const std::size_t assetIndex = _tenor->translateTenorIndexToAssetIndex(0);
     const double period = _tenor->operator[](1) - _tenor->operator[](0);
 
     const double cashFlow =  (path(assetIndex, maturityIndex) - _strike);

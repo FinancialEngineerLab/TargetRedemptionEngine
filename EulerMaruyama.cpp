@@ -20,7 +20,7 @@ void EulerMaruyama::simulateOneStep(
     const boost::shared_ptr<const StochasticDifferentialEquation>& model,
     const double time,
     const double timeStepSize,
-    std::vector<double>::iterator& random) const
+    std::vector<double>::iterator random) const
 {
     /**************************************************************************
      * Precomute variables.
@@ -49,7 +49,7 @@ void EulerMaruyama::simulateOneStep(
  ******************************************************************************/
 void EulerMaruyama::generateRandomsVectorFromIterator(
     boost::numeric::ublas::vector<double>& randoms,
-    std::vector<double>::iterator& random,
+    std::vector<double>::iterator random,
     const std::size_t dimension) const
 {
     for (std::size_t dimensionIndex = 0; dimensionIndex < dimension; 

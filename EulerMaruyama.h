@@ -19,7 +19,7 @@ public:
         const boost::shared_ptr<const StochasticDifferentialEquation>& model,
         const double time,
         const double timeStepSize,
-        std::vector<double>::iterator& random) const;
+        std::vector<double>::iterator random) const;
 
 private:
     /**************************************************************************
@@ -27,7 +27,7 @@ private:
      **************************************************************************/
     void generateRandomsVectorFromIterator(
         boost::numeric::ublas::vector<double>& randoms,
-        std::vector<double>::iterator& random,
+        std::vector<double>::iterator random,
         const std::size_t dimension) const;
             
 };

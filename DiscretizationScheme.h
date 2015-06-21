@@ -20,7 +20,7 @@ public:
         const boost::shared_ptr<const StochasticDifferentialEquation>& model,
         const double time,
         const double timeStepSize,
-        std::vector<double>::iterator& random) const = 0;
+        std::vector<double>::iterator random) const = 0;
 
 private:
 

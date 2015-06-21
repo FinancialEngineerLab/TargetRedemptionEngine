@@ -26,13 +26,17 @@ std::size_t Tenor::size() const
     return _tenorToMaturityIndice.size();
 }
 
-std::size_t Tenor::getAssetIndex(const std::size_t index) const
+std::size_t Tenor::translateTenorIndexToAssetIndex(
+    const std::size_t tenorIndex) const
 {    
-    return _maturities->getAssetIndex(_tenorToMaturityIndice[index]);
+    return _maturities->translateMaturityIndexToAssetIndex(
+        _tenorToMaturityIndice[tenorIndex]);
 }
 
-std::size_t Tenor::getTimeIndex(const std::size_t index) const
+std::size_t Tenor::translateTenorIndexToTimeIndex(
+        const std::size_t tenorIndex) const
 {    
-    return _maturities->getTimeIndex(_tenorToMaturityIndice[index]);
+    return _maturities->translateMaturityIndexToTimeIndex(
+            _tenorToMaturityIndice[tenorIndex]);
 }
 

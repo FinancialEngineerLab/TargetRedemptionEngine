@@ -26,15 +26,17 @@ std::size_t Maturities::size() const
     return _maturities->size();
 }
 
-std::size_t Maturities::getAssetIndex(const std::size_t index) const
+std::size_t Maturities::translateMaturityIndexToAssetIndex(
+    const std::size_t maturityIndex) const
 {    
-    return index;
+    return maturityIndex;
 }
 
 //!To get the index in observedTimes
-std::size_t Maturities::getTimeIndex(const std::size_t index) const
+std::size_t Maturities::translateMaturityIndexToTimeIndex(
+    const std::size_t maturityIndex) const
 {    
-    return _maturities->getTimeIndex(index);
+    return _maturities->getTimeIndex(maturityIndex);
 }
 
 std::size_t Maturities::findIndexIncludingTime(const double time) const
