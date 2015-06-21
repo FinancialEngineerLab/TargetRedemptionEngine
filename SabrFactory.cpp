@@ -5,7 +5,7 @@
 #include <boost/make_shared.hpp>
 
 /******************************************************************************
- * Constructers and Destructers
+ * Constructers and Destructer.
  ******************************************************************************/
 SabrFactory::SabrFactory(const double beta, const double volatility, 
     const boost::numeric::ublas::matrix<double>& correlation)
@@ -23,7 +23,7 @@ SabrFactory::~SabrFactory()
 }
 
 /******************************************************************************
- * inherited pure virtual functions
+ * inherited pure virtual functions.
  ******************************************************************************/
 boost::shared_ptr<Drift> SabrFactory::makeDrift() const
 {

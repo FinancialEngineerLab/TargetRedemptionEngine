@@ -5,11 +5,10 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 
-class LiborMarketModelDrift 
-    : public Drift {
+class LiborMarketModelDrift : public Drift {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
     LiborMarketModelDrift(
         const boost::numeric::ublas::matrix<double>& volatilities,

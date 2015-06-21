@@ -1,7 +1,7 @@
 #include "ExpectationControlVariate.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 ExpectationControlVariate::ExpectationControlVariate(
     const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator,
@@ -30,8 +30,7 @@ void ExpectationControlVariate::addSample(
     add(_presentValueCalculator->operator()(path) + sumOfControlValue);
 }
 
-double ExpectationControlVariate::doExpectation(
-    const std::size_t numberOfSamples)
+double ExpectationControlVariate::doExpectation()
 {
     return getMean();
 }

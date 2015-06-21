@@ -13,7 +13,7 @@ public:
      **************************************************************************/
     CashFlowSwaption(
         const boost::shared_ptr<const CashFlowSwap>& swap);
-    ~CashFlowSwaption();
+    virtual ~CashFlowSwaption();
 
     /**************************************************************************
      * inherited pure virtual functions.

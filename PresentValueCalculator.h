@@ -9,14 +9,14 @@
 class PresentValueCalculator {
 public:
     /**************************************************************************
-     * Constructers and Destructers.
+     * Constructers and Destructer.
      **************************************************************************/
     PresentValueCalculator(
         const boost::shared_ptr<const CashFlow>& cashFlow,
         const boost::numeric::ublas::vector<double>& discountFactors);
-    virtual ~PresentValueCalculator();
+    ~PresentValueCalculator();
 
-    virtual double operator()(
+    double operator()(
         const boost::numeric::ublas::matrix<double>& path) const;
 
 private:

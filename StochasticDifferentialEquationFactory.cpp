@@ -3,7 +3,7 @@
 #include <boost/make_shared.hpp>
 
 /******************************************************************************
- * Constructers and Destructers
+ * Constructers and Destructer.
  ******************************************************************************/
 StochasticDifferentialEquationFactory::StochasticDifferentialEquationFactory() {
 }

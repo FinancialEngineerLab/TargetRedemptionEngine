@@ -1,7 +1,7 @@
 #include "StochasticDifferentialEquation.h"
 
 /******************************************************************************
- * Constructers and Destructers
+ * Constructers and Destructer.
  ******************************************************************************/
 StochasticDifferentialEquation::StochasticDifferentialEquation(
     const boost::shared_ptr<Drift>& drift, 

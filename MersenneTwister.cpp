@@ -1,7 +1,7 @@
 #include "MersenneTwister.h"
 
 /******************************************************************************
- * Constructers and Destructers
+ * Constructers and Destructer.
  ******************************************************************************/
 MersenneTwister::MersenneTwister(
     const std::size_t dimension, 

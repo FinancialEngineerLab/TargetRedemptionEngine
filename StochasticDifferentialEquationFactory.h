@@ -8,7 +8,7 @@
 class StochasticDifferentialEquationFactory {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
     StochasticDifferentialEquationFactory();
     virtual ~StochasticDifferentialEquationFactory();

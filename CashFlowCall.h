@@ -8,12 +8,12 @@
 class CashFlowCall : public CashFlowCalculator {
 public:
     /**************************************************************************
-     * Constructers and Destructers.
+     * Constructers and Destructer.
      **************************************************************************/
     CashFlowCall(const double strike,
         const std::size_t assetIndex,
         const std::size_t maturityIndex);
-    ~CashFlowCall();
+    virtual ~CashFlowCall();
 
     virtual double operator()(
         const boost::numeric::ublas::matrix<double>& path) const;

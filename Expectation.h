@@ -3,8 +3,7 @@
 #include "PresentValueCalculator.h"
 #include "ExpectationBase.h"
 
-class Expectation 
-    : public ExpectationBase {
+class Expectation : public ExpectationBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.
@@ -15,7 +14,7 @@ public:
     virtual ~Expectation();
 
     virtual void addSample(const boost::numeric::ublas::matrix<double>& path);
-    virtual double doExpectation(const std::size_t numberOfSamples);
+    virtual double doExpectation();
         
 private:
     const boost::shared_ptr<const PresentValueCalculator> 

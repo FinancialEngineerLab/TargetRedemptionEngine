@@ -4,6 +4,19 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
+void expPath(
+    boost::numeric::ublas::matrix<double>& path)
+{
+    for (std::size_t columnIndex = 0; columnIndex < path.size2(); 
+        ++columnIndex) {
+        for (std::size_t rowIndex = 0; rowIndex < path.size1(); 
+            ++rowIndex) {
+            path(rowIndex, columnIndex) = exp(path(rowIndex, columnIndex));
+        }
+    }
+}
+
+
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
@@ -29,17 +42,5 @@ void PathSimulatorExp::simulateOnePath(
     PathSimulatorDecorator::simulateOnePath(
         processes, path, observedTimes);
     expPath(path);
-}
-
-void PathSimulatorExp::expPath(
-    boost::numeric::ublas::matrix<double>& path) const
-{
-    for (std::size_t columnIndex = 0; columnIndex < path.size2(); 
-        ++columnIndex) {
-        for (std::size_t rowIndex = 0; rowIndex < path.size1(); 
-            ++rowIndex) {
-            path(rowIndex, columnIndex) = exp(path(rowIndex, columnIndex));
-        }
-    }
 }
 

@@ -14,12 +14,12 @@ public:
     ExpectationBase();
     virtual ~ExpectationBase();
 
-
     /**************************************************************************
      * pure virtual functions.
      **************************************************************************/
-    virtual void addSample(const boost::numeric::ublas::matrix<double>& path) =0;
-    virtual double doExpectation(const std::size_t numberOfSamples) = 0;
+    virtual void addSample(
+        const boost::numeric::ublas::matrix<double>& path) = 0;
+    virtual double doExpectation() = 0;
 
     inline void add(const double sample);
     inline void clear();

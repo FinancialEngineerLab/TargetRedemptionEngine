@@ -9,7 +9,7 @@ class SabrFactory :
     public StochasticDifferentialEquationFactory {
 public:
     /**************************************************************************
-     * Constructers and Destructers.
+     * Constructers and Destructer.
      **************************************************************************/
     SabrFactory(const double beta, const double volatility,
         const boost::numeric::ublas::matrix<double>& correlation);

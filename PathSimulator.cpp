@@ -5,7 +5,7 @@
 #include <boost/numeric/ublas/io.hpp>
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 PathSimulator::PathSimulator(
     const boost::shared_ptr<const StochasticDifferentialEquation>& model,

@@ -1,7 +1,7 @@
 #include "SabrDrift.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 SabrDrift::SabrDrift() 
 {

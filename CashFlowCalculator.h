@@ -5,10 +5,10 @@
 class CashFlowCalculator {
 public:
     /**************************************************************************
-     * Constructers and Destructers.
+     * Constructers and Destructer.
      **************************************************************************/
     CashFlowCalculator();
-    ~CashFlowCalculator();
+    virtual ~CashFlowCalculator();
 
     /**************************************************************************
      * inherited pure virtual functions.

@@ -4,11 +4,10 @@
 
 #include <boost/random.hpp>
 
-class MersenneTwister 
-    : public RandomGeneratorBase {
+class MersenneTwister : public RandomGeneratorBase {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
     MersenneTwister(const std::size_t dimension, const std::size_t seed);
     virtual ~MersenneTwister();

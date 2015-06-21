@@ -3,11 +3,10 @@
 #include "Diffusion.h"
 #include "Maturities.h"
 
-class LiborMarketModelDiffusion 
-    : public Diffusion {
+class LiborMarketModelDiffusion : public Diffusion {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer
      **************************************************************************/
     LiborMarketModelDiffusion(
         const boost::numeric::ublas::matrix<double>& volatilities,

@@ -1,7 +1,7 @@
 #include "PathSimulatorDecorator.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 PathSimulatorDecorator::PathSimulatorDecorator(
     const boost::shared_ptr<const PathSimulatorBase>& innerSimulator)

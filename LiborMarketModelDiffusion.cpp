@@ -6,7 +6,7 @@
 #include <boost/shared_ptr.hpp>
 
 /******************************************************************************
- * Constructers and Destructers
+ * Constructers and Destructer
  ******************************************************************************/
 LiborMarketModelDiffusion::LiborMarketModelDiffusion(
     const boost::numeric::ublas::matrix<double>& volatilities,

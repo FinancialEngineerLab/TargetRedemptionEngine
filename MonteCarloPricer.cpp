@@ -6,7 +6,7 @@
 #include <boost/numeric/ublas/io.hpp>
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 MonteCarloPricer::MonteCarloPricer(
     const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
@@ -49,7 +49,7 @@ double MonteCarloPricer::simulatePrice(
         //add sample and calculate present value.
         _expectation->addSample(path);
     }
-    const double price =_expectation->doExpectation(numberOfSimulations);
+    const double price =_expectation->doExpectation();
     const double variance = _expectation->getVariance();
     std::cout << "variacne:" << variance << std::endl;
 

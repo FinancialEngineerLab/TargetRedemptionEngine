@@ -14,7 +14,7 @@ public:
     CashFlowAsian(
         const std::size_t spotIndex,
         const std::vector<std::size_t>& timeIndice);
-    ~CashFlowAsian();
+    virtual ~CashFlowAsian();
 
     /**************************************************************************
      * inherited pure virtual functions.

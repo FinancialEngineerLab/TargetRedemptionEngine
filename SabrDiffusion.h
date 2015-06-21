@@ -2,11 +2,10 @@
 
 #include "Diffusion.h"
 
-class SabrDiffusion 
-    : public Diffusion {
+class SabrDiffusion : public Diffusion {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
     SabrDiffusion(const double beta, const double volatility,
         const boost::numeric::ublas::matrix<double>& correlation);

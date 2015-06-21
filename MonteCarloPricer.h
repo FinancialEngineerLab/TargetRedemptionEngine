@@ -9,14 +9,14 @@
 class MonteCarloPricer {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
     MonteCarloPricer(
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
         const boost::shared_ptr<const PresentValueCalculator>& 
             presentValueCalculator,
         const boost::shared_ptr<ExpectationBase>& expectation);
-    virtual ~MonteCarloPricer();
+    ~MonteCarloPricer();
 
     /**************************************************************************
      * member functions.

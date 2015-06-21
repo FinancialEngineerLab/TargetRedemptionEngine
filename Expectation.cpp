@@ -19,7 +19,7 @@ void Expectation::addSample(const boost::numeric::ublas::matrix<double>& path)
     add(_presentValueCalculator->operator()(path));
 }
 
-double Expectation::doExpectation(const std::size_t numberOfSamples)
+double Expectation::doExpectation()
 {
     return getMean();
 }

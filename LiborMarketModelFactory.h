@@ -5,11 +5,10 @@
 
 #include <boost/shared_ptr.hpp>
 
-class LiborMarketModelFactory :
-    public StochasticDifferentialEquationFactory {
+class LiborMarketModelFactory : public StochasticDifferentialEquationFactory {
 public:
     /**************************************************************************
-     * Constructers and Destructers.
+     * Constructers and Destructer.
      **************************************************************************/
     LiborMarketModelFactory(
         const boost::numeric::ublas::matrix<double>& volatilities,

@@ -4,8 +4,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-class PathSimulatorDecorator
-    : public PathSimulatorBase {
+class PathSimulatorDecorator : public PathSimulatorBase {
 public:
     PathSimulatorDecorator(
         const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);

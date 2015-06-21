@@ -14,7 +14,7 @@ public:
     CashFlowCaplet(
         const double strike,
         const boost::shared_ptr<const Tenor>& tenor);
-    ~CashFlowCaplet();
+    virtual ~CashFlowCaplet();
     
     /**************************************************************************
      * inherited pure virtual functions.

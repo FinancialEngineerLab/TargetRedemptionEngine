@@ -1,7 +1,7 @@
 #include "PresentValueCalculator.h"
 
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 PresentValueCalculator::PresentValueCalculator(
     const boost::shared_ptr<const CashFlow>& cashFlow,

@@ -8,8 +8,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/shared_ptr.hpp>
 
-class PathSimulator 
-    : public PathSimulatorBase {
+class PathSimulator : public PathSimulatorBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.

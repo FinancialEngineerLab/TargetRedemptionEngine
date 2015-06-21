@@ -4,8 +4,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-class PathSimulatorExp 
-    : public PathSimulatorDecorator {
+class PathSimulatorExp : public PathSimulatorDecorator {
 public:
     PathSimulatorExp(
         const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);
@@ -20,9 +19,5 @@ public:
         const std::vector<double>& observedTimes) const;
 
 private:
-    /******************************************************************************
-     * private variables.
-     ******************************************************************************/
-    void expPath(boost::numeric::ublas::matrix<double>& path) const;
 };
 

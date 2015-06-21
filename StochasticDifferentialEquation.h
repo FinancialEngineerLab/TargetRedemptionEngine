@@ -10,7 +10,7 @@
 class StochasticDifferentialEquation {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
     StochasticDifferentialEquation(
             const boost::shared_ptr<Drift>& drift, 

@@ -6,7 +6,7 @@ class SabrDrift
     : public Drift {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
     SabrDrift();
     virtual ~SabrDrift();

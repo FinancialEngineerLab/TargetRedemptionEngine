@@ -9,11 +9,10 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
 
-class ExpectationControlVariate
-    : public ExpectationBase {
+class ExpectationControlVariate : public ExpectationBase {
 public:
     /**************************************************************************
-     * Constructers and Destructers.
+     * Constructers and Destructer.
      **************************************************************************/
     ExpectationControlVariate(
         const boost::shared_ptr<const PresentValueCalculator>& 
@@ -23,7 +22,7 @@ public:
     virtual ~ExpectationControlVariate();
 
     virtual void addSample(const boost::numeric::ublas::matrix<double>& path);
-    virtual double doExpectation(const std::size_t numberOfSamples);
+    virtual double doExpectation();
         
 private:
     const boost::shared_ptr<const PresentValueCalculator> 

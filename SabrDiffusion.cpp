@@ -1,7 +1,7 @@
 #include "SabrDiffusion.h"
 
 /******************************************************************************
- * Constructers and Destructers
+ * Constructers and Destructer.
  ******************************************************************************/
 SabrDiffusion::SabrDiffusion(
     const double beta, const double volatility, 

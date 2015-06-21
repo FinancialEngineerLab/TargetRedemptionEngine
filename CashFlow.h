@@ -14,7 +14,7 @@ public:
     CashFlow(
         const boost::shared_ptr<const CashFlowCalculator> calculator,
         const std::size_t paymentDateIndex);
-    ~CashFlow();
+    virtual ~CashFlow();
 
     /**************************************************************************
      * inherited pure virtual functions.
