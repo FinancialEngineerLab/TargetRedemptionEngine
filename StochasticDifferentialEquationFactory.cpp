@@ -25,6 +25,6 @@ boost::shared_ptr<const StochasticDifferentialEquation>
         this->makeDimensionOfBrownianMotion();
     
     return boost::make_shared<StochasticDifferentialEquation>(
-            drift, diffusion, dimension, dimensionOfBrownianMotion);
+        drift, diffusion, dimension, dimensionOfBrownianMotion);
 }
 

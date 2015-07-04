@@ -1,12 +1,13 @@
 #pragma once
 
 #include "CashFlow.h"
+#include "SampleCalculator.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class PresentValueCalculator {
+class PresentValueCalculator : public SmapleCalculator {
 public:
     /**************************************************************************
      * Constructers and Destructer.
@@ -16,7 +17,10 @@ public:
         const boost::numeric::ublas::vector<double>& discountFactors);
     ~PresentValueCalculator();
 
-    double operator()(
+    /**************************************************************************
+     * inherited pure virtual functions.
+     **************************************************************************/
+    virtual double operator()(
         const boost::numeric::ublas::matrix<double>& path) const;
 
 private:

@@ -4,10 +4,10 @@
  * Constructers and Destructers.
  ******************************************************************************/
 Expectation::Expectation(
-    const boost::shared_ptr<const PresentValueCalculator>& 
-        presentValueCalculator)
+    const boost::shared_ptr<const SampleCalculator>& 
+        sampleCalculator)
     :
-    _presentValueCalculator(presentValueCalculator)
+    _sampleCalculator(sampleCalculator)
 {
 }
 Expectation::~Expectation() 
@@ -16,7 +16,7 @@ Expectation::~Expectation()
 
 void Expectation::addSample(const boost::numeric::ublas::matrix<double>& path)
 {
-    add(_presentValueCalculator->operator()(path));
+    add(_sampleCalculator>operator()(path));
 }
 
 double Expectation::doExpectation()

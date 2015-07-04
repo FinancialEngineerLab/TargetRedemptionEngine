@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PresentValueCalculator.h"
+#include "SampleCalculator.h"
 #include "ExpectationBase.h"
 
 class Expectation : public ExpectationBase {
@@ -9,16 +9,15 @@ public:
      * Constructers and Destructers.
      **************************************************************************/
     Expectation(
-        const boost::shared_ptr<const PresentValueCalculator>& 
-        presentValueCalculator);
+        const boost::shared_ptr<const SampleCalculator>& 
+        sampleCalculator);
     virtual ~Expectation();
 
     virtual void addSample(const boost::numeric::ublas::matrix<double>& path);
     virtual double doExpectation();
         
 private:
-    const boost::shared_ptr<const PresentValueCalculator> 
-        _presentValueCalculator;
+    const boost::shared_ptr<const SampleCalculator> _sampleCalculator;
             
 };
 
