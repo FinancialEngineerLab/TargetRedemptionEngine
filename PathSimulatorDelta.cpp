@@ -1,47 +1,33 @@
-#include "PathSimulatorExp.h"
+#include "PathSimulatorDelta.h"
 
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
-void expPath(
-    boost::numeric::ublas::matrix<double>& path)
-{
-    for (std::size_t columnIndex = 0; columnIndex < path.size2(); 
-        ++columnIndex) {
-        for (std::size_t rowIndex = 0; rowIndex < path.size1(); 
-            ++rowIndex) {
-            path(rowIndex, columnIndex) = exp(path(rowIndex, columnIndex));
-        }
-    }
-}
-
-
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
-PathSimulatorExp::PathSimulatorExp(
+PathSimulatorDelta::PathSimulatorDelta(
     const boost::shared_ptr<const PathSimulatorBase>& innerSimulator)
     :
     PathSimulatorDecorator(innerSimulator)
 {
 }
 
-PathSimulatorExp::~PathSimulatorExp() 
+PathSimulatorDelta::~PathSimulatorDelta() 
 {
 }
 
 /******************************************************************************
  * inherited virtual functions.
  ******************************************************************************/
-void PathSimulatorExp::simulateOnePath(
+void PathSimulatorDelta::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
     boost::numeric::ublas::matrix<double>& path,
     const std::vector<double>& observedTimes,
     std::vector<double>& randoms) const
 {
-    PathSimulatorDecorator::simulateOnePath(
+    _innserSimulator->simulateOnePath(
         processes, path, observedTimes, randoms);
-    expPath(path);
 }
 

@@ -16,7 +16,8 @@ public:
     virtual void simulateOnePath(
         boost::numeric::ublas::vector<double>& processes,
         boost::numeric::ublas::matrix<double>& path,
-        const std::vector<double>& observedTimes) const;
+        const std::vector<double>& observedTimes,
+        std::vector<double>& randoms) const;
 
     /**************************************************************************
      * member functions.

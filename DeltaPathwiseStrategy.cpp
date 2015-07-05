@@ -23,9 +23,21 @@ double DeltaPathwiseStrategy::calculate(
         path(processess.size(), observedTimes.size(), 0.0);
     initializePath(path, spots);
 
+    std::vector<double> randoms(_randomGenerator->getDimension());
+
     for (std::size_t simulationIndex = 0; simulationIndex < _numberOfSimulation;
         simulationIndex++) {
-        _pathSimulator->simulateOnePath(processess, path, observedTimes);
+        //generate randoms
+        _randomGenerator->generateNormalRandoms(randoms);
+           
+        //simulate one path
+        _pathSimulator->simulateOnePath(processess, path, observedTimes, randoms);
+
+        for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); ++timeIndex) {
+            //generate operator
+            _generator->generate(path, pathwiseOperator, timeIndex, randoms);
+            stepDelta= pathwiseOperator * stepDelta;
+        }
 
         expectation->addSample(path);
     }

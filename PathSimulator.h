@@ -16,8 +16,7 @@ public:
     PathSimulator(
         const boost::shared_ptr<const StochasticDifferentialEquation>& model,
         const boost::shared_ptr<const DiscretizationScheme>& 
-            discretizationScheme,
-        const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
+            discretizationScheme);
     virtual ~PathSimulator();
 
     /**************************************************************************
@@ -26,7 +25,8 @@ public:
     virtual void simulateOnePath(
         boost::numeric::ublas::vector<double>& processes,
         boost::numeric::ublas::matrix<double>& path,
-        const std::vector<double>& observedTimes) const;
+        const std::vector<double>& observedTimes,
+        std::vector<double>& randoms) const;
     virtual boost::numeric::ublas::vector<double> makeProcesses() const;
 
 private:
@@ -35,7 +35,6 @@ private:
      **************************************************************************/
     const boost::shared_ptr<const StochasticDifferentialEquation>& _model;
     const boost::shared_ptr<const DiscretizationScheme>& _discretizationScheme;
-    const boost::shared_ptr<RandomGeneratorBase>& _randomGenerator;
             
 };
 

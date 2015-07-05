@@ -15,7 +15,8 @@ public:
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
         const boost::shared_ptr<const PresentValueCalculator>& 
             presentValueCalculator,
-        const boost::shared_ptr<ExpectationBase>& expectation);
+        const boost::shared_ptr<ExpectationBase>& expectation,
+        const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
     ~MonteCarloPricer();
 
     /**************************************************************************
@@ -34,6 +35,7 @@ private:
     const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
     const boost::shared_ptr<const PresentValueCalculator> _presentValueCalculator;
     const boost::shared_ptr<ExpectationBase> _expectation;
+    const boost::shared_ptr<RandomGeneratorBase> _randomGenerator;
 
     /**************************************************************************
      * private functions.

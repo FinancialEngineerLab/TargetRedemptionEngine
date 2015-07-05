@@ -13,4 +13,6 @@ public:
     
 private:
     const boost::shared_ptr<const StochasticDifferentialEquationWithDifferential> 
+        _stochasticDifferentiaEquationWithDifferential;
 };
+

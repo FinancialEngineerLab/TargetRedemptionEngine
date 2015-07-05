@@ -9,12 +9,10 @@
  ******************************************************************************/
 PathSimulator::PathSimulator(
     const boost::shared_ptr<const StochasticDifferentialEquation>& model,
-    const boost::shared_ptr<const DiscretizationScheme>& discretizationScheme,
-    const boost::shared_ptr<RandomGeneratorBase>& randomGenerator)
+    const boost::shared_ptr<const DiscretizationScheme>& discretizationScheme)
     :
     _model(model),
-    _discretizationScheme(discretizationScheme),
-    _randomGenerator(randomGenerator)
+    _discretizationScheme(discretizationScheme)
 {
 }
 
@@ -29,21 +27,19 @@ PathSimulator::~PathSimulator()
 void PathSimulator::simulateOnePath(
     boost::numeric::ublas::vector<double>& processes,
     boost::numeric::ublas::matrix<double>& path,
-    const std::vector<double>& observedTimes) const
+    const std::vector<double>& observedTimes,
+    std::vector<double>& randoms) const
 {
-    //generate randoms
-    std::vector<double> randoms(_randomGenerator->getDimension());
-    _randomGenerator->generateNormalRandoms(randoms);
     std::vector<double>::iterator random = randoms.begin();
 
-    for (std::size_t timeIndex = 1; timeIndex < observedTimes.size(); 
+    for (std::size_t timeIndex = 0; timeIndex < observedTimes.size() - 1; 
         ++timeIndex) {
         const double timeStepSize = 
-            observedTimes[timeIndex] - observedTimes[timeIndex - 1];
+            observedTimes[timeIndex] - observedTimes[timeIndex];
 
         _discretizationScheme->simulateOneStep(
             processes, _model, 
-            observedTimes[timeIndex - 1], timeStepSize, random);
+            observedTimes[timeIndex], timeStepSize, random);
         boost::numeric::ublas::column(path, timeIndex) = processes;
     }
 }

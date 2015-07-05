@@ -4,11 +4,11 @@
 
 #include <boost/shared_ptr.hpp>
 
-class PathSimulatorExp : public PathSimulatorDecorator {
+class PathSimulatorDelta : public PathSimulatorDecorator {
 public:
-    PathSimulatorExp(
+    PathSimulatorDelta(
         const boost::shared_ptr<const PathSimulatorBase>& innerSimulator);
-    virtual ~PathSimulatorExp();
+    virtual ~PathSimulatorDelta();
 
     /******************************************************************************
      * inherited virtual functions.

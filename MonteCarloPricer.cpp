@@ -11,11 +11,13 @@
 MonteCarloPricer::MonteCarloPricer(
     const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
     const boost::shared_ptr<const PresentValueCalculator>& presentValueCalculator,
-    const boost::shared_ptr<ExpectationBase>& expectation)
+    const boost::shared_ptr<ExpectationBase>& expectation,
+    const boost::shared_ptr<RandomGeneratorBase>& randomGenerator)
     :
     _pathSimulator(pathSimulator),
     _presentValueCalculator(presentValueCalculator),
-    _expectation(expectation)
+    _expectation(expectation),
+    _randomGenerator(randomGenerator)
 {
 }
 
@@ -37,14 +39,19 @@ double MonteCarloPricer::simulatePrice(
         path(processes.size(), observedTimes.size(), 0.0);
     initializePath(path, spots);
 
+    std::vector<double> randoms(_randomGenerator->getDimension());
+
     for (std::size_t simulationIndex = 0; simulationIndex < numberOfSimulations;
         ++simulationIndex) {
         //initial settings
         processes = spots;
         boost::numeric::ublas::column(path , 0) = spots;
 
+        //generate randoms
+        _randomGenerator->generateNormalRandoms(randoms);
+
         //simulate path
-        _pathSimulator->simulateOnePath(processes, path, observedTimes);
+        _pathSimulator->simulateOnePath(processes, path, observedTimes, randoms);
 
         //add sample and calculate present value.
         _expectation->addSample(path);

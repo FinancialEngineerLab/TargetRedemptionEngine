@@ -10,6 +10,7 @@ private:
     const boost::shared_ptr<const DeltaStrategy> _deltaStrategy;
         
 };
+
 DeltaCalculator::DeltaCalculator( 
     const boost::shared_ptr<const DeltaStrategy> deltaStrategy)
     :
