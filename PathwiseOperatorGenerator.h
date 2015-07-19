@@ -1,3 +1,4 @@
+#include <boost/numeric/ublas/vector.hpp>
 
 class PathwiseOperatorGenerator {
 public:
@@ -5,9 +6,11 @@ public:
     virtual ~PathwiseOperatorGenerator();
 
     virtual void generate(
-        const boost::numeric::ublas::matrix<double>& path,
+        const boost::numeric::ublas::vector<double>& state,
         boost::numeric::ublas::matrix<double>& pathwiseOperator,
-        const std::size_t timeIndex) const = 0;
+        const double time, 
+        const std::size_t timeStepSize,
+        std::vector<double>::iterator random) = 0;
 
 private:
 };

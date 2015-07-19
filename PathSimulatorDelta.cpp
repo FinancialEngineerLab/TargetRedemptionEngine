@@ -27,7 +27,7 @@ void PathSimulatorDelta::simulateOnePath(
     const std::vector<double>& observedTimes,
     std::vector<double>& randoms) const
 {
-    _innserSimulator->simulateOnePath(
+    PathSimulatorDecorator::simulateOnePath(
         processes, path, observedTimes, randoms);
 }
 

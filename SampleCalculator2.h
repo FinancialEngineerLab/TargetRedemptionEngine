@@ -2,17 +2,18 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 
-class SampleCalculator 
-{
+class SampleCalculator2{
 public:
-    SampleCalculator();
-    virtual ~SampleCalculator();
+    SampleCalculator2();
+    virtual ~SampleCalculator2();
 
     /**************************************************************************
      * pure virtual functions.
      **************************************************************************/
     virtual double operator()(
-        const boost::numeric::ublas::matrix<double>& path) const = 0;
+        const boost::numeric::ublas::matrix<double>& path,
+        const std::vector<double>& observedTimes,
+        const std::vector<double>& randoms) const = 0;
 private:
             
 };

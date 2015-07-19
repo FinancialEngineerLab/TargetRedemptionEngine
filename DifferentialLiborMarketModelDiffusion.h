@@ -1,16 +1,22 @@
-#include "DifferentiatedDiffusion.h"
+#pragma once
 
-class DifferentiatedLiborMarketModelDiffusion : public DifferentiatedDiffusion
+#include "DifferentialDiffusion.h"
+
+class DifferentialLiborMarketModelDiffusion : public DifferentialDiffusion
 {
 public:
-    DifferentiatedLiborMarketModelDiffusion();
-    virtual ~DifferentiatedLiborMarketModelDiffusion();
+    /**************************************************************************
+     * Constructers and Destructer.
+     **************************************************************************/
+    DifferentialLiborMarketModelDiffusion();
+    virtual ~DifferentialLiborMarketModelDiffusion();
 
     virtual void calculate(
-        const double t,
+        const double time,
         const boost::numeric::ublas::vector<double>& states,
-        boost::numeric::ublas::vector<double>& results) const;
+        boost::multi_array<double, 3>& results) const;
     
 private:
+    
             
 };

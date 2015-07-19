@@ -1,3 +1,11 @@
+#pragma once
+
+#include "StochasticDifferentialEquationFactory.h"
+#include "StochasticDifferentialEquationWithDifferential.h"
+#include "DifferentialDrift.h"
+#include "DifferentialDiffusion.h"
+
+#include <boost/shared_ptr.hpp>
 
 class StochasticDifferentialEquationWithDifferentialFactory :
     public StochasticDifferentialEquationFactory
@@ -6,19 +14,19 @@ public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    StochasticDifferentialEquationWithDifferentialFactory();
+    StochasticDifferentialEquationWithDifferentialFactory(
+        const boost::shared_ptr<const StochasticDifferentialEquationFactory>&
+            factory);
     virtual ~StochasticDifferentialEquationWithDifferentialFactory();
 
     /**************************************************************************
      * member functions
      **************************************************************************/
-    boost::shared_ptr<const StochasticDifferentialEquationWithDifferential> 
-        makeStochasticDifferentialEquationWithDifferential() const;
+    virtual boost::shared_ptr<
+        const StochasticDifferentialEquationWithDifferential> 
+            makeStochasticDifferentialEquationWithDifferential() const;
     
 private:
-    const boost::shared_ptr<const StochasticDifferentialEquationFactory>
-        _factory;
-
     virtual boost::shared_ptr<DifferentialDrift> 
         makeDifferentialDrift() const = 0;
     virtual boost::shared_ptr<DifferentialDiffusion> 

@@ -1,9 +1,9 @@
 #include "DifferentialDiffusion.h"
 
-DifferentiatedDiffusion::DifferentiatedDiffusion() 
+DifferentialDiffusion::DifferentialDiffusion() 
 {
     
 }
-DifferentiatedDiffusion::~DifferentiatedDiffusion() 
+DifferentialDiffusion::~DifferentialDiffusion() 
 {
 }

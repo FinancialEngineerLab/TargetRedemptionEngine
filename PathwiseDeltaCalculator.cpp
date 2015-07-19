@@ -1,24 +1,40 @@
 #include "PathwiseDeltaCalculator.h"
 
-PathwiseDeltaCalculator::PathwiseDeltaCalculator() 
+/******************************************************************************
+ * Constructers and Destructer.
+ ******************************************************************************/
+PathwiseDeltaCalculator::PathwiseDeltaCalculator(const std::size_t dimension)
+    :
+    _pathwiseOperator(dimension, dimension, 0.0)
 {
-    
 }
+
 PathwiseDeltaCalculator::~PathwiseDeltaCalculator() 
 {
 }
 
+
 double PathwiseDeltaCalculator::operator()(
-    const boost::numeric::ublas::matrix<double>& path)
+    const boost::numeric::ublas::matrix<double>& path,
+    const std::vector<double>& observedTimes,
+    const std::vector<double>& randoms) const
 {
-    boost::numeric::ublas::matrix<double> pathwiseOperator(0, 0);
-    boost::numeric::ublas::vector<double> stepDelta(0, 0.0);
+    boost::numeric::ublas::vector<double>& stepDelta;
+    std::vector<double>::iterator random = randoms.begin();
+    for (std::size_t timeIndex = 0; timeIndex < observedTimes.size() - 1; 
+        ++timeIndex) {
+        const double timeStepSize = observedTimes[timeIndex + 1]  - observedTimes[timeIndex];
+        const double time = observedTimes[timeIndex];
 
-    for (std::size_t timeIndex = 0; timeIndex < path.size2(); ++timeIndex) {
-        _generator->generate(path, pathwiseOperator, timeIndex);
+        //get the state at timeIndex
+        const boost::numeric::ublas::matrix_column< boost::numeric::ublas::matrix<double> > 
+            state(path, timeIndex);
 
-        stepDelta = pathwiseOperator * stepDelta;
+        //generate operator
+        _generator->generate(state, _pathwiseOperator, time, timeStepSize, random);
+        stepDelta = boost::numeric::ublas::prod(_pathwiseOperator, stepDelta);
     }
 
-    return boost::numeric::ublas::inner_prod(_payOffFunction->differentiate(), stepDelta);
+    return stepDelta;
 }
+

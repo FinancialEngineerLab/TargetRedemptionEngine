@@ -9,7 +9,7 @@
  ******************************************************************************/
 LiborMarketModelFactory::LiborMarketModelFactory(
     const boost::numeric::ublas::matrix<double>& volatilities,
-        const boost::shared_ptr<const Maturities>& maturities,
+    const boost::shared_ptr<const Maturities>& maturities,
     const boost::numeric::ublas::matrix<double>& correlation)
     :
     _volatilities(volatilities),

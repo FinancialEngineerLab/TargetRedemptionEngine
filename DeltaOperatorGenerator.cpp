@@ -1,4 +1,7 @@
 #include "DeltaOperatorGenerator.h"
+#include "utilities.h"
+
+#include <vector>
 
 DeltaOperatorGenerator::DeltaOperatorGenerator() 
 {
@@ -9,44 +12,69 @@ DeltaOperatorGenerator::~DeltaOperatorGenerator()
 }
 
 void DeltaOperatorGenerator::generate(
-    const boost::numeric::ublas::matrix<double>& path,
+    const boost::numeric::ublas::vector<double>& state,
     boost::numeric::ublas::matrix<double>& pathwiseOperator,
-    const std::size_t timeIndex,
-    std::vector<double>& randoms) const
+    const double time, 
+    const std::size_t timeStepSize,
+    std::vector<double>::iterator random) 
 {
-    boost::numeric::ublas::matrix<double> differentiaDrift(0, 0, 0.0);
-    sde->differentialDrift(time, state, diffirentialDrift);
-    boost::numeric::ublas::matrix<double> differentialDiffusion(0, 0, 0.0);
+    const std::size_t dimension = _model->getDimension();
+    const std::size_t dimensionOfBrownianMotion = 
+        _model->getDimensionOfBrownianMotion();
 
-    for (std::size_t rowIndex = 0; rowIndex < pathwiseOperator.size1(); ++rowIndex) {
-        sde->differentialDiffusion(time, state, rowIndex, diffirentialDiffusion);
-        for (std::size_t columnIndex = 0; columnIndex < pathwiseOperator.size2(); ++columnIndex) {
-            pathwiseOperator(rowIndex, columnIndex) = 
-                calculateOperatorElement(rowIndex, columnIndex, 
-                    differentialDrfit, differentialDiffusion, randoms);
+    //randoms
+    boost::numeric::ublas::vector<double> randoms(dimensionOfBrownianMotion);
+    generateRandomsVectorFromIterator(randoms, random, dimension);
+
+    //caculate differentials.
+    _model->calculateDifferentialDrift(time, state, _differentialDrift);
+    _model->calculateDifferentialDiffusion(time, state, _differentialDiffusion);
+
+    //add diffusion term
+    doTensorContraction(_differentialDiffusion, randoms, 
+        pathwiseOperator, sqrt(timeStepSize));
+
+    for (std::size_t rowIndex = 0; rowIndex < pathwiseOperator.size1(); 
+        ++rowIndex) {
+        for (std::size_t columnIndex = 0; columnIndex < pathwiseOperator.size2(); 
+            ++columnIndex) {
+            //add drfit term
+            pathwiseOperator(rowIndex, columnIndex) += 
+                _differentialDrift(rowIndex, columnIndex) * timeStepSize;
+
+            //add kronecker delta
+            pathwiseOperator(rowIndex, columnIndex) += 
+                calculateKronecker(rowIndex, columnIndex);
         }
     }
 }
 
-double DeltaOperatorGenerator::calculateOperatorElement(
-    const std::size_t rowIndex,
-    const std::size_t columnIndex,
-    const boost::numeric::ublas::matrix<double>& diffirentialDrift,
-    const boost::numeric::ublas::matrix<double>& differentialDiffusion,
-    std::vector<double>& randoms)
+/******************************************************************************
+ * private functions.
+ ******************************************************************************/
+void DeltaOperatorGenerator::doTensorContraction(
+    const boost::multi_array<double, 3>& differentialDiffusion,
+    const boost::numeric::ublas::vector<double>& randoms,
+    boost::numeric::ublas::matrix<double>& result,
+    const double deviation)
 {
-    double kronecker = (rowIndex == columnIndex ? 1.0 : 0.0);
+    typedef boost::multi_array<double, 3> tensor3;
 
-    double driftTerm = 0.0; 
-    driftTerm = differentialDrfit(rowIndex, columnIndex) * timeStepSize;
+    const boost::multi_array_types::size_type *shape = 
+        differentialDiffusion.shape();
+        
+    assert(shape[2] == randoms.size());
 
-    double diffusionTerm = 0.0;
-    for (std::size_t randomIndex = 0; randomIndex < _sde->getDimensionOfBrownianMotion();
-        ++randomIndex) {
-        diffusionTerm += differentialDiffusion(randomIndex, columnIndex) 
-            * randoms[randomIndex] * sqrt(timeStepSize);
-    }
-    return kronecker + driftTerm + diffusionTerm;
+    for (tensor3::index rowIndex = 0; rowIndex < shape[0]; ++rowIndex) {
+        for (tensor3::index columnIndex = 0; columnIndex < shape[1]; ++columnIndex) {
+            for (tensor3::index depthIndex = 0; depthIndex < shape[2]; ++depthIndex) {
+                result(rowIndex, columnIndex) += 
+                    differentialDiffusion[rowIndex][columnIndex][depthIndex] 
+                        * randoms[depthIndex] * deviation;
+            }   
+        }   
+    }   
+
 }
 
-    
+

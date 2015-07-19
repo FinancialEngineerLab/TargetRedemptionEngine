@@ -2,28 +2,27 @@
 
 #include "PathSimulatorBase.h"
 #include "PresentValueCalculator.h"
+#include "PathwiseOperatorGenerator.h"
 #include "ExpectationBase.h"
 #include "RandomGeneratorBase.h"
 
 #include <boost/shared_ptr.hpp>
 
-class MonteCarloPricer {
+class MonteCarloGreeks {
 public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    MonteCarloPricer(
+    MonteCarloGreeks(
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-        const boost::shared_ptr<const PresentValueCalculator>& 
-            presentValueCalculator,
         const boost::shared_ptr<ExpectationBase>& expectation,
         const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
-    ~MonteCarloPricer();
+    ~MonteCarloGreeks();
 
     /**************************************************************************
      * member functions.
      **************************************************************************/
-    double simulatePrice(
+    double simulate(
         const boost::numeric::ublas::vector<double>& spots,
         const std::size_t numberOfSimulations,
         const std::vector<double>& observedTimes,
@@ -34,8 +33,8 @@ private:
      * private variables.
      **************************************************************************/
     const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
-    const boost::shared_ptr<const PresentValueCalculator> _presentValueCalculator;
     const boost::shared_ptr<ExpectationBase> _expectation;
+    const boost::shared_ptr<PathwiseOperatorGenerator> _generator;
     const boost::shared_ptr<RandomGeneratorBase> _randomGenerator;
 
     /**************************************************************************

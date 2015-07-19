@@ -1,35 +1,32 @@
-#include "MonteCarloPricer.h"
+#include "MonteCarloGreeks.h"
 #include "utilities.h"
 
+#include <vector>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
-#include <boost/numeric/ublas/io.hpp>
 
 /******************************************************************************
  * Constructers and Destructer.
  ******************************************************************************/
-MonteCarloPricer::MonteCarloPricer(
+MonteCarloGreeks::MonteCarloGreeks(
     const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-    const boost::shared_ptr<const PresentValueCalculator>& 
-        presentValueCalculator,
     const boost::shared_ptr<ExpectationBase>& expectation,
     const boost::shared_ptr<RandomGeneratorBase>& randomGenerator)
     :
     _pathSimulator(pathSimulator),
-    _presentValueCalculator(presentValueCalculator),
     _expectation(expectation),
     _randomGenerator(randomGenerator)
 {
 }
 
-MonteCarloPricer::~MonteCarloPricer() 
+MonteCarloGreeks::~MonteCarloGreeks() 
 {
 }
 
 /******************************************************************************
  * member functions.
  ******************************************************************************/
-double MonteCarloPricer::simulatePrice(
+double MonteCarloGreeks::simulate(
     const boost::numeric::ublas::vector<double>& spots,
     const std::size_t numberOfSimulations,
     const std::vector<double>& observedTimes,
@@ -39,6 +36,8 @@ double MonteCarloPricer::simulatePrice(
     boost::numeric::ublas::matrix<double> 
         path(processes.size(), observedTimes.size(), 0.0);
     initializePath(path, spots);
+    boost::numeric::ublas::matrix<double> 
+        pathwiseOperator(spots.size(), spots.size(), 0.0);
 
     std::vector<double> randoms(_randomGenerator->getDimension());
 
@@ -54,18 +53,41 @@ double MonteCarloPricer::simulatePrice(
         //simulate path
         _pathSimulator->simulateOnePath(processes, path, observedTimes, randoms);
 
+        std::vector<double>::iterator random = randoms.begin();
+        boost::numeric::ublas::vector<double> stepDelta(spots.size(), 0.0);
+        for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); 
+            ++timeIndex) {
+            //get brownian motion
+            const double timeStepSize = 0.0;
+            const double time = observedTimes[timeIndex];
+
+            //get the state at timeIndex
+            const boost::numeric::ublas::matrix_column< boost::numeric::ublas::matrix<double> > 
+                state(path, timeIndex);
+
+            //generate operator
+            _generator->generate(state, pathwiseOperator, time, timeStepSize, random);
+            stepDelta = boost::numeric::ublas::prod(pathwiseOperator, stepDelta);
+        }
+
         //add sample and calculate present value.
-        _expectation->addSample(path, observedTimes, randoms);
+        _expectation->addSample(path);
     }
-    const double price =_expectation->doExpectation();
+    const double greeks =_expectation->doExpectation();
     const double variance = _expectation->getVariance();
     std::cout << "variacne:" << variance << std::endl;
 
-    return price;
+    return greeks;
 }
 
 
 /******************************************************************************
  * private functions.
  ******************************************************************************/
+inline void MonteCarloGreeks::initializePath(
+    boost::numeric::ublas::matrix<double>& path,
+    const boost::numeric::ublas::vector<double>& processes) const
+{
+    boost::numeric::ublas::column(path, 0) = processes;
+}
 

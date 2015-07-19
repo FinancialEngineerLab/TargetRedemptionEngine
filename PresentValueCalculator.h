@@ -7,7 +7,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class PresentValueCalculator : public SmapleCalculator {
+class PresentValueCalculator : public SampleCalculator {
 public:
     /**************************************************************************
      * Constructers and Destructer.

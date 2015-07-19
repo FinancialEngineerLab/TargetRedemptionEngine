@@ -1,8 +1,8 @@
 #include "DifferentialDrift.h"
 
-DifferentiatedDrift::DifferentiatedDrift() 
+DifferentialDrift::DifferentialDrift() 
 {
 }
-DifferentiatedDrift::~DifferentiatedDrift() 
+DifferentialDrift::~DifferentialDrift() 
 {
 }

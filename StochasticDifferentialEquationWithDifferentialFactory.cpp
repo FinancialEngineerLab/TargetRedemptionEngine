@@ -4,7 +4,11 @@
  * Constructers and Destructer.
  ******************************************************************************/
 StochasticDifferentialEquationWithDifferentialFactory::
-    StochasticDifferentialEquationWithDifferentialFactory() 
+    StochasticDifferentialEquationWithDifferentialFactory(
+        const boost::shared_ptr<const StochasticDifferentialEquationFactory>&
+            factory) 
+    :
+    _factory(factory)
 {
 }
 
@@ -29,4 +33,5 @@ boost::shared_ptr<const StochasticDifferentialEquationWithDifferential>
     return boost::make_shared<StochasticDifferentialEquation>(
         stochasticDifferentiaEquation, differentialDrfit, differentialDiffusion);
 }
+
 

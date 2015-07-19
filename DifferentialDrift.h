@@ -1,14 +1,18 @@
+#pragma once
 
-class DifferentiatedDrift 
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+
+class DifferentialDrift 
 {
 public:
-    DifferentiatedDrift();
-    virtual ~DifferentiatedDrift();
+    DifferentialDrift();
+    virtual ~DifferentialDrift();
 
     virtual void calculate(
-        const double t,
+        const double time,
         const boost::numeric::ublas::vector<double>& states,
-        boost::numeric::ublas::vector<double>& results) const = 0;
+        boost::numeric::ublas::matrix<double>& result) = 0;
     
 private:
         
