@@ -17,14 +17,17 @@ PresentValueCalculator::~PresentValueCalculator()
 }
 
 
-double PresentValueCalculator::operator()(
-    const boost::numeric::ublas::matrix<double>& path) const
+void PresentValueCalculator::operator()(
+    const boost::numeric::ublas::matrix<double>& path,
+    const std::vector<double>& observedTimes,
+    const std::vector<double>& randoms,
+    boost::numeric::ublas::vector<double>& result) const
 {
     const double cashFlow =  _cashFlow->operator()(path);
     const double discountFactor = 
         _discountFactors[_cashFlow->getPaymentDateIndex()];
     const double presentValue = cashFlow * discountFactor;
 
-    return presentValue;
+    result[0] = presentValue;
 }
 

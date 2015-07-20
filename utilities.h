@@ -5,6 +5,10 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
+inline std::size_t invertIndex(std::size_t index, std::size_t endIndex) {
+    return endIndex - 1 - index;
+}
+
 inline void initializePath(
     boost::numeric::ublas::matrix<double>& path,
     const boost::numeric::ublas::vector<double>& processes)

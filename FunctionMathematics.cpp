@@ -1,12 +1,13 @@
-#include "SampleCalculator2.h"
+#include "FunctionMathematics.h"
 
 /******************************************************************************
  * Constructers and Destructer.
  ******************************************************************************/
-SampleCalculator2::SampleCalculator2() 
-{
-    
-}
-SampleCalculator2::~SampleCalculator2() 
+FunctionMathematics::FunctionMathematics() 
 {
 }
+
+FunctionMathematics::~FunctionMathematics() 
+{
+}
+

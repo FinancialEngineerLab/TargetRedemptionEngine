@@ -1,32 +1,30 @@
-#include "Expectator.h"
+#include "Expectators.h"
 
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
-Expectator::Expectator(
-    const boost::shared_ptr<ExpectatorBase>& next,
+Expectators::Expectators(
+    const boost::shared_ptr<ExpectatorsBase>& next,
     const boost::shared_ptr<const SampleCalculator>& sampleCalculator)
     :
-    ExpectatorBase(next),
+    ExpectatorsBase(next),
     _sampleCalculator(sampleCalculator)
 {
 }
 
-Expectator::~Expectator() 
+Expectators::~Expectators() 
 {
 }
 
-void Expectator::addSample(
+void Expectators::addSample(
     const boost::numeric::ublas::matrix<double>& path,
     const std::vector<double>& observedTimes,
     const std::vector<double>& randoms)
 {
-    boost::numeric::ublas::vector<double> result(dimension);
-    _sampleCalculator->operator()(path, observedTimes, randoms, result)
-    add(result);
+    add(_sampleCalculator->operator()(path, observedTimes, randoms));
 }
 
-double Expectator::doExpectation()
+double Expectators::doExpectation()
 {
     return getMean();
 }

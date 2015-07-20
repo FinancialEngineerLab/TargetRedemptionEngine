@@ -1,12 +1,12 @@
 #pragma once
 
-#include "SampleCalculator2.h"
+#include "SampleCalculator.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class PathwiseDeltaCalculator : public SampleCalculator2 {
+class PathwiseDeltaCalculator : public SampleCalculator {
 public:
     /**************************************************************************
      * Constructers and Destructer.

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "DeltaStrategy.h"
 #include "SampleCalculator.h"
 #include "PathSimulator.h"

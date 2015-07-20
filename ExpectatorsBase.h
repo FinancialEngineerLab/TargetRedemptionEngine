@@ -7,15 +7,14 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
 
-
-class ExpectatorBase {
+class ExpectatorsBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    ExpectatorBase(
-        const boost::shared_ptr<ExpectatorBase>& next);
-    virtual ~ExpectatorBase();
+    ExpectatorsBase(
+        const boost::shared_ptr<ExpectatorsBase>& next);
+    virtual ~ExpectatorsBase();
 
     /**************************************************************************
      * pure virtual functions.
@@ -24,43 +23,45 @@ public:
         const boost::numeric::ublas::matrix<double>& path,
         const std::vector<double>& observedTimes,
         const std::vector<double>& randoms) = 0;
-    virtual double doExpectator() = 0;
+    virtual double doExpectators() = 0;
 
-    inline void add(const double sample);
+    inline void add(const boost::numeric::ublas::vector<double>& sample);
     inline void clear();
     inline double getMean();
     inline double getVariance();
         
 private:
-    const boost::shared_ptr<ExpectatorBase> _next;
-    boost::accumulators::accumulator_set<double, 
+    const boost::shared_ptr<ExpectatorsBase> _next;
+    boost::accumulators::accumulator_set<
+        boost::numeric::ublas::vector<double>, 
         boost::accumulators::stats<
             boost::accumulators::tag::mean, 
             boost::accumulators::tag::variance> > _accumulator;
-            
 };
 
 
-inline void ExpectatorBase::add(const double sample)
+inline void ExpectatorsBase::add(const boost::numeric::ublas::vector<double>& sample)
 {
     _accumulator(sample);
 }
 
-inline void ExpectatorBase::clear()
+inline void ExpectatorsBase::clear()
 {
     _accumulator = 
-        boost::accumulators::accumulator_set<double, 
+        boost::accumulators::accumulator_set<
+            boost::numeric::ublas::vector<double>, 
             boost::accumulators::stats<
                 boost::accumulators::tag::mean, 
                 boost::accumulators::tag::variance> >();
 }
 
-inline double ExpectatorBase::getMean()
+inline double ExpectatorsBase::getMean()
 {
     return boost::accumulators::mean(_accumulator);
 }
 
-inline double ExpectatorBase::getVariance()
+inline double ExpectatorsBase::getVariance()
 {
     return boost::accumulators::variance(_accumulator);
 }
+

@@ -21,7 +21,9 @@ public:
      * inherited pure virtual functions.
      **************************************************************************/
     virtual double operator()(
-        const boost::numeric::ublas::matrix<double>& path) const;
+        const boost::numeric::ublas::matrix<double>& path,
+        const std::vector<double>& observedTimes,
+        const std::vector<double>& randoms) const;
 
 private:
     const boost::shared_ptr<const CashFlow> _cashFlow;
