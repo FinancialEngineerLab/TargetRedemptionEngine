@@ -56,8 +56,8 @@ void cloewlowChapter4Test()
                 new PresentValueCalculator(europeanCall, discountFactors));
 
         //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new Expectation(presentValueCalculator));
+        const boost::shared_ptr<ExpectatorBase> expectation(
+            new Expectator(presentValueCalculator));
 
         //create a pricer.
         const MonteCarloPricer pricer(logBlackScholesPathSimulator, 
@@ -123,8 +123,8 @@ void cloewlowChapter4Test()
                 new PresentValueCalculator(europeanCall, discountFactors));
 
         //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new Expectation(presentValueCalculator));
+        const boost::shared_ptr<ExpectatorBase> expectation(
+            new Expectator(presentValueCalculator));
 
         //create a pricer.
         const MonteCarloPricer pricer(logBlackScholesPathSimulator, 
@@ -203,8 +203,8 @@ void cloewlowChapter4Test()
         controlVariates[0] = deltaControlVariate;
 
         //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new ExpectationControlVariate(presentValueCalculator, 
+        const boost::shared_ptr<ExpectatorBase> expectation(
+            new ExpectatorControlVariate(presentValueCalculator, 
                 controlVariates));
 
         //create a pricer.
@@ -286,8 +286,8 @@ void cloewlowChapter4Test()
         controlVariates[0] = deltaControlVariate;
 
         //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new ExpectationControlVariate(presentValueCalculator, 
+        const boost::shared_ptr<ExpectatorBase> expectation(
+            new ExpectatorControlVariate(presentValueCalculator, 
                 controlVariates));
 
         //create a pricer.
@@ -379,8 +379,8 @@ void cloewlowChapter4Test()
         controlVariates[1] = gammaControlVariate;
 
         //expectation
-        const boost::shared_ptr<ExpectationBase> expectation(
-            new ExpectationControlVariate(presentValueCalculator, 
+        const boost::shared_ptr<ExpectatorBase> expectation(
+            new ExpectatorControlVariate(presentValueCalculator, 
                 controlVariates));
 
         //create a pricer.

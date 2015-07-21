@@ -15,10 +15,10 @@ public:
     virtual void calculate(
         const double time,
         const boost::numeric::ublas::vector<double>& states,
-        boost::numeric::ublas::matrix<double>& result);
+        boost::numeric::ublas::matrix<double>& result) const;
     
 private:
-    boost::numeric::ublas::matrix<double> _volatilities;
+    const boost::numeric::ublas::matrix<double> _volatilities;
     const boost::shared_ptr<const Maturities> _maturities;
     const std::size_t _dimension;
 
@@ -30,7 +30,7 @@ private:
         const double time,
         const boost::numeric::ublas::vector<double>& states,
         boost::numeric::ublas::matrix<double>& result,
-        const std::size_t rowIndex1);
+        const std::size_t rowIndex1) const;
     
 };
 

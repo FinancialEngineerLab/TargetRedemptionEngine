@@ -1,3 +1,5 @@
+#pragma once
+
 #include <boost/numeric/ublas/vector.hpp>
 
 class PathwiseOperatorGenerator {
@@ -10,7 +12,7 @@ public:
         boost::numeric::ublas::matrix<double>& pathwiseOperator,
         const double time, 
         const std::size_t timeStepSize,
-        std::vector<double>::iterator random) = 0;
+        std::vector<double>::const_iterator& random) = 0;
 
 private:
 };

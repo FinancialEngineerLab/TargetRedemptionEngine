@@ -4,11 +4,11 @@
  * Constructers and Destructers.
  ******************************************************************************/
 Expectator::Expectator(
-    const boost::shared_ptr<ExpectatorBase>& next,
     const boost::shared_ptr<const SampleCalculator>& sampleCalculator)
     :
-    ExpectatorBase(next),
-    _sampleCalculator(sampleCalculator)
+    ExpectatorBase(),
+    _sampleCalculator(sampleCalculator),
+    _cache(1)
 {
 }
 
@@ -21,13 +21,13 @@ void Expectator::addSample(
     const std::vector<double>& observedTimes,
     const std::vector<double>& randoms)
 {
-    boost::numeric::ublas::vector<double> result(dimension);
-    _sampleCalculator->operator()(path, observedTimes, randoms, result)
-    add(result);
+    _sampleCalculator->operator()(path, observedTimes, randoms, _cache);
+    add(_cache[0]);
 }
 
 double Expectator::doExpectation()
 {
     return getMean();
 }
+
 

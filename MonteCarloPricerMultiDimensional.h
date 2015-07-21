@@ -1,28 +1,27 @@
 #pragma once
 
 #include "PathSimulatorBase.h"
-#include "PresentValueCalculator.h"
-#include "ExpectatorBase.h"
+#include "ExpectatorsBase.h"
 #include "RandomGeneratorBase.h"
 
 #include <boost/shared_ptr.hpp>
 
-class MonteCarloPricer {
+class MonteCarloPricerMultiDimensional {
 public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    MonteCarloPricer(
+    MonteCarloPricerMultiDimensional(
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-        const boost::shared_ptr<ExpectatorBase>& expectation,
+        const boost::shared_ptr<ExpectatorsBase>& expectation,
         const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
-    ~MonteCarloPricer();
+    ~MonteCarloPricerMultiDimensional();
 
     /**************************************************************************
      * member functions.
      **************************************************************************/
-    double simulatePrice(
-        const boost::numeric::ublas::vector<double>& spots,
+    boost::numeric::ublas::vector<double> simulatePrice(
+        const boost::numeric::ublas::vector<double>& spot,
         const std::size_t numberOfSimulations,
         const std::vector<double>& observedTimes,
         const boost::numeric::ublas::vector<double>& discountFactors) const;
@@ -32,7 +31,7 @@ private:
      * private variables.
      **************************************************************************/
     const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
-    const boost::shared_ptr<ExpectatorBase> _expectation;
+    const boost::shared_ptr<ExpectatorsBase> _expectation;
     const boost::shared_ptr<RandomGeneratorBase> _randomGenerator;
 
 };

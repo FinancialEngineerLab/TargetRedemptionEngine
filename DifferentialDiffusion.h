@@ -5,6 +5,9 @@
 
 class DifferentialDiffusion {
 public:
+    /**************************************************************************
+     * Constructers and Destructer.
+     **************************************************************************/
     DifferentialDiffusion();
     virtual ~DifferentialDiffusion();
 

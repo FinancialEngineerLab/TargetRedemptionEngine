@@ -1,6 +1,8 @@
 #pragma once
 
+#include "PathwiseOperatorGenerator.h"
 #include "SampleCalculator.h"
+#include "FunctionMathematics.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/numeric/ublas/vector.hpp>
@@ -11,19 +13,26 @@ public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    PathwiseCalculator(const std::size_t dimension);
-    ~PathwiseCalculator();
+    PathwiseDeltaCalculator(
+        const std::size_t timeLength,
+        const std::size_t dimension,
+        const boost::shared_ptr<PathwiseOperatorGenerator>& _generator,
+        const boost::shared_ptr<FunctionMathematics>& payOffFunction);
+    ~PathwiseDeltaCalculator();
 
     /**************************************************************************
      * inherited pure virtual functions.
      **************************************************************************/
-    virtual double operator()(
+    virtual void operator()(
         const boost::numeric::ublas::matrix<double>& path,
         const std::vector<double>& observedTimes,
-        const std::vector<double>& randoms) const;
+        const std::vector<double>& randoms,
+        boost::numeric::ublas::vector<double>& result) const;
 
 private:
-    boost::numeric::ublas::matrix<double> _pathwiseOperator;
-            
+    std::vector< boost::shared_ptr< boost::numeric::ublas::matrix<double> > > 
+        _pathwiseOperators;
+    const boost::shared_ptr<PathwiseOperatorGenerator> _generator;
+    const boost::shared_ptr<FunctionMathematics> _payOffFunction; 
 };
 

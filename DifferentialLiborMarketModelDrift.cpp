@@ -4,6 +4,9 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <iostream>
 
+/**************************************************************************
+ * Constructers and Destructer.
+ **************************************************************************/
 DifferentialLiborMarketModelDrift::DifferentialLiborMarketModelDrift(
     const boost::numeric::ublas::matrix<double>& volatilities,
     const boost::shared_ptr<const Maturities>& maturities,
@@ -21,7 +24,7 @@ DifferentialLiborMarketModelDrift::~DifferentialLiborMarketModelDrift()
 void DifferentialLiborMarketModelDrift::calculate(
     const double time,
     const boost::numeric::ublas::vector<double>& states,
-    boost::numeric::ublas::matrix<double>& result)
+    boost::numeric::ublas::matrix<double>& result) const
 {
     for (std::size_t rowIndex1 = 0; rowIndex1 < result.size1(); ++rowIndex1) {
         if (isBeforeMaturity(time, rowIndex1)) {
@@ -46,11 +49,11 @@ void DifferentialLiborMarketModelDrift::calculateDifferentialElement(
     const double time,
     const boost::numeric::ublas::vector<double>& states,
     boost::numeric::ublas::matrix<double>& result,
-    const std::size_t rowIndex1)
+    const std::size_t rowIndex1) const
 {
     namespace ublas = boost::numeric::ublas;
 
-    ublas::matrix_row< ublas::matrix<double> > 
+    ublas::matrix_row< const ublas::matrix<double> > 
         rowVolatility1(_volatilities, rowIndex1);
 
     for (std::size_t rowIndex2 = 0; rowIndex2 < result.size1(); ++rowIndex2) {

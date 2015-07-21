@@ -31,7 +31,7 @@ void LiborMarketModelDrift::operator()(
     const boost::numeric::ublas::vector<double>& states,
     boost::numeric::ublas::vector<double>& drifts) const
 {
-    using namespace boost::numeric;
+    namespace ublas = boost::numeric::ublas;
     ublas::vector<double> summedRowVector(_dimension, 0.0);
 
     const std::size_t startIndex = _maturities->findIndexIncludingTime(time);

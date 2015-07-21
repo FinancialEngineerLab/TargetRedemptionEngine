@@ -10,7 +10,7 @@
  ******************************************************************************/
 MonteCarloGreeks::MonteCarloGreeks(
     const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-    const boost::shared_ptr<ExpectationBase>& expectation,
+    const boost::shared_ptr<ExpectatorBase>& expectation,
     const boost::shared_ptr<RandomGeneratorBase>& randomGenerator)
     :
     _pathSimulator(pathSimulator),
@@ -71,7 +71,7 @@ double MonteCarloGreeks::simulate(
         }
 
         //add sample and calculate present value.
-        _expectation->addSample(path);
+        _expectation->addSample(path, observedTimes, randoms);
     }
     const double greeks =_expectation->doExpectation();
     const double variance = _expectation->getVariance();

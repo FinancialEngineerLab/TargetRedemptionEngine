@@ -1,26 +1,12 @@
 #include "DeltaPathwiseStrategy.h"
 #include "FunctionMathematics.h"
-#include "Expectation.h"
+#include "Expectators.h"
+#include "ExpectatorsNull.h"
 #include "utilities.h"
 
-void initializePathwiseOperators(
-    std::vector< boost::shared_ptr< boost::numeric::ublas::matrix<double> > > 
-        pathwiseOperators,
-    const std::size_t rowSize,
-    const std::size_t columnSize)
-{
-    namespace ublas = boost::numeric::ublas;
+#include <boost/make_shared.hpp>
+#include <boost/shared_ptr.hpp>
 
-    pathwiseOperators[0] = boost::shared_ptr(
-            new identity_matrix<double>(rowSize));
-
-    for (std::size_t vectorIndex = 0; vectorIndex < pathwiseOperators.size(); 
-        ++vectorIndex) {
-        pathwiseOperators[vectorIndex + 1] = 
-            boost::shared_ptr< ublas::vector<double> >( 
-                new ublas::matrix<double>(rowSize, columnSize, 0.0));
-    }
-}
 
 /******************************************************************************
  * Constructers and Destructer.
@@ -36,14 +22,14 @@ DeltaPathwiseStrategy::DeltaPathwiseStrategy(
     _randomGenerator(randomGenerator),
     _generator(generator)
 {
-    
 }
+
 DeltaPathwiseStrategy::~DeltaPathwiseStrategy() 
 {
 }
 
 
-double DeltaPathwiseStrategy::calculate(
+boost::numeric::ublas::vector<double> DeltaPathwiseStrategy::calculate(
     boost::numeric::ublas::vector<double>& spot,
     const std::vector<double> observedTimes,
     const boost::shared_ptr<FunctionMathematics>& payOffFunction,
@@ -52,16 +38,14 @@ double DeltaPathwiseStrategy::calculate(
     namespace ublas = boost::numeric::ublas;
 
     const std::size_t timeLength = observedTimes.size();
-    boost::shared_ptr<Expectation> 
-        expectation(new Expectation(_sampleCalculator));
 
-    ublas::vector<double> processess(0, 0.0);
-    ublas::vector<double> stepDelta(spot.size());
+    //boost::shared_ptr<ExpectatorsNull> expectatorsNull(
+    //    new ExpectatorsNull());
+    boost::shared_ptr<Expectators> expectators(
+        new Expectators(spot.size(), _sampleCalculator));
+
     ublas::matrix<double> path(spot.size(), timeLength, 0.0);
     initializePath(path, spot);
-    std::vector< ublas::matrix<double> > 
-        pathwiseOperators(timeLength);
-    initializePathwiseOperators(pathwiseOperators, spot.size(), spot.size());
 
     std::vector<double> randoms(_randomGenerator->getDimension());
 
@@ -73,38 +57,13 @@ double DeltaPathwiseStrategy::calculate(
         //simulate one path
         _pathSimulator->simulateOnePath(spot, path, observedTimes, randoms);
 
-        //calculate differential of the payoff function, 
-        //which is initial value of adjoin method.
-        state = column(path, path.size2());
-        _payOffFunction->calculateDifferential(state, stepDelta);
-
-        //generate operators in all time.
-        std::vector<double>::iterator random = randoms.begin();
-        for (std::size_t timeIndex = 0; timeIndex < timeLength; ++timeIndex) {
-            const double timeStepSize = 
-                observedTimes[timeIndex + 1]  - observedTimes[timeIndex];
-            const double time = observedTimes[timeIndex];
-
-            //get the state at timeIndex
-            const boost::numeric::ublas::matrix_column< boost::numeric::ublas::matrix<double> > 
-                state(path, timeIndex);
-
-            //generate operators.
-            _generator->generate(state, 
-                *pathwiseOperators[timeIndex + 1], time, timeStepSize, random);
-        }
-
-        //calculate delta by adjoint methods.
-        for (std::size_t timeIndex = 0; timeIndex < timeLength; ++timeIndex) {
-            stepDelta = ublas::prod(stepDelta, 
-                pathwiseOperators[invertIndex(index, timeLength)]);
-        }
-
-        expectation->addSample(path, observedTimes, randoms);
+        expectators->addSample(path, observedTimes, randoms);
     }
 
-    const double delta = expectation->doExpectation();
-    const double variance = expectation->getVariance();
+    boost::numeric::ublas::vector<double> delta(spot.size());
+    expectators->doExpectation(delta);
+    boost::numeric::ublas::vector<double> variance(spot.size());
+    expectators->getVariance(variance);
 
     return delta;
 }

@@ -47,7 +47,6 @@ void LiborMarketModelDiffusion::operator()(
                 *=  states[dimensionIndex];
         }
     }
-
 }
 
 

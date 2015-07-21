@@ -18,13 +18,13 @@ double FunctionCall::operator()(
     const boost::numeric::ublas::vector<double>& spot)
 {
     assert(spot.size() == 1);
-    return spot[0] > strike ? spot[0] - K : 0.0;
+    return spot[0] > _strike ? spot[0] - _strike : 0.0;
 }
 
 void FunctionCall::calculateDifferential(
     const boost::numeric::ublas::vector<double>& spot,
     boost::numeric::ublas::vector<double>& result)
 {
-    return spot[0] > strike ? 1.0 : 0.0;
+    result[0] = spot[0] > _strike ? 1.0 : 0.0;
 }
 

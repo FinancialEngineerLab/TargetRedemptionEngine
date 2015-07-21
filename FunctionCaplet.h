@@ -2,13 +2,15 @@
 
 #include "FunctionMathematics.h"
 
-class FunctionCall : public FunctionMathematics {
+class FunctionCaplet : public FunctionMathematics {
 public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    FunctionCall(const double strike);
-    virtual ~FunctionCall();
+    FunctionCaplet(
+        const double strike,
+        const std::size_t dimensionIndex);
+    virtual ~FunctionCaplet();
 
     virtual double operator()(
         const boost::numeric::ublas::vector<double>& spot);
@@ -18,6 +20,6 @@ public:
     
 private:
     const double _strike;
-            
+    const std::size_t _dimensionIndex;            
 };
 

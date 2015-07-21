@@ -5,6 +5,7 @@
 #include "PathSimulator.h"
 #include "RandomGeneratorBase.h"
 #include "PathwiseOperatorGenerator.h"
+#include "FunctionMathematics.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -17,9 +18,10 @@ public:
         const boost::shared_ptr<PathwiseOperatorGenerator>& generator);
     virtual ~DeltaPathwiseStrategy();
 
-    virtual double calculate(
+    virtual boost::numeric::ublas::vector<double> calculate(
         boost::numeric::ublas::vector<double>& delta,
         const std::vector<double> observedTimes,
+        const boost::shared_ptr<FunctionMathematics>& payOffFunction,
         const std::size_t numberOfSimulations);
     
 private:

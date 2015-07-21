@@ -20,10 +20,11 @@ public:
     /**************************************************************************
      * inherited pure virtual functions.
      **************************************************************************/
-    virtual double operator()(
+    virtual void operator()(
         const boost::numeric::ublas::matrix<double>& path,
         const std::vector<double>& observedTimes,
-        const std::vector<double>& randoms) const;
+        const std::vector<double>& randoms,
+        boost::numeric::ublas::vector<double>& result) const;
 
 private:
     const boost::shared_ptr<const CashFlow> _cashFlow;

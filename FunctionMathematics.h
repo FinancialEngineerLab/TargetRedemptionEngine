@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/numeric/ublas/vector.hpp>
 
 class FunctionMathematics {
 public:
@@ -9,8 +10,9 @@ public:
     FunctionMathematics();
     virtual ~FunctionMathematics();
 
-    virtual double operator()(const boost::numeric::ublas::vector<double>& x) = 0;
-    virtual void calculateDerivative(
+    virtual double operator()(
+        const boost::numeric::ublas::vector<double>& x) = 0;
+    virtual void calculateDifferential(
         const boost::numeric::ublas::vector<double>& x,
         boost::numeric::ublas::vector<double>& result) = 0;
  

@@ -13,20 +13,20 @@ public:
      * Constructers and Destructer.
      **************************************************************************/
     StochasticDifferentialEquation(
-            const boost::shared_ptr<Drift>& drift, 
-            const boost::shared_ptr<Diffusion>& diffusion,
-            const std::size_t dimension,
-            const std::size_t dimensionOfBrownianMotion);
+        const boost::shared_ptr<Drift>& drift, 
+        const boost::shared_ptr<Diffusion>& diffusion,
+        const std::size_t dimension,
+        const std::size_t dimensionOfBrownianMotion);
     virtual ~StochasticDifferentialEquation();
 
     /**************************************************************************
      * member functions
      **************************************************************************/
-    void calculateDrift(
+    virtual void calculateDrift(
         const double time, 
         const boost::numeric::ublas::vector<double>& states,
         boost::numeric::ublas::vector<double>& drift) const;
-    void calculateDiffusion(
+    virtual void calculateDiffusion(
         const double time, 
         const boost::numeric::ublas::vector<double>& states,
         boost::numeric::ublas::matrix<double>& diffusion) const;

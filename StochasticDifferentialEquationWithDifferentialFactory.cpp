@@ -1,5 +1,7 @@
 #include "StochasticDifferentialEquationWithDifferentialFactory.h"
 
+#include <boost/make_shared.hpp>
+
 /******************************************************************************
  * Constructers and Destructer.
  ******************************************************************************/
@@ -27,11 +29,11 @@ boost::shared_ptr<const StochasticDifferentialEquationWithDifferential>
             _factory->makeStochasticDifferentialEquation();
     const boost::shared_ptr<const DifferentialDrift> differentialDrift = 
         makeDifferentialDrift();
-    const boost::shared_ptr<const DifferentialDrift> differentialDiffusion = 
+    const boost::shared_ptr<const DifferentialDiffusion> differentialDiffusion = 
         makeDifferentialDiffusion();
 
-    return boost::make_shared<StochasticDifferentialEquation>(
-        stochasticDifferentiaEquation, differentialDrfit, differentialDiffusion);
+    return boost::make_shared<const StochasticDifferentialEquationWithDifferential>(
+        stochasticDifferentiaEquation, differentialDrift, differentialDiffusion);
 }
 
 

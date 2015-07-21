@@ -33,7 +33,7 @@ LiborMarketModelWithDifferentialFactory::~LiborMarketModelWithDifferentialFactor
  * inherited pure virtual functions
  ******************************************************************************/
 
-boost::shared_ptr<DifferentialDrift> 
+boost::shared_ptr<const DifferentialDrift> 
     LiborMarketModelWithDifferentialFactory::makeDifferentialDrift() const
 {
     return boost::shared_ptr<DifferentialLiborMarketModelDrift>(
@@ -41,10 +41,11 @@ boost::shared_ptr<DifferentialDrift>
             _volatilities, _maturities, _dimension));
 }
 
-boost::shared_ptr<DifferentialDiffusion> 
+boost::shared_ptr<const DifferentialDiffusion> 
     LiborMarketModelWithDifferentialFactory::makeDifferentialDiffusion() const
 {
     return boost::shared_ptr<DifferentialLiborMarketModelDiffusion>(
         new DifferentialLiborMarketModelDiffusion());
 }
+
 

@@ -1,4 +1,6 @@
 #include "EulerMaruyama.h"
+#include "utilities.h"
+
 #include <boost/numeric/ublas/io.hpp>
 
 /******************************************************************************
@@ -20,7 +22,7 @@ void EulerMaruyama::simulateOneStep(
     const boost::shared_ptr<const StochasticDifferentialEquation>& model,
     const double time,
     const double timeStepSize,
-    std::vector<double>::iterator random) const
+    std::vector<double>::const_iterator& random) const
 {
     /**************************************************************************
      * Precomute variables.
@@ -37,25 +39,9 @@ void EulerMaruyama::simulateOneStep(
     boost::numeric::ublas::vector<double> randoms(dimensionOfBrownianMotion);
     generateRandomsVectorFromIterator(randoms, random, dimension);
 
-
     //one step calculation.
     processes += timeStepSize * drift 
         + sqrt(timeStepSize) * boost::numeric::ublas::prod(diffusion, randoms);
 }
 
-
-/******************************************************************************
- * private functions.
- ******************************************************************************/
-void EulerMaruyama::generateRandomsVectorFromIterator(
-    boost::numeric::ublas::vector<double>& randoms,
-    std::vector<double>::iterator random,
-    const std::size_t dimension) const
-{
-    for (std::size_t dimensionIndex = 0; dimensionIndex < dimension; 
-        ++dimensionIndex) {
-        randoms[dimensionIndex] = *random;
-        ++random;
-    }
-}
 

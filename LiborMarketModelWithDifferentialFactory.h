@@ -21,17 +21,25 @@ public:
 
 private:
     /**************************************************************************
-     * inherited pure virtual funcitons.
-     **************************************************************************/
-    virtual boost::shared_ptr<DifferentialDrift> makeDifferentialDrift() const;
-    virtual boost::shared_ptr<DifferentialDiffusion> makeDifferentialDiffusion() const;
-
-    /**************************************************************************
      * private variables.
      **************************************************************************/
     const boost::numeric::ublas::matrix<double> _volatilities;
     const boost::shared_ptr<const Maturities> _maturities;
     const boost::numeric::ublas::matrix<double> _correlation;
     const std::size_t _dimension;
+
+    /**************************************************************************
+     * inherited pure virtual funcitons.
+     **************************************************************************/
+    virtual boost::shared_ptr<Drift> makeDrift() const;
+    virtual boost::shared_ptr<Diffusion> makeDiffusion() const;
+    virtual std::size_t makeDimension() const;
+    virtual std::size_t makeDimensionOfBrownianMotion() const;
+
+    virtual boost::shared_ptr<const DifferentialDrift> 
+        makeDifferentialDrift() const;
+    virtual boost::shared_ptr<const DifferentialDiffusion> 
+        makeDifferentialDiffusion() const;
+
 };
 

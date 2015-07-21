@@ -3,7 +3,7 @@
 #include "PathSimulatorBase.h"
 #include "PresentValueCalculator.h"
 #include "PathwiseOperatorGenerator.h"
-#include "ExpectationBase.h"
+#include "ExpectatorBase.h"
 #include "RandomGeneratorBase.h"
 
 #include <boost/shared_ptr.hpp>
@@ -15,7 +15,7 @@ public:
      **************************************************************************/
     MonteCarloGreeks(
         const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-        const boost::shared_ptr<ExpectationBase>& expectation,
+        const boost::shared_ptr<ExpectatorBase>& expectation,
         const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
     ~MonteCarloGreeks();
 
@@ -33,16 +33,10 @@ private:
      * private variables.
      **************************************************************************/
     const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
-    const boost::shared_ptr<ExpectationBase> _expectation;
+    const boost::shared_ptr<ExpectatorBase> _expectation;
     const boost::shared_ptr<PathwiseOperatorGenerator> _generator;
     const boost::shared_ptr<RandomGeneratorBase> _randomGenerator;
 
-    /**************************************************************************
-     * private functions.
-     **************************************************************************/
-    inline void initializePath(
-        boost::numeric::ublas::matrix<double>& path,
-        const boost::numeric::ublas::vector<double>& processes) const;
 
 };
 

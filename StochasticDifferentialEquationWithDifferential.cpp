@@ -1,4 +1,6 @@
 #include "StochasticDifferentialEquationWithDifferential.h"
+#include "DifferentialDrift.h"
+#include "DifferentialDiffusion.h"
 
 #include "boost/numeric/ublas/matrix.hpp"
 
@@ -7,22 +9,25 @@
  ******************************************************************************/
 StochasticDifferentialEquationWithDifferential::
     StochasticDifferentialEquationWithDifferential(
-        const StochasticDifferentialEquation stochasticDifferentiaEquation,
-        const boost::shared_ptr<const DriftDifferential> differentialDrift,
-        const boost::shared_ptr<const DiffusionDifferential> 
+        const boost::shared_ptr<const StochasticDifferentialEquation>& 
+            stochasticDifferentiaEquation,
+        const boost::shared_ptr<const DifferentialDrift> differentialDrift,
+        const boost::shared_ptr<const DifferentialDiffusion> 
             differentialDiffusion)
         :
-        StochasticDifferentialEquation(stochasticDifferentiaEquation),
-        _differentialDrift(difrrentialDrift),
+        StochasticDifferentialEquation(*stochasticDifferentiaEquation),
+        _differentialDrift(differentialDrift),
         _differentialDiffusion(differentialDiffusion)
 {
 }
-
 StochasticDifferentialEquationWithDifferential::
     ~StochasticDifferentialEquationWithDifferential()
 {
 }
 
+/******************************************************************************
+ * member functions.
+ ******************************************************************************/
 void StochasticDifferentialEquationWithDifferential::
     calculateDifferentialDrift(
         const double time, 

@@ -7,8 +7,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-class StochasticDifferentialEquationWithDifferentialFactory :
-    public StochasticDifferentialEquationFactory
+class StochasticDifferentialEquationWithDifferentialFactory
 {
 public:
     /**************************************************************************
@@ -27,9 +26,15 @@ public:
             makeStochasticDifferentialEquationWithDifferential() const;
     
 private:
-    virtual boost::shared_ptr<DifferentialDrift> 
+    const boost::shared_ptr<const StochasticDifferentialEquationFactory>
+        _factory;
+
+    /**************************************************************************
+     * pure virtual functions.
+     **************************************************************************/
+    virtual boost::shared_ptr<const DifferentialDrift> 
         makeDifferentialDrift() const = 0;
-    virtual boost::shared_ptr<DifferentialDiffusion> 
+    virtual boost::shared_ptr<const DifferentialDiffusion> 
         makeDifferentialDiffusion() const = 0;
         
 };

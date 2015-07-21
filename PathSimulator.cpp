@@ -35,12 +35,12 @@ void PathSimulator::simulateOnePath(
     for (std::size_t timeIndex = 0; timeIndex < observedTimes.size() - 1; 
         ++timeIndex) {
         const double timeStepSize = 
-            observedTimes[timeIndex] - observedTimes[timeIndex];
+            observedTimes[timeIndex + 1] - observedTimes[timeIndex];
 
         _discretizationScheme->simulateOneStep(
             processes, _model, 
             observedTimes[timeIndex], timeStepSize, random);
-        boost::numeric::ublas::column(path, timeIndex) = processes;
+        boost::numeric::ublas::column(path, timeIndex + 1) = processes;
     }
 }
 

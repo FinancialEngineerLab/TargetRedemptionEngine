@@ -7,14 +7,12 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
 
-
 class ExpectatorBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    ExpectatorBase(
-        const boost::shared_ptr<ExpectatorBase>& next);
+    ExpectatorBase();
     virtual ~ExpectatorBase();
 
     /**************************************************************************
@@ -24,7 +22,7 @@ public:
         const boost::numeric::ublas::matrix<double>& path,
         const std::vector<double>& observedTimes,
         const std::vector<double>& randoms) = 0;
-    virtual double doExpectator() = 0;
+    virtual double doExpectation() = 0;
 
     inline void add(const double sample);
     inline void clear();
@@ -32,12 +30,10 @@ public:
     inline double getVariance();
         
 private:
-    const boost::shared_ptr<ExpectatorBase> _next;
     boost::accumulators::accumulator_set<double, 
         boost::accumulators::stats<
             boost::accumulators::tag::mean, 
             boost::accumulators::tag::variance> > _accumulator;
-            
 };
 
 
@@ -64,3 +60,4 @@ inline double ExpectatorBase::getVariance()
 {
     return boost::accumulators::variance(_accumulator);
 }
+

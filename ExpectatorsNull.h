@@ -1,27 +1,25 @@
 #pragma once
 
-#include "SampleCalculator.h"
-#include "ExpectatorBase.h"
+#include "ExpectatorsBase.h"
 
 #include <boost/shared_ptr.hpp>
 
-class Expectator : public ExpectatorBase {
+class ExpectatorsNull : public ExpectatorsBase {
 public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    Expectator(
-        const boost::shared_ptr<const SampleCalculator>& sampleCalculator);
-    virtual ~Expectator();
+    ExpectatorsNull();
+    virtual ~ExpectatorsNull();
 
     virtual void addSample(
         const boost::numeric::ublas::matrix<double>& path,
         const std::vector<double>& observedTimes,
         const std::vector<double>& randoms);
-    virtual double doExpectation();
+    virtual void doExpectation(
+        boost::numeric::ublas::vector<double>& result);
         
 private:
-    const boost::shared_ptr<const SampleCalculator> _sampleCalculator;
-    boost::numeric::ublas::vector<double> _cache;
+            
 };
 

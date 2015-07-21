@@ -3,7 +3,18 @@
 
 #include <vector>
 
-DeltaOperatorGenerator::DeltaOperatorGenerator() 
+/******************************************************************************
+ * Constructers and Destructer.
+ ******************************************************************************/
+DeltaOperatorGenerator::DeltaOperatorGenerator(
+    const boost::shared_ptr<
+        const StochasticDifferentialEquationWithDifferential> model)
+    :
+    _model(model),
+    _differentialDrift(_model->getDimension(), _model->getDimension()),
+    _differentialDiffusion(
+        boost::extents[_model->getDimension()][_model->getDimension()]
+            [_model->getDimensionOfBrownianMotion()])
 {
 }
 
@@ -16,7 +27,7 @@ void DeltaOperatorGenerator::generate(
     boost::numeric::ublas::matrix<double>& pathwiseOperator,
     const double time, 
     const std::size_t timeStepSize,
-    std::vector<double>::iterator random) 
+    std::vector<double>::const_iterator& random) 
 {
     const std::size_t dimension = _model->getDimension();
     const std::size_t dimensionOfBrownianMotion = 
@@ -65,12 +76,18 @@ void DeltaOperatorGenerator::doTensorContraction(
         
     assert(shape[2] == randoms.size());
 
-    for (tensor3::index rowIndex = 0; rowIndex < shape[0]; ++rowIndex) {
-        for (tensor3::index columnIndex = 0; columnIndex < shape[1]; ++columnIndex) {
-            for (tensor3::index depthIndex = 0; depthIndex < shape[2]; ++depthIndex) {
-                result(rowIndex, columnIndex) += 
-                    differentialDiffusion[rowIndex][columnIndex][depthIndex] 
-                        * randoms[depthIndex] * deviation;
+    //tensor row
+    for (tensor3::index rowIndex = 0; 
+        static_cast<std::size_t>(rowIndex) < shape[0]; ++rowIndex) {
+        //tensor column
+        for (tensor3::index columnIndex = 0; 
+            static_cast<std::size_t>(columnIndex) < shape[1]; ++columnIndex) {
+            //tensor depth
+            for (tensor3::index depthIndex = 0; 
+                static_cast<std::size_t>(depthIndex) < shape[2]; ++depthIndex) {
+                    result(rowIndex, columnIndex) += 
+                        differentialDiffusion[rowIndex][columnIndex][depthIndex] 
+                            * randoms[depthIndex] * deviation;
             }   
         }   
     }   

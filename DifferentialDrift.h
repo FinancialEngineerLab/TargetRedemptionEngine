@@ -12,7 +12,7 @@ public:
     virtual void calculate(
         const double time,
         const boost::numeric::ublas::vector<double>& states,
-        boost::numeric::ublas::matrix<double>& result) = 0;
+        boost::numeric::ublas::matrix<double>& result) const = 0;
     
 private:
         
