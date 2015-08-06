@@ -30,7 +30,7 @@ void PathSimulator::simulateOnePath(
     const std::vector<double>& observedTimes,
     std::vector<double>& randoms) const
 {
-    std::vector<double>::iterator random = randoms.begin();
+    std::vector<double>::const_iterator random = randoms.begin();
 
     for (std::size_t timeIndex = 0; timeIndex < observedTimes.size() - 1; 
         ++timeIndex) {

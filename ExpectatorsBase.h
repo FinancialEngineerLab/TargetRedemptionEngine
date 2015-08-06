@@ -1,5 +1,3 @@
-#define BOOST_NUMERIC_FUNCTIONAL_STD_VECTOR_SUPPORT 
-
 #pragma once
 
 #include <boost/shared_ptr.hpp>
@@ -7,6 +5,7 @@
 
 #include <vector>
 
+#define BOOST_NUMERIC_FUNCTIONAL_STD_VECTOR_SUPPORT 
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -43,6 +42,7 @@ public:
 private:
     const std::size_t _dimension;
     std::vector<double> _cache;
+
     boost::accumulators::accumulator_set<
         std::vector<double>, 
         boost::accumulators::stats<
