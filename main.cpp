@@ -16,12 +16,7 @@
 #include "ExpectatorControlVariate.h"
 #include "Maturities.h"
 #include "Tenor.h"
-#include "LiborMarketModelWithDifferentialFactory.h"
-#include "Expectators.h"
-#include "DeltaOperatorGenerator.h"
-#include "PathwiseDeltaCalculator.h"
 #include "FunctionCaplet.h"
-#include "MonteCarloPricerMultiDimensional.h"
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -525,143 +520,11 @@ void calculateEuropeanCapletLiborMarketModel()
     std::cout << std::endl;
 }
 
-void calculatePathwiseDelta()
-{
-    /**********************************************************************
-     * Parameter settings.
-     **********************************************************************/
-    const double strike = 0.05;
-    const double interestRate = 0.006;
-    const std::size_t numberOfBonds = 5;
-    const boost::numeric::ublas::vector<double> spot =
-        makeLiborMarketModelSpots(numberOfBonds);
-    const boost::numeric::ublas::matrix<double> volatilities =
-        makeLiborMarketModelVolatilities(numberOfBonds);
-    const boost::numeric::ublas::matrix<double> correlation = 
-        makeLiborMarketModelCorrelationMatrix(numberOfBonds);
 
-    const std::size_t numberOfTimeSteps = 32;
-    const std::size_t numberOfSimulations = 100;
-
-    //make Indice
-    std::vector<double> observedTimes(numberOfTimeSteps + 1);
-    for (std::size_t timeIndex = 0; timeIndex < observedTimes.size(); 
-        ++timeIndex) {
-        observedTimes[timeIndex] = timeIndex * (1.0 / 4.0);
-    }
-    std::vector<std::size_t> maturitiesIndice(numberOfBonds);
-    maturitiesIndice[0] = 4;
-    maturitiesIndice[1] = 8;
-    maturitiesIndice[2] = 12;
-    maturitiesIndice[3] = 16;
-    maturitiesIndice[4] = 20;
-    //Maturities maturities(observedTimes, maturitiesIndex);
-    boost::shared_ptr<Maturities> maturities(
-        new Maturities(observedTimes, maturitiesIndice));
-
-    std::vector<std::size_t> tenorToMaturityIndice(2);
-    tenorToMaturityIndice[0] = 0;
-    tenorToMaturityIndice[1] = 1;
-    const boost::shared_ptr<const Tenor> tenor(
-        new Tenor(maturities, tenorToMaturityIndice));
-
-    //LIBOR Market Model Factory.
-    const boost::shared_ptr<const LiborMarketModelFactory> liborFactory(
-        new LiborMarketModelFactory(volatilities, maturities, correlation));
-
-    //Libor market model with differential of drift and diffusion.
-    const boost::shared_ptr<const LiborMarketModelWithDifferentialFactory>
-        liborDifferentialFactory(new
-            LiborMarketModelWithDifferentialFactory(liborFactory, 
-                volatilities, maturities, correlation));
-    boost::shared_ptr<const StochasticDifferentialEquationWithDifferential>
-        liborDifferential = 
-            liborDifferentialFactory->
-                makeStochasticDifferentialEquationWithDifferential();
-
-    //discretization scheme.
-    boost::shared_ptr<EulerMaruyama> eulerMaruyama(new EulerMaruyama());
-
-    //random number generator.
-    boost::shared_ptr<MersenneTwister> mersenneTwister(
-        new MersenneTwister(numberOfTimeSteps * numberOfBonds, 0));
-
-    //path simulator
-    const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
-        new PathSimulator(liborDifferential, eulerMaruyama));
-
-    //discount factors
-    const boost::numeric::ublas::vector<double> discountFactors =
-        makeDiscountFactors(interestRate, observedTimes);
-
-    //payOff funciton
-    const boost::shared_ptr<FunctionCaplet>
-        payOffFunction(new FunctionCaplet(strike, tenor->translateTenorIndexToAssetIndex(0)));
-
-    //operator generator
-    const boost::shared_ptr<DeltaOperatorGenerator>
-        operatorGenerator(new DeltaOperatorGenerator(liborDifferential));
-
-    //pathwise delta calculator
-    const boost::shared_ptr<const PathwiseDeltaCalculator> 
-        pathwiseDeltaCalculator(
-            new PathwiseDeltaCalculator(observedTimes.size(), spot.size(),
-                operatorGenerator, payOffFunction));
-
-    //expectation
-    //const boost::shared_ptr<ExpectatorsNull> expectatorNull(
-    //    new ExpectatorsNull());
-    const boost::shared_ptr<Expectators> expectator(
-        new Expectators(spot.size(), pathwiseDeltaCalculator));
-
-    //pricer
-    boost::shared_ptr<const MonteCarloPricerMultiDimensional> pricer(
-        new MonteCarloPricerMultiDimensional(pathSimulator, 
-            expectator, mersenneTwister));
-
-    /**************************************************************************
-     * Calculate Price.
-     **************************************************************************/
-    {
-        const boost::numeric::ublas::vector<double> price = 
-            pricer->simulatePrice(spot, 
-                numberOfSimulations, observedTimes, discountFactors);
-        std::cout << "LIBOR Price:" << price << std::endl;
-    }
-
-
-    /**********************************************************************
-     * European caplet analytic price.
-     **********************************************************************/
-    {
-        std::cout << std::endl;
-        const boost::numeric::ublas::vector<double> rowVolatility =
-            boost::numeric::ublas::row(volatilities, tenor->translateTenorIndexToAssetIndex(0));
-        const double volatility = sqrt(
-            boost::numeric::ublas::inner_prod(rowVolatility, rowVolatility));
-
-        const double period = tenor->operator[](1) - tenor->operator[](0);
-        const double price = period * calculateBlackFormula(
-            spot[tenor->translateTenorIndexToAssetIndex(0)], strike, volatility, 
-            tenor->operator[](0), discountFactors[tenor->translateTenorIndexToTimeIndex(1)]);
-
-        std::cout << "tenor:" << tenor->operator[](0) << std::endl;
-        std::cout << "DF:" << discountFactors[tenor->translateTenorIndexToTimeIndex(1)] << std::endl;
-        std::cout << "spot:" << spot << std::endl;
-        std::cout << "vol:" << volatility << std::endl;
-        std::cout << "LIBOR analytic Price:" << price << std::endl;
-    }
-
-    std::cout << std::endl;
-
-}
 
 
 int main()
 {
-
-    //calculateEuropeanCapletLiborMarketModel();
-    calculatePathwiseDelta();
 
     {
         int a = 0;
