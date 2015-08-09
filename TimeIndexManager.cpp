@@ -34,3 +34,19 @@ std::size_t TimeIndexManager::getTimeIndex(const std::size_t index) const
     return _timeIndice[index];
 }
 
+/**
+ * @brief get an index which satisfies the following inequality,
+ *        time at index <= time < time at (index + 1).
+ *        if time < time at the first index, then return -1.
+ *        if time > time at the last index, then reutn (last index + 1).
+ */
+int TimeIndexManager::searchIndex(const double time) const
+{
+    for (std::size_t timeIndex = 0; timeIndex < _timeIndice.size(); ++timeIndex) {
+        if (time < _observedTimes[_timeIndice[timeIndex]]) {
+            return timeIndex - 1;
+        }
+    }
+    return _timeIndice.size();
+}
+

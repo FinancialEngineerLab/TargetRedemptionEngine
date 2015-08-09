@@ -1,14 +1,18 @@
 #pragma once
 
 #include "Drift.h"
+#include "Function1DStepWise.h"
+#include "Function2DLogInterpolate.h"
 
-class SabrDrift : public Drift {
+class LocalVolatilityDrift : public Drift {
 public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    SabrDrift();
-    virtual ~SabrDrift();
+    LocalVolatilityDrift(
+        const Function1DStepWise& drift,
+        const Function2DLogInterpolate& interpolatedVolatility);
+    virtual ~LocalVolatilityDrift();
 
     /**************************************************************************
      * inherited  operators.
@@ -19,5 +23,8 @@ public:
         boost::numeric::ublas::vector<double>& drift) const;
 
 private:
+    const Function1DStepWise _drift;
+    const Function2DLogInterpolate _interpolatedVolatility;
 
 };
+

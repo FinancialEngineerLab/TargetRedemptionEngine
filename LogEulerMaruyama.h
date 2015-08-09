@@ -2,14 +2,17 @@
 
 #include "DiscretizationScheme.h"
 
-class EulerMaruyama 
-    : public DiscretizationScheme {
+/**
+ * @brief The class only supports 1-dim processes.
+ */
+class LogEulerMaruyama : public DiscretizationScheme {
 public:
     /**************************************************************************
-     * Constructers and Destructers
+     * Constructers and Destructer.
      **************************************************************************/
-    EulerMaruyama();
-    virtual ~EulerMaruyama();
+    LogEulerMaruyama(
+        const std::size_t dimensionOfBrownianMotion);
+    virtual ~LogEulerMaruyama();
 
     /**************************************************************************
      * inherited pure virtual functions.
@@ -22,6 +25,13 @@ public:
         std::vector<double>::const_iterator& random);
 
 private:
-            
+    /**************************************************************************
+     * private variables.
+     **************************************************************************/
+    //! cache
+    boost::numeric::ublas::vector<double> _drift;
+    //! cache
+    boost::numeric::ublas::matrix<double> _diffusion;
+    
 };
 

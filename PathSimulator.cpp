@@ -9,7 +9,7 @@
  ******************************************************************************/
 PathSimulator::PathSimulator(
     const boost::shared_ptr<const StochasticDifferentialEquation>& model,
-    const boost::shared_ptr<const DiscretizationScheme>& discretizationScheme)
+    const boost::shared_ptr<DiscretizationScheme>& discretizationScheme)
     :
     _model(model),
     _discretizationScheme(discretizationScheme)
