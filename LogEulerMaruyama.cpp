@@ -10,7 +10,8 @@ LogEulerMaruyama::LogEulerMaruyama(
     const std::size_t dimensionOfBrownianMotion) 
     :
     _drift(1),
-    _diffusion(1, dimensionOfBrownianMotion)
+    _diffusion(1, dimensionOfBrownianMotion),
+    _cacheProcess(1)
 {
 }
 
@@ -22,7 +23,7 @@ LogEulerMaruyama::~LogEulerMaruyama()
  * inherited pure virtual functions.
  ******************************************************************************/
 void LogEulerMaruyama::simulateOneStep(
-    boost::numeric::ublas::vector<double>& processes, 
+    boost::numeric::ublas::vector<double>& process, 
     const boost::shared_ptr<const StochasticDifferentialEquation>& model,
     const double time,
     const double timeStepSize,
@@ -32,8 +33,9 @@ void LogEulerMaruyama::simulateOneStep(
     /**************************************************************************
      * Precomute variables.
      **************************************************************************/
-    model->calculateDrift(time, processes, _drift);
-    model->calculateDiffusion(time, processes, _diffusion);
+    _cacheProcess(0) = exp(process(0));
+    model->calculateDrift(time, _cacheProcess, _drift);
+    model->calculateDiffusion(time, _cacheProcess, _diffusion);
     double diffusionTerm = 0.0;
     for (std::size_t factorIndex = 0; factorIndex < _diffusion.size2(); 
         ++factorIndex) {
@@ -42,7 +44,7 @@ void LogEulerMaruyama::simulateOneStep(
     }
 
     //one step calculation.
-    processes(0) += timeStepSize * _drift(0) + sqrt(timeStepSize) * diffusionTerm;
+    process(0) += timeStepSize * _drift(0) + sqrt(timeStepSize) * diffusionTerm;
 }
 
 

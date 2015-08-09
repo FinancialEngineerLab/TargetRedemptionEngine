@@ -1,33 +1,33 @@
-#ifndef CASH_FLOW_TARGET_REDEMPTION_FORWARD_H
-#define CASH_FLOW_TARGET_REDEMPTION_FORWARD_H
+#ifndef CASH_FLOW_TARGET_REDEMPTION_FORWARD_MOMENT_MATCHING_H
+#define CASH_FLOW_TARGET_REDEMPTION_FORWARD_MOMENT_MATCHING_H
 
-#include "CashFlowCalculator.h"
+#include "CashFlowCalculatorMomentMatching.h"
 #include "TimeIndexManager.h"
-#include "SampleTransform.h"
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
-#include <boost/shared_ptr.hpp>
 #include <vector>
 
-class CashFlowTargetRedemptionForward : public CashFlowCalculator {
+class CashFlowTargetRedemptionForwardMomentMatching : 
+    public CashFlowCalculatorMomentMatching {
 public:
     /**************************************************************************
      * Constructers and Destructers.
      **************************************************************************/
-    CashFlowTargetRedemptionForward(
+    CashFlowTargetRedemptionForwardMomentMatching(
+        const std::size_t numberOfSimulations,
         const double strike,
         const double targetLevel,
-        const std::vector<double>& discountFactors,
-        const TimeIndexManager& excerciseDate,
-        const boost::shared_ptr<SampleTransform>& transform);
-    virtual ~CashFlowTargetRedemptionForward();
+        const TimeIndexManager& excerciseDate);
+    virtual ~CashFlowTargetRedemptionForwardMomentMatching();
 
     /**************************************************************************
      * inherited pure virtual functions.
      **************************************************************************/
     virtual double operator()(
-        const boost::numeric::ublas::matrix<double>& path) const;
+        const double sampleAtGrid,
+        const std::size_t simulationIndex,
+        const std::size_t timeIndex);
     
 private:
     /**************************************************************************
@@ -35,9 +35,8 @@ private:
      **************************************************************************/
     const double _strike;
     const double _targetLevel;
-    const std::vector<double> _discountFactors;
+    std::vector<double> _targets;
     const TimeIndexManager _excerciseDate;
-    const boost::shared_ptr<SampleTransform> _transform;
 };
 
 #endif

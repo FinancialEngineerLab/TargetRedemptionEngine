@@ -32,6 +32,8 @@ private:
     boost::numeric::ublas::vector<double> _drift;
     //! cache
     boost::numeric::ublas::matrix<double> _diffusion;
+    //! cache
+    boost::numeric::ublas::vector<double> _cacheProcess;
     
 };
 

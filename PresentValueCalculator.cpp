@@ -5,7 +5,7 @@
  ******************************************************************************/
 PresentValueCalculator::PresentValueCalculator(
     const boost::shared_ptr<const CashFlow>& cashFlow,
-    const boost::numeric::ublas::vector<double>& discountFactors)
+    const std::vector<double>& discountFactors)
     :
     _cashFlow(cashFlow),
     _discountFactors(discountFactors)

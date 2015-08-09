@@ -1,16 +1,23 @@
 #include "CashFlowTargetRedemptionForward.h"
 
+#include <algorithm>
+#include <boost/numeric/ublas/io.hpp>
+
 /******************************************************************************
- * Constructers and Destructers.
+ * Constructers and Destructer.
  ******************************************************************************/
 CashFlowTargetRedemptionForward::CashFlowTargetRedemptionForward(
-    const std::size_t numberOfSimulations,
     const double strike,
-    const double targetLevel)
+    const double targetLevel,
+    const std::vector<double>& discountFactors,
+    const TimeIndexManager& excerciseDate,
+    const boost::shared_ptr<SampleTransform>& transform)
     :
     _strike(strike),
     _targetLevel(targetLevel),
-    _targets(numberOfSimulations, 0.0)
+    _discountFactors(discountFactors),
+    _excerciseDate(excerciseDate),
+    _transform(transform)
 {
 }
 
@@ -22,16 +29,23 @@ CashFlowTargetRedemptionForward::~CashFlowTargetRedemptionForward()
  * inherited pure virtual functions.
  ******************************************************************************/
 double CashFlowTargetRedemptionForward::operator()(
-    const double sampleAtGrid,
-    const std::size_t simulationIndex, 
-    const std::size_t timeIndex)
+    const boost::numeric::ublas::matrix<double>& path) const
 {
-    if (_targets[simulationIndex] > _targetLevel) {
-        return 0.0;
+    double target = 0.0;
+    double presentValue = 0.0;
+    for (std::size_t timeIndex = 0; timeIndex < _excerciseDate.size(); 
+        ++timeIndex) {
+        const std::size_t gridIndex = _excerciseDate.getTimeIndex(timeIndex);
+        if (target > _targetLevel) {
+            break;
+        }
+        target += std::max(
+            _transform->operator()(path(0, gridIndex)) - _strike, 0.0);
+        presentValue += 
+            _discountFactors[gridIndex] * 
+                (_transform->operator()(path(0, gridIndex)) - _strike);
     }
 
-    _targets[simulationIndex] += std::max(sampleAtGrid - _strike, 0.0);
-
-    return sampleAtGrid - _strike;
+    return presentValue;
 }
 

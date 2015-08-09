@@ -14,7 +14,7 @@ public:
      **************************************************************************/
     PresentValueCalculator(
         const boost::shared_ptr<const CashFlow>& cashFlow,
-        const boost::numeric::ublas::vector<double>& discountFactors);
+        const std::vector<double>& discountFactors);
     ~PresentValueCalculator();
 
     /**************************************************************************
@@ -28,7 +28,7 @@ public:
 
 private:
     const boost::shared_ptr<const CashFlow> _cashFlow;
-    const boost::numeric::ublas::vector<double> _discountFactors;
+    const std::vector<double> _discountFactors;
     const std::vector<double> sumOfDiscountFactors;
             
 };

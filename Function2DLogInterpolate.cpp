@@ -53,25 +53,31 @@ double Function2DLogInterpolate::operator()(
     const std::size_t timeLastIndex = _volatilities.size1() - 1;
     const std::size_t lastIndex = _strikes.size2() - 1;
 
-    std::size_t timeIndex;
-    for (timeIndex = 0; timeIndex < timeLastIndex; ++timeIndex) {
-        if (time < _timeIndexManager[timeIndex]) {
-            if (timeIndex > 0) {
-                timeIndex -= 1;
-            }
+    int timeIndex = _timeIndexManager.searchIndex(time);
+    if (timeIndex < 0) {
+        timeIndex = 0;
+    } else if (timeIndex > static_cast<int>(timeLastIndex)) {
+        timeIndex = timeLastIndex;
+    }
+
+    int strikeIndex;
+    for (strikeIndex = 0; strikeIndex < static_cast<int>(lastIndex); 
+        ++strikeIndex) {
+        if (state < _strikes(timeIndex, strikeIndex)) {
+            strikeIndex -= 1;
             break;
         }
     }
-
-    for (std::size_t strikeIndex = 0; strikeIndex < lastIndex; 
-        ++strikeIndex) {
-        if (state < _strikes(timeIndex, strikeIndex)) {
-             return logarithmicInterpolate(state, 
-                _volatilities(timeIndex, strikeIndex),
-                _volatilities(timeIndex, strikeIndex + 1), 
-                _strikes(timeIndex, strikeIndex), 
-                _strikes(timeIndex, strikeIndex + 1));
-        }
+    if (strikeIndex < 0) {
+        strikeIndex = 0;
+    } else if (strikeIndex >= static_cast<int>(lastIndex)) {
+        strikeIndex = lastIndex - 1;
     }
+
+    return logarithmicInterpolate(state, 
+        _volatilities(timeIndex, strikeIndex),
+        _volatilities(timeIndex, strikeIndex + 1), 
+        _strikes(timeIndex, strikeIndex), 
+        _strikes(timeIndex, strikeIndex + 1));
 }
 
