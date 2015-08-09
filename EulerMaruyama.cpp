@@ -6,7 +6,11 @@
 /******************************************************************************
  * Constructers and Destructers.
  ******************************************************************************/
-EulerMaruyama::EulerMaruyama() 
+EulerMaruyama::EulerMaruyama(
+    const std::size_t dimensionOfBrownianMotion) 
+    :
+    _drift(1),
+    _diffusion(1, dimensionOfBrownianMotion)
 {
 }
 
@@ -17,8 +21,11 @@ EulerMaruyama::~EulerMaruyama()
 /******************************************************************************
  * inherited pure virtual functions.
  ******************************************************************************/
+/**
+ * @brief only for 1-dim 1-factor process.
+ */
 void EulerMaruyama::simulateOneStep(
-    boost::numeric::ublas::vector<double>& processes, 
+    boost::numeric::ublas::vector<double>& process, 
     const boost::shared_ptr<const StochasticDifferentialEquation>& model,
     const double time,
     const double timeStepSize,
@@ -27,21 +34,17 @@ void EulerMaruyama::simulateOneStep(
     /**************************************************************************
      * Precomute variables.
      **************************************************************************/
-    const std::size_t dimension = model->getDimension();
-    const std::size_t dimensionOfBrownianMotion = 
-        model->getDimensionOfBrownianMotion();
-
-    boost::numeric::ublas::vector<double> drift(dimension);
-    model->calculateDrift(time, processes, drift);
-    boost::numeric::ublas::matrix<double> diffusion(
-        dimension, dimensionOfBrownianMotion);
-    model->calculateDiffusion(time, processes, diffusion);
-    boost::numeric::ublas::vector<double> randoms(dimensionOfBrownianMotion);
-    generateRandomsVectorFromIterator(randoms, random, dimension);
+    model->calculateDrift(time, process, _drift);
+    model->calculateDiffusion(time, process, _diffusion);
+    double diffusionTerm = 0.0;
+    for (std::size_t factorIndex = 0; factorIndex < _diffusion.size2(); 
+        ++factorIndex) {
+        diffusionTerm += _diffusion(0, factorIndex) * (*random);
+        random++;
+    }
 
     //one step calculation.
-    processes += timeStepSize * drift 
-        + sqrt(timeStepSize) * boost::numeric::ublas::prod(diffusion, randoms);
+    process(0) += timeStepSize * _drift(0) + sqrt(timeStepSize) * diffusionTerm;
 }
 
 

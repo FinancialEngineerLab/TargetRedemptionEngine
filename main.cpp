@@ -13,6 +13,7 @@
 #include "Function1DStepWise.h"
 #include "Function2DLogInterpolate.h"
 #include "LocalVolatilityFactory.h"
+#include "LogEulerMaruyama.h"
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -111,17 +112,16 @@ void calculateTargetRedemptionForward()
     boost::shared_ptr<const StochasticDifferentialEquation> localVolatility = 
         localVolatilityFactory.makeStochasticDifferentialEquation();
 
-    /*
     //discretization scheme.
-    boost::shared_ptr<LogEulerMaruyama> logEulerMaruyama(new LogEulerMaruyama());
+    boost::shared_ptr<LogEulerMaruyama> logEulerMaruyama(new LogEulerMaruyama(1));
 
     //random number generator.
     boost::shared_ptr<MersenneTwister> mersenneTwister(
-        new MersenneTwister(numberOfTimeSteps * numberOfBonds, 0));
-
+        new MersenneTwister(numberOfTimeSteps, 0));
     //path simulator
     const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
-        new PathSimulator(localVolatility, eulerMaruyama));
+        new PathSimulator(localVolatility, logEulerMaruyama));
+    /*
 
     //cash flow.
     const boost::shared_ptr<const CashFlowCalculator> cashFlowCaplet(

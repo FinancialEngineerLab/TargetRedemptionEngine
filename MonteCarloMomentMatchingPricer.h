@@ -1,28 +1,31 @@
 #pragma once
 
-#include "PathSimulatorBase.h"
-#include "PresentValueCalculator.h"
-#include "ExpectatorBase.h"
+#include "DiscretizationScheme.h"
+#include "MomentMatcher.h"
+#include "PresentValueCalculatorMomentMatching.h"
 #include "RandomGeneratorBase.h"
 
 #include <boost/shared_ptr.hpp>
 
-class MonteCarloPricer {
+class MonteCarloMomentMatchingPricer {
 public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    MonteCarloPricer(
-        const boost::shared_ptr<const PathSimulatorBase>& pathSimulator,
-        const boost::shared_ptr<ExpectatorBase>& expectation,
+    MonteCarloMomentMatchingPricer(
+        const boost::shared_ptr<StochasticDifferentialEquation>& model, 
+        const boost::shared_ptr<DiscretizationScheme>& discretizationScheme,
+        const boost::shared_ptr<MomentMatcher>& momentMatcher,
+        const boost::shared_ptr<PresentValueCalculatorMomentMatching>& 
+            presentValueCalculator,
         const boost::shared_ptr<RandomGeneratorBase>& randomGenerator);
-    ~MonteCarloPricer();
+    ~MonteCarloMomentMatchingPricer();
 
     /**************************************************************************
      * member functions.
      **************************************************************************/
     double simulatePrice(
-        const boost::numeric::ublas::vector<double>&  spots,
+        const double spots,
         const std::size_t numberOfSimulations,
         const std::vector<double>& timeGrid) const;
     
@@ -30,8 +33,11 @@ private:
     /**************************************************************************
      * private variables.
      **************************************************************************/
-    const boost::shared_ptr<const PathSimulatorBase> _pathSimulator;
-    const boost::shared_ptr<ExpectatorBase> _expectation;
+    const boost::shared_ptr<StochasticDifferentialEquation> _model;
+    const boost::shared_ptr<DiscretizationScheme> _discretizationScheme;
+    const boost::shared_ptr<MomentMatcher> _momentMatcher;
+    const boost::shared_ptr<PresentValueCalculatorMomentMatching> 
+        _presentValueCalculator;
     const boost::shared_ptr<RandomGeneratorBase> _randomGenerator;
 
 };

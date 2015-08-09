@@ -27,14 +27,14 @@ MonteCarloPricer::~MonteCarloPricer()
  * member functions.
  ******************************************************************************/
 double MonteCarloPricer::simulatePrice(
-    const boost::numeric::ublas::vector<double>& spots,
+    const boost::numeric::ublas::vector<double>&  spots,
     const std::size_t numberOfSimulations,
-    const std::vector<double>& observedTimes,
-    const boost::numeric::ublas::vector<double>& discountFactors) const
+    const std::vector<double>& timeGrid) const
 {
-    boost::numeric::ublas::vector<double> processes = spots;
-    boost::numeric::ublas::matrix<double> 
-        path(processes.size(), observedTimes.size(), 0.0);
+    namespace ublas = boost::numeric::ublas;
+    ublas::vector<double> processes = spots;
+    ublas::matrix<double> 
+        path(processes.size(), timeGrid.size(), 0.0);
     initializePath(path, spots);
 
     std::vector<double> randoms(_randomGenerator->getDimension());
@@ -43,16 +43,16 @@ double MonteCarloPricer::simulatePrice(
         ++simulationIndex) {
         //initial settings
         processes = spots;
-        boost::numeric::ublas::column(path , 0) = spots;
+        ublas::column(path , 0) = spots;
 
         //generate randoms
         _randomGenerator->generateNormalRandoms(randoms);
 
         //simulate path
-        _pathSimulator->simulateOnePath(processes, path, observedTimes, randoms);
+        _pathSimulator->simulateOnePath(processes, path, timeGrid, randoms);
 
         //add sample and calculate present value.
-        _expectation->addSample(path, observedTimes, randoms);
+        _expectation->addSample(path, timeGrid, randoms);
     }
     const double price =_expectation->doExpectation();
     const double variance = _expectation->getVariance();
