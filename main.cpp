@@ -85,14 +85,17 @@ std::vector<double> makeDiscountFactors(
     const double interestRate, 
     const std::vector<double>& timeGrid)
 {
-    std::vector<double> discountFactors(37);
+    std::vector<double> discountFactors(timeGrid.size());
 
     for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); ++timeIndex) {
         discountFactors[timeIndex] = exp(-interestRate * (timeGrid[timeIndex] - timeGrid[0]));
+        discountFactors[timeIndex] = 1.0;
     }
     
     return discountFactors;
 }
+
+
 
 /******************************************************************************
  * Target Redemption Forward simulation.
@@ -109,15 +112,16 @@ void calculateTargetRedemptionForward()
     const double interestRate = 0.01;
     const boost::numeric::ublas::vector<double> spots(1, spot);
 
-    const std::size_t numberOfTimeSteps = 36;
-    const std::size_t numberOfSimulations = 100;
+    
+    const std::size_t numberOfTimeSteps = 36 * 6;
+    const std::size_t numberOfSimulations = 100000;
 
     //make Indice
     std::vector<double> timeGrid(numberOfTimeSteps + 1);
     std::vector<std::size_t> timeGridIndex(numberOfTimeSteps + 1);
     for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); 
         ++timeIndex) {
-        timeGrid[timeIndex] = timeIndex * (1.0 / 12.0);
+        timeGrid[timeIndex] = timeIndex * (5.0 / 360.0);
         timeGridIndex[timeIndex] = timeIndex;
     }
     TimeIndexManager timeGridManager(timeGrid, timeGridIndex);
@@ -126,7 +130,102 @@ void calculateTargetRedemptionForward()
     std::vector<std::size_t> excerciseDateIndex(36);
     for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); 
         ++timeIndex) {
-        excerciseDateIndex[timeIndex] = timeIndex + 1;
+        excerciseDateIndex[timeIndex] = (timeIndex + 1) * 6;
+    }
+    TimeIndexManager excerciseDate(timeGrid, excerciseDateIndex);
+
+    //Local Volatility Model creation
+    Function1DStepWise drift = makeDriftFunction(timeGrid);
+    Function2DLogInterpolate diffusion = makeDiffusionFunction(timeGrid);
+    const LocalVolatilityFactory localVolatilityFactory(drift, diffusion);
+    boost::shared_ptr<const StochasticDifferentialEquation> localVolatility = 
+        localVolatilityFactory.makeStochasticDifferentialEquation();
+
+    //discretization scheme.
+    boost::shared_ptr<LogEulerMaruyama> discretization(new LogEulerMaruyama(1));
+    const boost::shared_ptr<SampleTransform> transform(new SampleTransformExp());
+    //boost::shared_ptr<EulerMaruyama> discretization(new EulerMaruyama(1));
+    //const boost::shared_ptr<SampleTransform> transform(new SampleTransformNull());
+
+    //random number generator.
+    boost::shared_ptr<MersenneTwister> mersenneTwister(
+        new MersenneTwister(numberOfTimeSteps, 0));
+    //path simulator
+    const boost::shared_ptr<const PathSimulatorBase> pathSimulator(
+        new PathSimulator(localVolatility, discretization));
+
+    //discount factors
+    const std::vector<double> discountFactors =
+        makeDiscountFactors(interestRate, timeGrid);
+
+    //cash flow.
+    const boost::shared_ptr<const CashFlowCalculator> cashFlowTRF(
+        new CashFlowTargetRedemptionForward(strike, targetLevel, 
+            discountFactors, excerciseDate, transform));
+    const boost::shared_ptr<const CashFlow> cashFlow(
+        new CashFlow(cashFlowTRF, 0));
+
+    //present value calculator
+    const boost::shared_ptr<const PresentValueCalculator> 
+        presentValueCalculator(
+            new PresentValueCalculator(cashFlow, discountFactors));
+
+    //expectation
+    const boost::shared_ptr<ExpectatorBase> expectation(
+        new Expectator(presentValueCalculator));
+
+    //pricer
+    boost::shared_ptr<const MonteCarloPricer> pricer(
+        new MonteCarloPricer(pathSimulator, 
+            expectation, mersenneTwister));
+
+    /**********************************************************************
+     * Calculate Price.
+     **********************************************************************/
+    {
+        const double price = pricer->simulatePrice(spots, 
+            numberOfSimulations, timeGrid);
+        std::cout << "TRF Price:" << price << std::endl;
+    }
+    
+
+    std::cout << std::endl;
+}
+
+/******************************************************************************
+ * Target Redemption Forward simulation.
+ ******************************************************************************/
+void calculateTargetRedemptionForwardMomentMatching()
+{
+    /**********************************************************************
+     * Parameter settings.
+     **********************************************************************/
+    const double strike = 100.0;
+    const double targetLevel = 30000.0;
+    const double spot = log(100.0);
+    //const double spot = 100.0;
+    const double interestRate = 0.01;
+    const boost::numeric::ublas::vector<double> spots(1, spot);
+
+    
+    const std::size_t numberOfTimeSteps = 36 * 6;
+    const std::size_t numberOfSimulations = 100000;
+
+    //make Indice
+    std::vector<double> timeGrid(numberOfTimeSteps + 1);
+    std::vector<std::size_t> timeGridIndex(numberOfTimeSteps + 1);
+    for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); 
+        ++timeIndex) {
+        timeGrid[timeIndex] = timeIndex * (5.0 / 360.0);
+        timeGridIndex[timeIndex] = timeIndex;
+    }
+    TimeIndexManager timeGridManager(timeGrid, timeGridIndex);
+
+    //excerciseDate
+    std::vector<std::size_t> excerciseDateIndex(36);
+    for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); 
+        ++timeIndex) {
+        excerciseDateIndex[timeIndex] = (timeIndex + 1) * 6;
     }
     TimeIndexManager excerciseDate(timeGrid, excerciseDateIndex);
 

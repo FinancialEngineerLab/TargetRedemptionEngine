@@ -50,7 +50,6 @@ double MonteCarloPricer::simulatePrice(
 
         //simulate path
         _pathSimulator->simulateOnePath(processes, path, timeGrid, randoms);
-        std::cout << path << std::endl;
 
         //add sample and calculate present value.
         _expectation->addSample(path, timeGrid, randoms);

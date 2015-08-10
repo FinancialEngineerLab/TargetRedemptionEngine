@@ -41,7 +41,6 @@ void PathSimulator::simulateOnePath(
             processes, _model, 
             observedTimes[timeIndex], timeStepSize, random);
         boost::numeric::ublas::column(path, timeIndex + 1) = processes;
-        std::cout << path << std::endl;
     }
 }
 

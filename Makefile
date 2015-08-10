@@ -7,8 +7,7 @@
 SELF = basic.mk
 
 CC = g++
-#DEBUG = -O2 -Wall
-DEBUG = -Wall
+DEBUG = -O3 -Wall
 CFLAGS = $(DEBUG)
 INC_FLAGS = -I./
 
@@ -20,7 +19,7 @@ TARGETS = european_option
 all: $(TARGETS)
 
 $(TARGETS): $(SDE_WA_OBJS)
-	$(CC) $(SDE_WA_OBJS) -o $@
+	$(CC) -O3 $(SDE_WA_OBJS) -o $@
 
 Makefile : $(SELF)
 	rm -f $@
