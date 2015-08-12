@@ -1,23 +1,19 @@
 #pragma once
 
-#include "CashFlowMomentMatching.h"
-#include "SampleCalculatorMomentMatching.h"
+#include "CashFlowCalculatorMomentMatching.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-class PresentValueCalculatorMomentMatching : 
-    public SampleCalculatorMomentMatching {
+class CashFlowMomentMatching : public CashFlowCalculatorMomentMatching {
 public:
     /**************************************************************************
      * Constructers and Destructer.
      **************************************************************************/
-    PresentValueCalculatorMomentMatching(
-        const boost::shared_ptr<CashFlowMomentMatching>& cashFlow,
-        const std::vector<double>& discountFactors,
-        const std::size_t numberOfSimulations);
-    ~PresentValueCalculatorMomentMatching();
+    CashFlowMomentMatching(
+        const boost::shared_ptr<CashFlowCalculatorMomentMatching> calculator);
+    virtual ~CashFlowMomentMatching();
 
     /**************************************************************************
      * inherited pure virtual functions.
@@ -26,10 +22,12 @@ public:
         const double sampleAtGrid,
         const std::size_t simulationIndex,
         const std::size_t timeIndex);
-
+    
 private:
-    const boost::shared_ptr<CashFlowMomentMatching> _cashFlow;
-    const std::vector<double> _discountFactors;
-            
+    /**************************************************************************
+     * private variables.
+     **************************************************************************/
+    const boost::shared_ptr<CashFlowCalculatorMomentMatching> _calculator;
 };
+
 

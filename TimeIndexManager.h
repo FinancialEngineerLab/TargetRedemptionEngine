@@ -12,7 +12,7 @@ public:
     double operator[](const std::size_t index) const;
     std::size_t size() const;
     std::size_t getTimeIndex(const std::size_t index) const;
-    int searchIndex(const double time) const;
+    std::size_t searchIndex(const double time) const;
 
 private:
     const std::vector<double> _observedTimes;

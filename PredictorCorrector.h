@@ -41,7 +41,6 @@ private:
     //! cache
     boost::numeric::ublas::vector<double> _cacheProcess2;
 
-
     double calculateDriftEta(
         const boost::shared_ptr<const StochasticDifferentialEquation>& model,
         const double time,

@@ -1,9 +1,9 @@
-#include "LocalVolatilityDrift.h"
+#include "LocalVolatilityTransformedDrift.h"
 
 /******************************************************************************
  * Constructers and Destructer.
  ******************************************************************************/
-LocalVolatilityDrift::LocalVolatilityDrift(
+LocalVolatilityTransformedDrift::LocalVolatilityTransformedDrift(
     const Function1DStepWise& drift,
     const Function2DLogInterpolate& interpolatedVolatility) 
     :
@@ -12,11 +12,11 @@ LocalVolatilityDrift::LocalVolatilityDrift(
 {
 }
 
-LocalVolatilityDrift::~LocalVolatilityDrift() 
+LocalVolatilityTransformedDrift::~LocalVolatilityTransformedDrift() 
 {
 }
 
-void LocalVolatilityDrift::operator()(
+void LocalVolatilityTransformedDrift::operator()(
     const double time, 
     const boost::numeric::ublas::vector<double>& states,
     boost::numeric::ublas::vector<double>& drifts) const

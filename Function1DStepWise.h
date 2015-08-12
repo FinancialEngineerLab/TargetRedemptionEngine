@@ -1,5 +1,5 @@
-#ifndef FUNCTION_1D_STEP_WISEP_H
-#define FUNCTION_1D_STEP_WISEP_H
+#ifndef FUNCTION_1D_STEP_WISE_H
+#define FUNCTION_1D_STEP_WISE_H
 
 #include "TimeIndexManager.h"
 
@@ -19,7 +19,15 @@ public:
      * operators.
      **************************************************************************/
     double operator()(const double time) const;
+
+    double integral(
+        const double from,
+        const double to) const;
 private:
+    //! the length of steps is _timeIndexManager.size()+1, say, lastIndex.
+    //! steps[0] is the value of the function in (-inf, _timeIndexManager[0]].
+    //! steps[lastIndx] is the value of the function 
+    //! in (_timeIndexManager[lastIndex-1], +inf).
     const boost::numeric::ublas::vector<double> _steps;
     const TimeIndexManager _timeIndexManager;
         

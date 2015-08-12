@@ -15,7 +15,8 @@ public:
      **************************************************************************/
     LocalVolatilityFactory(
         const Function1DStepWise& drift,
-        const Function2DLogInterpolate& diffusion);
+        const Function2DLogInterpolate& diffusion,
+        const bool isTransformed);
     virtual ~LocalVolatilityFactory();
 
 private:
@@ -34,5 +35,6 @@ private:
     const Function2DLogInterpolate _diffusion;
     const std::size_t _dimension;
     const std::size_t _dimensionOfBrownianMotion;
+    const bool _isTransformed;
 };
 

@@ -72,6 +72,7 @@ double MonteCarloMomentMatchingPricer::simulatePrice(
                     samples(simulationIndex), simulationIndex, timeIndex);
         }
     }
+
     //calculate sample mean of PV.
     double sampleMean = 0.0;
     for (std::size_t simulationIndex = 0; 

@@ -43,3 +43,27 @@ inline double square(const double x)
 }
 
 
+inline std::size_t ufloor(const double x)
+{
+    return static_cast<std::size_t>(floor(x));
+}
+
+inline double logarithmicIntegral(const double x) {
+    const double Gamma = 0.577215664901532860606512090082402431042;
+    double sum = 0.0;
+    double sum1 = 0.0;
+    double fractorial = 0.0;
+    int sign = 1;
+    sum += Gamma + log(log(x));
+    for (std::size_t index1 = 1; index1 < 10; ++index1) {
+        sum1 = 0.0;
+        for (std::size_t index2 = 0; index2 < ufloor((index1-1.0)/2.0); ++index2) {
+            sum1 += 1.0 / (2.0 * index2 + 1.0);
+        }
+        fractorial *= index1;
+        sum += sign * sqrt(x) * pow(log(x), index1) * sum1 / (fractorial * pow(2.0, index1-1.0));
+        sign *= -1;
+    }
+    return sum;
+}
+

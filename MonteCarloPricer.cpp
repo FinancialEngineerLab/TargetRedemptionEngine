@@ -33,8 +33,7 @@ double MonteCarloPricer::simulatePrice(
 {
     namespace ublas = boost::numeric::ublas;
     ublas::vector<double> processes = spots;
-    ublas::matrix<double> 
-        path(processes.size(), timeGrid.size(), 0.0);
+    ublas::matrix<double> path(processes.size(), timeGrid.size(), 0.0);
     initializePath(path, spots);
 
     std::vector<double> randoms(_randomGenerator->getDimension());
@@ -54,7 +53,7 @@ double MonteCarloPricer::simulatePrice(
         //add sample and calculate present value.
         _expectation->addSample(path, timeGrid, randoms);
     }
-    const double price =_expectation->doExpectation();
+    const double price = _expectation->doExpectation();
     const double variance = _expectation->getVariance();
     std::cout << "variacne:" << variance << std::endl;
 

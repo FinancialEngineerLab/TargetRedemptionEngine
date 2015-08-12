@@ -22,6 +22,14 @@ public:
     double operator()(
         const double time, 
         const double state) const;
+
+    double differentialByX(
+        const double time, 
+        const double state);
+
+    double interpolateIntegral(
+        const double time, 
+        const double state);
 private:
     const boost::numeric::ublas::matrix<double> _strikes;
     const boost::numeric::ublas::matrix<double> _volatilities;

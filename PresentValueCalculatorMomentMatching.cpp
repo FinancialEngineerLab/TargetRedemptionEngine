@@ -4,8 +4,8 @@
  * Constructers and Destructer.
  ******************************************************************************/
 PresentValueCalculatorMomentMatching::PresentValueCalculatorMomentMatching(
-    const boost::shared_ptr<CashFlowCalculatorMomentMatching>& cashFlow,
-    const boost::numeric::ublas::vector<double>& discountFactors,
+    const boost::shared_ptr<CashFlowMomentMatching>& cashFlow,
+    const std::vector<double>& discountFactors,
     const std::size_t numberOfSimulations)
     :
     _cashFlow(cashFlow),
