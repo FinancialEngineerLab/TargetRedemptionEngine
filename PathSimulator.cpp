@@ -1,4 +1,5 @@
 #include "PathSimulator.h"
+#include "Function2DLogInterpolate.h"
 
 #include <vector>
 #include <boost/numeric/ublas/matrix_proxy.hpp>

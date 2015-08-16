@@ -3,10 +3,10 @@
 #include <cassert>
 
 TimeIndexManager::TimeIndexManager(
-    const std::vector<double>& observedTimes, 
+    const std::vector<double>& timeGrid, 
     const std::vector<std::size_t>& timeIndice) 
     :
-    _observedTimes(observedTimes),
+    _timeGrid(timeGrid),
     _timeIndice(timeIndice)
 {
 }
@@ -18,8 +18,8 @@ TimeIndexManager::~TimeIndexManager()
 double TimeIndexManager::operator[](const std::size_t index) const
 {
     assert(0 <= index);
-    assert(index < _observedTimes.size());
-    return _observedTimes[_timeIndice[index]];
+    assert(index < _timeGrid.size());
+    return _timeGrid[_timeIndice[index]];
 }
 
 std::size_t TimeIndexManager::size() const
@@ -34,6 +34,12 @@ std::size_t TimeIndexManager::getTimeIndex(const std::size_t index) const
     return _timeIndice[index];
 }
 
+std::vector<double> TimeIndexManager::getTimeGrid() const
+{
+    return _timeGrid;
+}
+
+
 /**
  * @brief get an index which satisfies the following inequality,
  *        time at (index-1) <= time < time at index.
@@ -44,11 +50,13 @@ std::size_t TimeIndexManager::searchIndex(const double time) const
 {
     for (std::size_t timeIndex = 0; timeIndex < _timeIndice.size(); 
         ++timeIndex) {
-        if (time < _observedTimes[_timeIndice[timeIndex]]) {
+        if (time < _timeGrid[_timeIndice[timeIndex]]) {
             return timeIndex;
         }
     }
 
     return _timeIndice.size();
 }
+
+
 

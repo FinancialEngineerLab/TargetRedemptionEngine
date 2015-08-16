@@ -2,8 +2,10 @@
 #define FUNCITON_2D_LOG_INTERPOLATE_H
 
 #include "TimeIndexManager.h"
+#include "FunctionMathematics.h"
 
 #include <boost/numeric/ublas/matrix.hpp>
+
 
 class Function2DLogInterpolate {
 public:
@@ -23,20 +25,42 @@ public:
         const double time, 
         const double state) const;
 
-    double differentialByX(
+    double differentialByState(
+        const double time, 
+        const double state) const;
+
+    double integrateByState(
         const double time, 
         const double state);
 
-    double interpolateIntegral(
-        const double time, 
-        const double state);
+    void out() const;
+
+    std::vector<double> getTimeGrid() const;
+
+    std::size_t searchTimeIndex(const double time) const;
+
 private:
     const boost::numeric::ublas::matrix<double> _strikes;
     const boost::numeric::ublas::matrix<double> _volatilities;
     const TimeIndexManager _timeIndexManager;
+    //! cache
+    boost::numeric::ublas::matrix<double>  _stepIntegral;
         
+    /**************************************************************************
+     * private functions.
+     **************************************************************************/
+    double invokeLogarithmicInterpolate(
+        const double x,
+        const std::size_t timeIndex,
+        const std::size_t strikeIndex) const;
+
+    double invokeLogarithmicInterpolateDifferential(
+        const double x,
+        const std::size_t timeIndex,
+        const std::size_t strikeIndex) const;
 };
 
 
 #endif
+
 

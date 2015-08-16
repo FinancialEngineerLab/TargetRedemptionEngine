@@ -1,7 +1,9 @@
 #pragma once
 
 #include "DiscretizationScheme.h"
+#include "SampleTransform.h"
 
+#include <boost/shared_ptr.hpp>
 /**
  * @brief The class only supports 1-dim processes.
  */
@@ -11,9 +13,11 @@ public:
      * Constructers and Destructer.
      **************************************************************************/
     PredictorCorrector(
+        const boost::shared_ptr<SampleTransform>& transform,
         const std::size_t dimensionOfBrownianMotion,
         const double theta,
         const double eta);
+        
     virtual ~PredictorCorrector();
 
     /**************************************************************************
@@ -30,6 +34,7 @@ private:
     /**************************************************************************
      * private variables.
      **************************************************************************/
+    const boost::shared_ptr<SampleTransform> _transform;
     const double _eta;
     const double _theta;
     //! cache

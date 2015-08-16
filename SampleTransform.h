@@ -10,10 +10,11 @@ public:
     /**************************************************************************
      * pure virtual functions.
      **************************************************************************/
-    virtual double operator()(const double x) const = 0;
-    virtual void operator()(
-        const boost::numeric::ublas::vector<double>& x,
-        boost::numeric::ublas::vector<double>& result) const = 0;
+    virtual double operator()(const double time, const double state) = 0;
+    //TODO: accept multi-dimentional process.
+    //virtual boost::numeric::ublas::vector<double>& operator()(
+    //        const double time, 
+    //        boost::numeric::ublas::vector<double>&  state) = 0;
 
 private:
             

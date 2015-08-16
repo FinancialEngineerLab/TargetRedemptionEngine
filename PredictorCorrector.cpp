@@ -1,6 +1,8 @@
 #include "PredictorCorrector.h"
 #include "utilities.h"
 
+#include "global.h"
+
 #include <boost/numeric/ublas/io.hpp>
 
 
@@ -9,10 +11,12 @@
  * Constructers and Destructers.
  ******************************************************************************/
 PredictorCorrector::PredictorCorrector(
+    const boost::shared_ptr<SampleTransform>& transform,
     const std::size_t dimensionOfBrownianMotion,
     const double theta,
-    const double eta) 
+    const double eta)
     :
+    _transform(transform),
     _eta(eta),
     _theta(theta),
     _drift(1),
@@ -38,26 +42,32 @@ void PredictorCorrector::simulateOneStep(
     std::vector<double>::const_iterator& random)
 {
     assert(model->getDimension() == 1);
+
     //Predictor
-    _cacheProcess1(0) = exp(process(0));
-    model->calculateDrift(time, _cacheProcess1, _drift);
+    _cacheProcess1(0) = exp(_transform->operator()(time, process(0)));
+    std::cout << "_cachProcess1:" << _cacheProcess1(0) << std::endl;
     model->calculateDiffusion(time, _cacheProcess1, _diffusion);
     double diffusionTerm = 0.0;
     for (std::size_t factorIndex = 0; factorIndex < _diffusion.size2(); 
         ++factorIndex) {
         diffusionTerm += _diffusion(0, factorIndex) * (*random);
-        random++;
+        //random++;
     }
+    std::cout << "drift:" << _drift(0) << ", diffusion:" << diffusionTerm << std::endl;
     const double predictor = process(0) + timeStepSize * _drift(0) 
         + sqrt(timeStepSize) * diffusionTerm;
     
     //Corrector
-    _cacheProcess2(0) = exp(predictor);
+    std::cout << "predictor:" << predictor << std::endl;
+    _cacheProcess2(0) = exp(_transform->operator()(time, predictor));
+    std::cout << "_cacheProcess2:" << _cacheProcess2(0) << std::endl;
+
     //calculate drift
     calculateDriftEta(model, time, _cacheProcess1, _drift);
     const double driftEtaPrevious = (1.0 - _theta) * _drift(0);
     calculateDriftEta(model, time + timeStepSize, _cacheProcess2, _drift);
     const double driftEtaNext =  _theta * _drift(0);
+
     //calculate diffusion
     //TODO: consider multi factor
     model->calculateDiffusion(time, _cacheProcess1, _diffusion);
@@ -72,7 +82,8 @@ void PredictorCorrector::simulateOneStep(
         random++;
     }
     
-    process(0) += timeStepSize * (driftEtaPrevious + driftEtaNext) 
+    process(0) += g_diffusion->integrateByState(time, exp(_cacheProcess1[0]))
+        + timeStepSize * (driftEtaPrevious + driftEtaNext) 
         + sqrt(timeStepSize) * diffusionTerm;
 }
 

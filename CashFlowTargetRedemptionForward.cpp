@@ -35,15 +35,16 @@ double CashFlowTargetRedemptionForward::operator()(
     double presentValue = 0.0;
     for (std::size_t timeIndex = 0; timeIndex < _excerciseDate.size(); 
         ++timeIndex) {
+        const double time = _excerciseDate[timeIndex];
         const std::size_t gridIndex = _excerciseDate.getTimeIndex(timeIndex);
         if (target > _targetLevel) {
             break;
         }
         target += std::max(
-            _transform->operator()(path(0, gridIndex)) - _strike, 0.0);
+            _transform->operator()(time, path(0, gridIndex)) - _strike, 0.0);
         presentValue += 
             _discountFactors[gridIndex] * 
-                (_transform->operator()(path(0, gridIndex)) - _strike);
+                (_transform->operator()(time, path(0, gridIndex)) - _strike);
     }
 
     return presentValue;

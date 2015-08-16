@@ -9,7 +9,7 @@
  * Constructers and Destructer.
  ******************************************************************************/
 MonteCarloMomentMatchingPricer::MonteCarloMomentMatchingPricer(
-    const boost::shared_ptr<StochasticDifferentialEquation>& model, 
+    const boost::shared_ptr<const StochasticDifferentialEquation>& model, 
     const boost::shared_ptr<DiscretizationScheme>& discretizationScheme,
     const boost::shared_ptr<MomentMatcher>& momentMatcher,
     const boost::shared_ptr<PresentValueCalculatorMomentMatching>& 
@@ -44,6 +44,9 @@ double MonteCarloMomentMatchingPricer::simulatePrice(
     std::vector<double> randoms(_randomGenerator->getDimension());
 
     for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); ++timeIndex) {
+        //generate randoms
+        _randomGenerator->generateNormalRandoms(randoms);
+
         std::vector<double>::const_iterator random = randoms.begin();
         const double time = timeGrid[timeIndex];
         const double timeStepSize = timeGrid[timeIndex + 1] - timeGrid[timeIndex];
@@ -53,11 +56,17 @@ double MonteCarloMomentMatchingPricer::simulatePrice(
         for (std::size_t simulationIndex = 0; 
             simulationIndex < numberOfSimulations; ++simulationIndex) {
             process(0) = samples(simulationIndex);
+            std::cout << "prev:" ;
+            std::cout << process(0) << std::endl;
             _discretizationScheme->simulateOneStep(process, 
                 _model, time, timeStepSize, random);
             samples(simulationIndex) = process(0);
+            std::cout << "after:";
+            std::cout << process(0) << std::endl;
 
             sampleMean += samples(simulationIndex);
+            std::cout << "samples:";
+            std::cout << samples(simulationIndex) << std::endl;
         }
         sampleMean /= numberOfSimulations;
 

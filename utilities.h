@@ -67,3 +67,33 @@ inline double logarithmicIntegral(const double x) {
     return sum;
 }
 
+//! integrate 1/(A + B * ln(y / C)) from 0 to x w.r.t. y
+inline double logarithmicIntegralChangeOfVariable(
+    const double x,
+    const double A,
+    const double B,
+    const double C) {
+    //change of variables to transfrom integrand 1/ln(x)
+    const double to = exp(A) * pow(x / C, B);
+    return logarithmicIntegral(to) * exp(1.0 / B);
+}
+
+inline double logarithmicIntegralStep(
+    const double state,
+    const double strike1,
+    const double strike2,
+    const double volatility1,
+    const double volatility2)
+{
+    assert(strike2 >= strike1);
+    assert(volatility2 >= volatility1);
+
+    const double D = log(strike2 /strike1) ;
+    const double A = D * strike1;
+    const double B = volatility2 - volatility1; 
+    const double C = volatility1;
+    const double x = exp(A) * pow(state/C, B);
+    
+    return D *  logarithmicIntegralChangeOfVariable(x, A, B, C);
+}
+

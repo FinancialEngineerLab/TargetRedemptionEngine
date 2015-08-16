@@ -4,6 +4,7 @@
 #include "PresentValueCalculator.h"
 #include "ExpectatorBase.h"
 #include "RandomGeneratorBase.h"
+#include "Function2DLogInterpolate.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -24,7 +25,8 @@ public:
     double simulatePrice(
         const boost::numeric::ublas::vector<double>&  spots,
         const std::size_t numberOfSimulations,
-        const std::vector<double>& timeGrid) const;
+        const std::vector<double>& timeGrid,
+        const Function2DLogInterpolate& function2D) const;
     
 private:
     /**************************************************************************

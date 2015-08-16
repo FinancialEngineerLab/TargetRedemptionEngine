@@ -9,7 +9,6 @@
 #include "CashFlowCall.h"
 #include "Expectator.h"
 #include "ExpectatorControlVariate.h"
-#include "FunctionCaplet.h"
 #include "Function1DStepWise.h"
 #include "Function2DLogInterpolate.h"
 #include "LocalVolatilityFactory.h"
@@ -22,15 +21,35 @@
 #include "CashFlowTargetRedemptionForwardMomentMatching.h"
 #include "MomentMatcherFirst.h"
 #include "PresentValueCalculatorMomentMatching.h"
+#include "SampleTransformInverse.h"
+#include "Solver.h"
+#include "NewtonRaphson.h"
+#include "MonteCarloMomentMatchingPricer.h"
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/io.hpp>
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
 #include <boost/math/distributions/normal.hpp>
 
+
+struct Integrand {
+    Integrand(Function2DLogInterpolate& function) : _function(function){};
+    ~Integrand(){};
+
+    double operator()(
+        const double time,
+        const double state) {
+        return 1.0 / _function(time, state);
+    }
+
+    Function2DLogInterpolate _function;
+};
 
 Function1DStepWise makeDriftFunction(const std::vector<double>& timeGrid)
 {
@@ -95,7 +114,8 @@ std::vector<double> makeDiscountFactors(
     std::vector<double> discountFactors(timeGrid.size());
 
     for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); ++timeIndex) {
-        discountFactors[timeIndex] = exp(-interestRate * (timeGrid[timeIndex] - timeGrid[0]));
+        discountFactors[timeIndex] = 
+            exp(-interestRate * (timeGrid[timeIndex] - timeGrid[0]));
         discountFactors[timeIndex] = 1.0;
     }
     
@@ -114,16 +134,17 @@ boost::numeric::ublas::vector<double> makeForwardPrice(
     return forwardPrice;
 }
 
-
+Function2DLogInterpolate* g_diffusion;
+Function2DLogInterpolate* hogehoge;
 
 /******************************************************************************
  * Target Redemption Forward simulation.
  ******************************************************************************/
 void calculateTargetRedemptionForward()
 {
-    /**********************************************************************
+    /**************************************************************************
      * Parameter settings.
-     **********************************************************************/
+     **************************************************************************/
     const double strike = 100.0;
     const double targetLevel = 30000.0;
     const double spot = log(100.0);
@@ -132,15 +153,15 @@ void calculateTargetRedemptionForward()
     const boost::numeric::ublas::vector<double> spots(1, spot);
 
     
-    const std::size_t numberOfTimeSteps = 36 * 12;
-    const std::size_t numberOfSimulations = 100000;
+    const std::size_t numberOfTimeSteps = 36 * 6;
+    const std::size_t numberOfSimulations = 100;
 
     //make Indice
     std::vector<double> timeGrid(numberOfTimeSteps + 1);
     std::vector<std::size_t> timeGridIndex(numberOfTimeSteps + 1);
     for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); 
         ++timeIndex) {
-        timeGrid[timeIndex] = timeIndex * (2.5 / 360.0);
+        timeGrid[timeIndex] = timeIndex * (5.0 / 360.0);
         timeGridIndex[timeIndex] = timeIndex;
     }
     TimeIndexManager timeGridManager(timeGrid, timeGridIndex);
@@ -149,13 +170,14 @@ void calculateTargetRedemptionForward()
     std::vector<std::size_t> excerciseDateIndex(36);
     for (std::size_t timeIndex = 0; timeIndex < timeGrid.size(); 
         ++timeIndex) {
-        excerciseDateIndex[timeIndex] = (timeIndex + 1) * 12;
+        excerciseDateIndex[timeIndex] = (timeIndex + 1) * 6;
     }
     TimeIndexManager excerciseDate(timeGrid, excerciseDateIndex);
 
     //Local Volatility Model creation
     Function1DStepWise drift = makeDriftFunction(timeGrid);
     Function2DLogInterpolate diffusion = makeDiffusionFunction();
+    hogehoge = &diffusion;
     const LocalVolatilityFactory localVolatilityFactory(drift, diffusion, false);
     boost::shared_ptr<const StochasticDifferentialEquation> localVolatility = 
         localVolatilityFactory.makeStochasticDifferentialEquation();
@@ -203,7 +225,7 @@ void calculateTargetRedemptionForward()
      **********************************************************************/
     {
         const double price = pricer->simulatePrice(spots, 
-            numberOfSimulations, timeGrid);
+            numberOfSimulations, timeGrid, diffusion);
         std::cout << "TRF Price:" << price << std::endl;
     }
     
@@ -228,7 +250,7 @@ void calculateTargetRedemptionForwardMomentMatching()
 
     
     const std::size_t numberOfTimeSteps = 36 * 6;
-    const std::size_t numberOfSimulations = 100000;
+    const std::size_t numberOfSimulations = 100;
 
     //make Indice
     std::vector<double> timeGrid(numberOfTimeSteps + 1);
@@ -251,15 +273,22 @@ void calculateTargetRedemptionForwardMomentMatching()
     //Local Volatility Model creation
     Function1DStepWise drift = makeDriftFunction(timeGrid);
     Function2DLogInterpolate diffusion = makeDiffusionFunction();
+    g_diffusion = &diffusion;
     const LocalVolatilityFactory localVolatilityFactory(drift, diffusion, true);
     boost::shared_ptr<const StochasticDifferentialEquation> localVolatility = 
         localVolatilityFactory.makeStochasticDifferentialEquation();
+
+    //transform
+    boost::shared_ptr<SampleTransformInverse> transform(
+        new SampleTransformInverse(diffusion, log(50.0), log(200.0), 100));
+
     //discretization scheme.
     boost::shared_ptr<PredictorCorrector> discretization(
-        new PredictorCorrector(1, 0.5, 0.5));
+        new PredictorCorrector(transform, 1, 0.5, 0.5));
+
     //random number generator.
     boost::shared_ptr<MersenneTwister> mersenneTwister(
-        new MersenneTwister(numberOfTimeSteps, 0));
+        new MersenneTwister(numberOfSimulations, 0));
     //discount factors
     const std::vector<double> discountFactors =
         makeDiscountFactors(interestRate, timeGrid);
@@ -277,28 +306,27 @@ void calculateTargetRedemptionForwardMomentMatching()
         new MomentMatcherFirst(forwardPrice));
 
     //present value calculator
-    const boost::shared_ptr<const PresentValueCalculatorMomentMatching> 
-        presentValueCalculatorMomentMatching(
+    const boost::shared_ptr<PresentValueCalculatorMomentMatching> 
+        presentValueCalculator(
             new PresentValueCalculatorMomentMatching(
                 cashFlow, discountFactors, numberOfSimulations));
+
     
     //pricer
-    /*
     boost::shared_ptr<const MonteCarloMomentMatchingPricer> pricer(
         new MonteCarloMomentMatchingPricer(
             localVolatility,
             discretization, 
-            momentMathcer,
+            momentMatcher,
             presentValueCalculator,
             mersenneTwister));
-    */
     /**********************************************************************
      * Calculate Price.
      **********************************************************************/
     {
-//        const double price = pricer->simulatePrice(spots, 
-//            numberOfSimulations, timeGrid);
-//        std::cout << "TRF Price:" << price << std::endl;
+        const double price = pricer->simulatePrice(g_diffusion->integrateByState(0.0, spot), 
+            numberOfSimulations, timeGrid);
+        std::cout << "TRF Price:" << price << std::endl;
     }
     
 
@@ -308,19 +336,73 @@ void calculateTargetRedemptionForwardMomentMatching()
 int testFunction2DLogInterpolate()
 {
     Function2DLogInterpolate vol = makeDiffusionFunction();
-    double spot = 60.0;
+    double spot = 100.0;
     std::cout << vol(5.5, spot) << std::endl;
+
+    std::cout << "differentialByState:" << vol.differentialByState(1.5, spot) << std::endl;
+
+    return 0;
+}
+
+int testSolver()
+{
+    Solver solver;
+    const double tolerance = 0.1;
+    const double time = 1.0;
+    Function2DLogInterpolate vol = makeDiffusionFunction();
+    std::vector<double> zs(5);
+    double xs[] = {log(90.0), log(95.0), log(100.0), log(105.0), log(110.0)};
+    for (std::size_t index = 0; index < zs.size(); ++index) {
+        zs[index] = vol.integrateByState(time, xs[index]);
+        std::cout << xs[index] << "\t\t" << zs[index] << std::endl;
+    }
+
+    Integrand integrand(vol);
+
+    //function
+    boost::function<double(double)> function = 
+        boost::bind(
+            &Function2DLogInterpolate::integrateByState, &vol, time, _1);
+    //differential of the funtcion
+    boost::function<double(double)> differential = 
+        boost::bind(&Integrand::operator(), 
+            &integrand, time, _1);
+
+    const boost::shared_ptr<NewtonRaphson> engine(
+        new NewtonRaphson(function, differential));
+
+    for (std::size_t index = 0; index < zs.size(); ++index) {
+        const double x = solver.solve(2.0, zs[index], tolerance, engine);
+        std::cout << x  << "\t" << zs[index] << std::endl;
+    }
+
+    return 0;
+}
+
+int testSampleTransFormInverse()
+{
+    Function2DLogInterpolate vol = makeDiffusionFunction();
+    double from = log(80.0);
+    double to = log(120.0);
+    std::size_t numberOfPartitions = 10;
+
+    std::cout << "start" << std::endl;
+    const boost::shared_ptr<SampleTransformInverse> transform(
+        new SampleTransformInverse(vol, from, to, numberOfPartitions));
+    std::cout << "end" << std::endl;
+    std::cout << transform->operator()(1.0, log(90.0)) << std::endl;
 
     return 0;
 }
 
 int main()
 {
-//    calculateTargetRedemptionForward();
+    //calculateTargetRedemptionForward();
     calculateTargetRedemptionForwardMomentMatching();
-    //
 
     //testFunction2DLogInterpolate();
+    //testSolver();
+    //testSampleTransFormInverse();
     {
         int a = 0;
         std::cin >> a;

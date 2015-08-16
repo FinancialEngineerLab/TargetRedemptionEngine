@@ -12,10 +12,7 @@ public:
     /**************************************************************************
      * pure virtual functions.
      **************************************************************************/
-    virtual double operator()(const double x) const;
-    virtual void operator()(
-        const boost::numeric::ublas::vector<double>& x,
-        boost::numeric::ublas::vector<double>& result) const;
+    virtual double operator()(const double time, const double state);
 
 private:
             

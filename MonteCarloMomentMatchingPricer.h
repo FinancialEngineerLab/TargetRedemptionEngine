@@ -13,7 +13,7 @@ public:
      * Constructers and Destructer.
      **************************************************************************/
     MonteCarloMomentMatchingPricer(
-        const boost::shared_ptr<StochasticDifferentialEquation>& model, 
+        const boost::shared_ptr<const StochasticDifferentialEquation>& model, 
         const boost::shared_ptr<DiscretizationScheme>& discretizationScheme,
         const boost::shared_ptr<MomentMatcher>& momentMatcher,
         const boost::shared_ptr<PresentValueCalculatorMomentMatching>& 
@@ -33,7 +33,7 @@ private:
     /**************************************************************************
      * private variables.
      **************************************************************************/
-    const boost::shared_ptr<StochasticDifferentialEquation> _model;
+    const boost::shared_ptr<const StochasticDifferentialEquation> _model;
     const boost::shared_ptr<DiscretizationScheme> _discretizationScheme;
     const boost::shared_ptr<MomentMatcher> _momentMatcher;
     const boost::shared_ptr<PresentValueCalculatorMomentMatching> 

@@ -24,7 +24,7 @@ public:
 
 private:
     const Function1DStepWise _drift;
-    const Function2DLogInterpolate _interpolatedVolatility;
+    Function2DLogInterpolate _interpolatedVolatility;
 
 };
 

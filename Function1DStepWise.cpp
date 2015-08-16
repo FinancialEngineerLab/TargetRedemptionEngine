@@ -40,8 +40,6 @@ double Function1DStepWise::integral(
     const std::size_t startIndex = _timeIndexManager.searchIndex(from);
     const std::size_t endIndex = _timeIndexManager.searchIndex(to);
 
-    std::cout << startIndex << std::endl;
-    std::cout << endIndex << std::endl;
     if (startIndex == endIndex) {
         return (to - from) * _steps[startIndex];
     } else {

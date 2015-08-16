@@ -11,17 +11,8 @@ SampleTransformExp::~SampleTransformExp()
 {
 }
 
-double SampleTransformExp::operator ()(const double x) const
+double SampleTransformExp::operator ()(const double time, const double state)
 {
-    return exp(x);
+    return exp(state);
 }
-
-void SampleTransformExp::operator ()(
-    const boost::numeric::ublas::vector<double>& x,
-    boost::numeric::ublas::vector<double>& result) const
-{
-    for (std::size_t index = 0; index < result.size(); ++index) {
-        result[index] = exp(x[index]);
-    }
-} 
 

@@ -1,6 +1,8 @@
 #include "LogEulerMaruyama.h"
 #include "utilities.h"
 
+#include "global.h"
+
 #include <boost/numeric/ublas/io.hpp>
 
 /******************************************************************************

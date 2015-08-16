@@ -29,7 +29,8 @@ MonteCarloPricer::~MonteCarloPricer()
 double MonteCarloPricer::simulatePrice(
     const boost::numeric::ublas::vector<double>&  spots,
     const std::size_t numberOfSimulations,
-    const std::vector<double>& timeGrid) const
+    const std::vector<double>& timeGrid,
+    const Function2DLogInterpolate& function2D) const
 {
     namespace ublas = boost::numeric::ublas;
     ublas::vector<double> processes = spots;

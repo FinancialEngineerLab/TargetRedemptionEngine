@@ -11,17 +11,11 @@ SampleTransformNull::~SampleTransformNull()
 {
 }
 
-double SampleTransformNull::operator ()(const double x) const
+double SampleTransformNull::operator ()(
+    const double time,
+    const double state)
 {
-    return x;
+    return state;
 }
 
-void SampleTransformNull::operator ()(
-    const boost::numeric::ublas::vector<double>& x,
-    boost::numeric::ublas::vector<double>& result) const
-{
-    for (std::size_t index = 0; index < result.size(); ++index) {
-        result[index] = x[index];
-    }
-} 
 
