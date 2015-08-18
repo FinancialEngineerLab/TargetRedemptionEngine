@@ -310,7 +310,6 @@ void calculateTargetRedemptionForwardMomentMatching()
         presentValueCalculator(
             new PresentValueCalculatorMomentMatching(
                 cashFlow, discountFactors, numberOfSimulations));
-
     
     //pricer
     boost::shared_ptr<const MonteCarloMomentMatchingPricer> pricer(
